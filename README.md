@@ -29,7 +29,7 @@ Being the core of the convolution computation, the Matrix Multiplication needs t
 <p align="center">
   <img src="docs/images/cmsis.png" alt="HWC Data Layout, image-like to columns transform and computation as a Matrix Multiplication (MatMul)" align="middle" width="512">
   <br>
-  <em> Fig.1:HWC Data Layout, image-like to columns transform and computation as a Matrix Multiplication (MatMul) <\em>
+  <em> Fig.1:(a) Dataflow of the spatial convolution kernel (b) Convolution inner loop as a matrix multiplication working on two spatially adjacent pixels (activation outputs) of two consecutive channels (features) (2x2 sized kernel). </em>
 </p>
 
 ## Pooling
@@ -50,7 +50,7 @@ The data-parallel execution exploits fully the PULP cluster, achieving almost li
 <p align="center">
   <img src="docs/images/multicore.jpg" alt="The right side shows how the chunks are assigned to the 8 cores of the PULP cluster. Each chunk is built along the spatial dimension of theoutput feature map. The left side gives a graphical intuition of the need each core has to create its private im2col buffer." align="middle" width="512">
   <br>
-  <em> Fig.2: The right side shows how the chunks are assigned to the 8 cores of the PULP cluster. Each chunk is built along the spatial dimension of theoutput feature map. The left side gives a graphical intuition of the need each core has to create its private im2col buffer. <\em>
+  <em> Fig.2: The right side shows how the chunks are assigned to the 8 cores of the PULP cluster. Each chunk is built along the spatial dimension of theoutput feature map. The left side gives a graphical intuition of the need each core has to create its private im2col buffer. </em>
 </p>
 
 + Linear: each core computes a balanced number of output neurons;
