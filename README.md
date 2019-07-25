@@ -46,7 +46,7 @@ The data-parallel execution exploits fully the PULP cluster, achieving almost li
 + Convolution: to take advantage of the HWC data layout, the data chunks to be assigned to each core are built along the spatial dimension of the Output Feature Map;
 
 <p align="center">
-  <img src="docs/images/nulticore.jpeg" alt="The right side shows how the chunks are assigned to the 8 cores of the PULP cluster. Each chunk is built along the spatial dimension of theoutput feature map. The left side gives a graphical intuition of the need each core has to create its private im2col buffer." align="middle" width="512">
+  <img src="docs/images/multicore.jpeg" alt="The right side shows how the chunks are assigned to the 8 cores of the PULP cluster. Each chunk is built along the spatial dimension of theoutput feature map. The left side gives a graphical intuition of the need each core has to create its private im2col buffer." align="middle" width="512">
 </p>
 
 + Linear: each core computes a balanced number of output neurons;
