@@ -28,7 +28,7 @@
 #define INIT_PROFILING()       rt_perf_t perf2;
 
 #define START_PROFILING() \
-for (int k=0; k < 14; k++) { \
+for (int k=0; k < 13; k++) { \
   if ( (k>=3))  { \
     rt_perf_init(&perf2);						\
     if(k==3) rt_perf_conf(&perf2, (1<<RT_PERF_CYCLES));			\
@@ -41,7 +41,6 @@ for (int k=0; k < 14; k++) { \
     if(k==10) rt_perf_conf(&perf2, (1<<RT_PERF_LD_STALL));		\
     if(k==11) rt_perf_conf(&perf2, (1<<RT_PERF_JR_STALL ));		\
     if(k==12) rt_perf_conf(&perf2, (1<<RT_PERF_BRANCH ));		\
-    if(k==13) rt_perf_conf(&perf2, (1<<RT_PERF_CSR_HAZARD));		\
     rt_perf_reset(&perf2);						\
     rt_perf_stop(&perf2);						\
     rt_perf_start(&perf2); \
@@ -62,7 +61,6 @@ for (int k=0; k < 14; k++) { \
 	 if(k==10) printf("[%d] : num_load_stalls: %d\n",cid,rt_perf_get(&perf2,RT_PERF_LD_STALL ) ); \
 	 if(k==11) printf("[%d] : num_jumpr_stalls: %d\n",cid,rt_perf_get(&perf2,RT_PERF_JR_STALL ) ); \
 	 if(k==12) printf("[%d] : num_branch: %d\n",cid,rt_perf_get(&perf2,RT_PERF_BRANCH ) ); \
-	 if(k==13)printf("[%d] : num_csr_haz: %d\n",cid,rt_perf_get(&perf2,RT_PERF_CSR_HAZARD ) ); \
        }								\
  }
 #else

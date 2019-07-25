@@ -106,7 +106,6 @@ void pulp_nn_cifar10(rt_perf_t *perf)
 				  						img_buffer1,
 				  						CONV1_OUT_DIM,
 				  						col_buffer,
-				  						NULL,
 				  						NULL);
 
 #ifdef CHECKLAYER
@@ -189,7 +188,6 @@ void pulp_nn_cifar10(rt_perf_t *perf)
 				     				img_buffer1,
 				     				CONV2_OUT_DIM,
 				     				col_buffer,
-				     				NULL,
 				     				NULL);
 #ifdef CHECKLAYER
   	if(rt_core_id()==0){
@@ -269,9 +267,7 @@ void pulp_nn_cifar10(rt_perf_t *perf)
 				   					img_buffer1,
 				   					CONV3_OUT_DIM,
 				   					col_buffer,
-				   					NULL,
-				   					NULL
-				   					);
+				   					NULL);
 
 #ifdef CHECKLAYER
   	if(rt_core_id()==0){

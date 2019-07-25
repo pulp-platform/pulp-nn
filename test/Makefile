@@ -3,9 +3,6 @@ PULP_APP = main
 PULP_APP_FC_SRCS  = main_test.c
 PULP_APP_CL_OMP_SRCS = test_layers.c
 PULP_APP_CL_OMP_SRCS += $(wildcard ./../kernels/*.c)
-#PULP_APP_CL_OMP_SRCS += $(wildcard ./../kernels/activations/*.c)
-#PULP_APP_CL_OMP_SRCS += $(wildcard ./../kernels/fully_connected/*.c)
-#PULP_APP_CL_OMP_SRCS += $(wildcard ./../kernels/pooling/*.c)
 
 
 ifndef cores
@@ -35,7 +32,7 @@ PULP_CFLAGS += -DCHECKLAYER
 endif
 
 PULP_CFLAGS += -DTEST=$(test) -DNUM_CORES=$(cores) -DQ$(Q) -O3  -Iinc -w
-PULP_LDFLAGS = -lm -lg
+PULP_LDFLAGS = -lm 
 
 
 
