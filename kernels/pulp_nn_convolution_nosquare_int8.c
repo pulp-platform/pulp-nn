@@ -138,7 +138,7 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
     {
       for (i_out_x = 0; i_out_x < dim_im_out_x; i_out_x++)
       {
-        /* This part implements the im2col function */
+        /* im2col  */
         for (i_ker_y = i_out_y * stride_y - padding_y; i_ker_y < i_out_y * stride_y - padding_y + dim_kernel_y;
           i_ker_y++)
           {
@@ -169,7 +169,7 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
             }
           }
 
-          /* middle part, here we also divide the x into left, mid and right */
+          /* middle part, split into left, mid and right */
           for (; i_out_y < dim_im_out_y - padding_y; i_out_y++)
           {
 
@@ -185,7 +185,6 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
                     {
                       if (i_ker_x < 0 || i_ker_x >= dim_im_in_x)
                       {
-                        /* arm_fill_q15(0, pBuffer, ch_im_in); */
                         pulp_zero_mem(pBuffer, ch_im_in);
                       } else
                       {
@@ -209,7 +208,7 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
                   /* mid part */
                   for (; i_out_x < dim_im_out_x - padding_x; i_out_x++)
                   {
-                    /* This part implements the im2col function */
+                    /* im2col function */
                     for (i_ker_y = i_out_y * stride_y - padding_y; i_ker_y < i_out_y * stride_y - padding_y + dim_kernel_y;
                       i_ker_y++)
                       {
@@ -233,7 +232,7 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
                       /* right part */
                       for (; i_out_x < dim_im_out_x; i_out_x++)
                       {
-                        /* This part implements the im2col function */
+                        
                         for (i_ker_y = i_out_y * stride_y - padding_y; i_ker_y < i_out_y * stride_y - padding_y + dim_kernel_y;
                           i_ker_y++)
                           {
@@ -242,7 +241,7 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
                               {
                                 if (i_ker_x < 0 || i_ker_x >= dim_im_in_x)
                                 {
-                                  /* arm_fill_q15(0, pBuffer, ch_im_in); */
+                                 
                                   pulp_zero_mem(pBuffer, ch_im_in);
                                 } else
                                 {
@@ -277,7 +276,7 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
                                     {
                                       if (i_ker_y < 0 || i_ker_y >= dim_im_in_y || i_ker_x < 0 || i_ker_x >= dim_im_in_x)
                                       {
-                                        /* arm_fill_q15(0, pBuffer, ch_im_in); */
+                                       
                                         pulp_zero_mem(pBuffer, ch_im_in);
                                       } else
                                       {
@@ -308,7 +307,7 @@ void __attribute__ ((noinline)) pulp_nn_convolution_nosquare_int8(
                                   {
                                     int     sum = ((int)(bias[i]) << bias_shift) + NN_ROUND(out_shift);
                                     int8_t    *pB = bufferA;
-                                    /* basically each time it process 4 entries */
+                                    /* it processes 4 entries */
                                     uint16_t  colCnt = ch_im_in * dim_kernel_x * dim_kernel_y >> 2;
 
                                     for (int j=0 ; j < colCnt; j++)
