@@ -4,6 +4,17 @@ PULP_NN is a multicore computing library for QNN inference on Parallel-Ultra-Low
 It adopts the Height-Width-Channel (HWC) layout to store NN weights and activations and the implementation of the convolution-based kernels as a Matrix Multiplication operation, as proposed by ARM's CMSIS-NN open source library.
 It fully exploits the Xpulp ISA extension and the cluster's parallelism to achieve high performance and high energy efficiency on PULP-based devices.
 
+The PULP-NN library is described and evaluated fully in [Garofalo et al., arXiv:1908.11263](https://arxiv.org/abs/1908.11263). If you intend to use or reference PULP-NN for an academic publication, please consider citing it:
+```
+@misc{garofalo2019pulpnn,
+    title={{{PULP-NN: Accelerating Quantized Neural Networks on Parallel Ultra-Low-Power RISC-V Processors}}},
+    author={Angelo Garofalo and Manuele Rusci and Francesco Conti and Davide Rossi and Luca Benini},
+    year={2019},
+    eprint={1908.11263},
+    archivePrefix={arXiv},
+    primaryClass={cs.NE}
+}
+```
 
 ## Structure of the library
 The library is organized as follow:
