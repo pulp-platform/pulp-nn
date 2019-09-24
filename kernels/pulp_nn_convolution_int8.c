@@ -23,7 +23,7 @@
 #include "rt/rt_api.h"
 
 #define SumDotp(a, b, c)          	__builtin_pulp_sdotsp4(a, b, c)
-#define NN_ROUND(out_shift) 		   ( 0x1 << ( out_shift -1 ))
+#define NN_ROUND(out_shift) 		   ((out_shift) ? (0x1 << (out_shift -1)) : (0))
 #define MIN(a,b) 					         ((a)<(b)?(a):(b))
 #define CLIP8(x)                   __builtin_pulp_clip(x,-128, 127)
 
