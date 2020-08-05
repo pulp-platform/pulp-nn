@@ -20,7 +20,7 @@
 import errno
 import os
 import shutil
-from include.struct_comp import PULPNNSrcDirs, PULPNNInstallPath
+from include.struct_comp import PULPNNSrcDirs, PULPNNSrcDirs32bit, PULPNNSrcDirs64bit, PULPNNInstallPath
 
 def mkdir_p(path):
     try:
@@ -32,15 +32,29 @@ def mkdir_p(path):
         else:
             raise
 
-def mkdir_str():
-    mkdir_p(PULPNNSrcDirs['src'])
-    mkdir_p(PULPNNSrcDirs['inc'])
-    mkdir_p(PULPNNSrcDirs['pointwise_convolution'])
-    mkdir_p(PULPNNSrcDirs['matmul'])
-    mkdir_p(PULPNNSrcDirs['depthwise_convolution'])
-    mkdir_p(PULPNNSrcDirs['linear_convolution_nq'])
-    mkdir_p(PULPNNSrcDirs['linear_convolution_q'])
-    mkdir_p(PULPNNSrcDirs['support_function'])
+def mkdir_str(act_prec):
+    if act_prec == '32bit':
+        mkdir_p(PULPNNSrcDirs32bit['src'])
+        mkdir_p(PULPNNSrcDirs32bit['inc'])
+        mkdir_p(PULPNNSrcDirs32bit['pointwise_convolution'])
+        mkdir_p(PULPNNSrcDirs32bit['matmul'])
+        mkdir_p(PULPNNSrcDirs32bit['depthwise_convolution'])
+        mkdir_p(PULPNNSrcDirs32bit['linear_convolution_nq'])
+        mkdir_p(PULPNNSrcDirs32bit['linear_convolution_q'])
+        mkdir_p(PULPNNSrcDirs32bit['support_function'])
 
-    shutil.copyfile(PULPNNSrcDirs['script'] + "templates/pulp_nn_utils.c", PULPNNSrcDirs['support_function'] + "pulp_nn_utils.c")
-    shutil.copyfile(PULPNNSrcDirs['script'] + "templates/pulp_nn_utils.h", PULPNNSrcDirs['inc'] + "pulp_nn_utils.h")
+        shutil.copyfile(PULPNNSrcDirs['script'] + "templates/pulp_nn_utils.c", PULPNNSrcDirs32bit['support_function'] + "pulp_nn_utils.c")
+        shutil.copyfile(PULPNNSrcDirs['script'] + "templates/pulp_nn_utils.h", PULPNNSrcDirs32bit['inc'] + "pulp_nn_utils.h")
+
+    elif act_prec == '64bit':
+        mkdir_p(PULPNNSrcDirs64bit['src'])
+        mkdir_p(PULPNNSrcDirs64bit['inc'])
+        mkdir_p(PULPNNSrcDirs64bit['pointwise_convolution'])
+        mkdir_p(PULPNNSrcDirs64bit['matmul'])
+        mkdir_p(PULPNNSrcDirs64bit['depthwise_convolution'])
+        mkdir_p(PULPNNSrcDirs64bit['linear_convolution_nq'])
+        mkdir_p(PULPNNSrcDirs64bit['linear_convolution_q'])
+        mkdir_p(PULPNNSrcDirs64bit['support_function'])
+
+        shutil.copyfile(PULPNNSrcDirs['script'] + "templates/pulp_nn_utils.c", PULPNNSrcDirs64bit['support_function'] + "pulp_nn_utils.c")
+        shutil.copyfile(PULPNNSrcDirs['script'] + "templates/pulp_nn_utils.h", PULPNNSrcDirs64bit['inc'] + "pulp_nn_utils.h")       

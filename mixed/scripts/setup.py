@@ -57,9 +57,6 @@ wt_precision = 8
 out_precision = 8
 quantization_type = 'shift_clip'
 
-# Choose between 32bit and 64bit
-BN_ACTIVATIONS = '32bit'
-
 # if depthwise CH_IM_IN must be equal to CH_IM_OUT
 DIM_IM_IN_X = 8
 DIM_IM_IN_Y = 8

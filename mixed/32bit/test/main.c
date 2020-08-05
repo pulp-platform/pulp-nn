@@ -113,28 +113,12 @@ void check_conv(rt_perf_t *perf)
       }
     }
 #elif INPUT == 8
-    // for(int i=0; i<CH_IM_IN; i++)
-    // {
-    //   for(int j=0; j<(DIM_IM_IN_X * DIM_IM_IN_Y); j++)
-    //   {
-    //     IN_INT8_L1_CHW[(i * DIM_IM_IN_X * DIM_IM_IN_Y) + j] = IN_INT8_L2_HWC[(j * CH_IM_IN) + i];
-    //   }
-    // }
     for(int i=0; i<CH_IM_IN; i++)
     {
       for(int j=0; j<(DIM_IM_IN_X * DIM_IM_IN_Y); j++)
       {
-        IN_INT8_L2_CHW[(i * DIM_IM_IN_X * DIM_IM_IN_Y) + j] = IN_INT8_L2_HWC[(j * CH_IM_IN) + i];
+        IN_INT8_L1_CHW[(i * DIM_IM_IN_X * DIM_IM_IN_Y) + j] = IN_INT8_L2_HWC[(j * CH_IM_IN) + i];
       }
-    }
-    for (int i=0; i<CH_IM_IN; i++)
-    {
-      for (int j=0; j<DIM_IM_IN_X; j++)
-        IN_INT8_L1_CHW_EXT[i*DIM_IM_IN_X*(DIM_IM_IN_Y + 2) + j] = 0;
-      for (int j=DIM_IM_IN_X; j<DIM_IM_IN_X * DIM_IM_IN_Y + DIM_IM_IN_X; j++)
-        IN_INT8_L1_CHW_EXT[i*DIM_IM_IN_X*(DIM_IM_IN_Y + 2) + j] = IN_INT8_L2_CHW[i*DIM_IM_IN_X*DIM_IM_IN_Y + j - DIM_IM_IN_X];
-      for (int j=DIM_IM_IN_X * DIM_IM_IN_Y + DIM_IM_IN_X; j<DIM_IM_IN_X * DIM_IM_IN_Y + 2 * DIM_IM_IN_X; j++)
-        IN_INT8_L1_CHW_EXT[i*DIM_IM_IN_X*(DIM_IM_IN_Y + 2) + j] = 0;
     }
 #endif
 #if WEIGHTS == 2
@@ -226,50 +210,36 @@ void check_conv(rt_perf_t *perf)
   rt_team_barrier();
 #endif
 
-//#if (KERNEL == 888)
-// pulp_nn_dw_u8_u8_i8(IN_INT8_L1_CHW,
-//          DIM_IM_IN_X,
-//          DIM_IM_IN_Y,
-//          CH_IM_IN,
-//          WEIGHT_INT8_L1_CHW,
-//          CH_IM_OUT,
-//          DIM_KERNEL_X,
-//          DIM_KERNEL_Y,
-//          PADDING_Y_TOP,
-//          PADDING_Y_BOTTOM,
-//          PADDING_X_LEFT,
-//          PADDING_X_RIGHT,
-//          STRIDE_X,
-//          STRIDE_Y,
-//          BIAS_L1,
-//          BIAS_SHIFT,
-//           OUT_SHIFT,
-//           OUT_MULT,
-//          OUT_L1,
-//          DIM_IM_OUT_X,
-//          DIM_IM_OUT_Y,
-//           KAPPA_L1,
-//           LAMBDA_L1,
-//          IM2COL_L1,
-//          WTBUFF_L1,
-//          1,
-//           1,
-//           NULL);
-Conv3x3_Vectorized(IN_INT8_L1_CHW_EXT,
-                    OUT_L1,
-                    DIM_IM_IN_Y + 2,
-                    DIM_IM_IN_X,
-                    CH_IM_IN,
-                    PADDING_X_LEFT,
-                    PADDING_X_RIGHT,
-                    WEIGHT_INT8_L1_CHW,
-                    OUT_SHIFT,
-                    OUT_MULT,
-                    KAPPA_L1,
-                    LAMBDA_L1,
-                    1,
-                    1);
-//#endif
+#if (KERNEL == 888)
+pulp_nn_dw_u8_u8_i8(IN_INT8_L1_CHW,
+					DIM_IM_IN_X,
+					DIM_IM_IN_Y,
+					CH_IM_IN,
+					WEIGHT_INT8_L1_CHW,
+					CH_IM_OUT,
+					DIM_KERNEL_X,
+					DIM_KERNEL_Y,
+					PADDING_Y_TOP,
+					PADDING_Y_BOTTOM,
+					PADDING_X_LEFT,
+					PADDING_X_RIGHT,
+					STRIDE_X,
+					STRIDE_Y,
+					BIAS_L1,
+					BIAS_SHIFT,
+          OUT_SHIFT,
+          OUT_MULT,
+					OUT_L1,
+					DIM_IM_OUT_X,
+					DIM_IM_OUT_Y,
+          KAPPA_L1,
+          LAMBDA_L1,
+					IM2COL_L1,
+					WTBUFF_L1,
+        	1,
+          1,
+          NULL);
+#endif
 
 
 

@@ -20,7 +20,7 @@
 import errno
 import os
 import shutil
-from include.struct_test import PULPNNSrcDirs, PULPNNInstallPath
+from include.struct_test import PULPNNSrcDirs, PULPNNSrcDirs32bit, PULPNNSrcDirs64bit, PULPNNInstallPath32bit, PULPNNInstallPath64bit 
 
 def mkdir_p(path):
     try:
@@ -32,30 +32,58 @@ def mkdir_p(path):
         else:
             raise
 
-def mkdir_str(type):
-    mkdir_p(PULPNNSrcDirs['src'])
-    mkdir_p(PULPNNSrcDirs['support_function'])
-    mkdir_p(PULPNNSrcDirs['include'])
-    if type=='pointwise':
-        mkdir_p(PULPNNSrcDirs['pointwise_convolution'])
-        mkdir_p(PULPNNSrcDirs['matmul'])
-        mkdir_p(PULPNNSrcDirs['data_allocation_pw'])
-        mkdir_p(PULPNNSrcDirs['golden_model_pw'])
-    elif type=='depthwise':
-        mkdir_p(PULPNNSrcDirs['depthwise_convolution'])
-        mkdir_p(PULPNNSrcDirs['data_allocation_dw'])
-        mkdir_p(PULPNNSrcDirs['golden_model_dw'])
-    elif type=='linear_no_quant':
-        mkdir_p(PULPNNSrcDirs['linear_convolution_nq'])
-        mkdir_p(PULPNNSrcDirs['data_allocation_ln_nq'])
-        mkdir_p(PULPNNSrcDirs['golden_model_ln_nq'])
-    elif type=='linear_quant':
-        mkdir_p(PULPNNSrcDirs['linear_convolution_q'])
-        mkdir_p(PULPNNSrcDirs['data_allocation_ln_q'])
-        mkdir_p(PULPNNSrcDirs['golden_model_ln_q'])
+def mkdir_str(type, act_prec):
+    if act_prec == '32bit':
+        mkdir_p(PULPNNSrcDirs32bit['src'])
+        mkdir_p(PULPNNSrcDirs32bit['support_function'])
+        mkdir_p(PULPNNSrcDirs32bit['include'])
+        if type=='pointwise':
+            mkdir_p(PULPNNSrcDirs32bit['pointwise_convolution'])
+            mkdir_p(PULPNNSrcDirs32bit['matmul'])
+            mkdir_p(PULPNNSrcDirs32bit['data_allocation_pw'])
+            mkdir_p(PULPNNSrcDirs32bit['golden_model_pw'])
+        elif type=='depthwise':
+            mkdir_p(PULPNNSrcDirs32bit['depthwise_convolution'])
+            mkdir_p(PULPNNSrcDirs32bit['data_allocation_dw'])
+            mkdir_p(PULPNNSrcDirs32bit['golden_model_dw'])
+        elif type=='linear_no_quant':
+            mkdir_p(PULPNNSrcDirs32bit['linear_convolution_nq'])
+            mkdir_p(PULPNNSrcDirs32bit['data_allocation_ln_nq'])
+            mkdir_p(PULPNNSrcDirs32bit['golden_model_ln_nq'])
+        elif type=='linear_quant':
+            mkdir_p(PULPNNSrcDirs32bit['linear_convolution_q'])
+            mkdir_p(PULPNNSrcDirs32bit['data_allocation_ln_q'])
+            mkdir_p(PULPNNSrcDirs32bit['golden_model_ln_q'])
 
-    try:
-        os.remove(PULPNNInstallPath + "Makefile")
-    except OSError as exc:
-        if exc.errno == errno.ENOENT:
-            pass
+        try:
+            os.remove(PULPNNInstallPath32bit + "Makefile")
+        except OSError as exc:
+            if exc.errno == errno.ENOENT:
+                pass
+    elif act_prec == '64bit':
+        mkdir_p(PULPNNSrcDirs64bit['src'])
+        mkdir_p(PULPNNSrcDirs64bit['support_function'])
+        mkdir_p(PULPNNSrcDirs64bit['include'])
+        if type=='pointwise':
+            mkdir_p(PULPNNSrcDirs64bit['pointwise_convolution'])
+            mkdir_p(PULPNNSrcDirs64bit['matmul'])
+            mkdir_p(PULPNNSrcDirs64bit['data_allocation_pw'])
+            mkdir_p(PULPNNSrcDirs64bit['golden_model_pw'])
+        elif type=='depthwise':
+            mkdir_p(PULPNNSrcDirs64bit['depthwise_convolution'])
+            mkdir_p(PULPNNSrcDirs64bit['data_allocation_dw'])
+            mkdir_p(PULPNNSrcDirs64bit['golden_model_dw'])
+        elif type=='linear_no_quant':
+            mkdir_p(PULPNNSrcDirs64bit['linear_convolution_nq'])
+            mkdir_p(PULPNNSrcDirs64bit['data_allocation_ln_nq'])
+            mkdir_p(PULPNNSrcDirs64bit['golden_model_ln_nq'])
+        elif type=='linear_quant':
+            mkdir_p(PULPNNSrcDirs64bit['linear_convolution_q'])
+            mkdir_p(PULPNNSrcDirs64bit['data_allocation_ln_q'])
+            mkdir_p(PULPNNSrcDirs64bit['golden_model_ln_q'])
+
+        try:
+            os.remove(PULPNNInstallPath64bit + "Makefile")
+        except OSError as exc:
+            if exc.errno == errno.ENOENT:
+                pass

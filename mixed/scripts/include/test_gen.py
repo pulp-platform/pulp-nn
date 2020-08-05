@@ -33,7 +33,7 @@ import numpy as np
 import random
 from mako.template import Template
 from models.linear_quantized_modules import ClippedLinearQuantization, LearnedClippedLinearQuantization, ScaledClippedLinearQuantization, ScaledThresholdsQuantization4d
-from include.struct_test import PULPNNSrcDirs, PULPNNInstallPath
+from include.struct_test import PULPNNSrcDirs, PULPNNSrcDirs32bit, PULPNNSrcDirs64bit, PULPNNInstallPath32bit, PULPNNInstallPath64bit, PULPNNInstallPath
 from include import comp_gen, utils
 
 # Define string returning function for input-output-weights-thresholds
@@ -376,35 +376,53 @@ def pointwise_mixed_tests_generator_int8(IN_CH, IN_DIM_X, IN_DIM_Y, OUT_CH, OUT_
 
     return str_out
 
-def headers():
-    shutil.copyfile(PULPNNSrcDirs['script'] + "templates/stats.h", PULPNNSrcDirs['include'] + "stats.h")
-    shutil.copyfile(PULPNNSrcDirs['pulp_nn_inc'] + "pulp_nn_functions.h", PULPNNSrcDirs['include'] + "pulp_nn_functions.h")
-    shutil.copyfile(PULPNNSrcDirs['pulp_nn_inc'] + "pulp_nn_utils.h", PULPNNSrcDirs['include'] + "pulp_nn_utils.h")
-    shutil.copyfile(PULPNNSrcDirs['pulp_nn_support_function'] + "pulp_nn_utils.c", PULPNNSrcDirs['support_function'] + "pulp_nn_utils.c")
+def headers(act_prec='32bit'):
+    if act_prec == '32bit':
+        shutil.copyfile(PULPNNSrcDirs['script'] + "templates/stats.h", PULPNNSrcDirs32bit['include'] + "stats.h")
+        shutil.copyfile(PULPNNSrcDirs32bit['pulp_nn_inc'] + "pulp_nn_functions.h", PULPNNSrcDirs32bit['include'] + "pulp_nn_functions.h")
+        shutil.copyfile(PULPNNSrcDirs32bit['pulp_nn_inc'] + "pulp_nn_utils.h", PULPNNSrcDirs32bit['include'] + "pulp_nn_utils.h")
+        shutil.copyfile(PULPNNSrcDirs32bit['pulp_nn_support_function'] + "pulp_nn_utils.c", PULPNNSrcDirs32bit['support_function'] + "pulp_nn_utils.c")
+    elif act_prec == '64bit':
+        shutil.copyfile(PULPNNSrcDirs['script'] + "templates/stats.h", PULPNNSrcDirs64bit['include'] + "stats.h")
+        shutil.copyfile(PULPNNSrcDirs64bit['pulp_nn_inc'] + "pulp_nn_functions.h", PULPNNSrcDirs64bit['include'] + "pulp_nn_functions.h")
+        shutil.copyfile(PULPNNSrcDirs64bit['pulp_nn_inc'] + "pulp_nn_utils.h", PULPNNSrcDirs64bit['include'] + "pulp_nn_utils.h")
+        shutil.copyfile(PULPNNSrcDirs64bit['pulp_nn_support_function'] + "pulp_nn_utils.c", PULPNNSrcDirs64bit['support_function'] + "pulp_nn_utils.c")
 
-def copy_file(src_tag, key, dest_tag):
-    shutil.copyfile(PULPNNSrcDirs[src_tag] + "%s" % key.filename, PULPNNSrcDirs[dest_tag] + "%s" % key.filename)
+def copy_file(src_tag, key, dest_tag, act_prec='32bit'):
+    if act_prec == '32bit':
+        shutil.copyfile(PULPNNSrcDirs32bit[src_tag] + "%s" % key.filename, PULPNNSrcDirs32bit[dest_tag] + "%s" % key.filename)
+    elif act_prec == '64bit':
+        shutil.copyfile(PULPNNSrcDirs64bit[src_tag] + "%s" % key.filename, PULPNNSrcDirs64bit[dest_tag] + "%s" % key.filename)
 
-def allocation(path_tag, type_of_kernel, layer, in_precision=8, out_precision=8, wt_precision=8, quant=True, type_of_quant='shift_clip'):
+def allocation(path_tag, type_of_kernel, layer, act_prec='32bit', in_precision=8, out_precision=8, wt_precision=8, quant=True, type_of_quant='shift_clip'):
     if quant:
         c = comp_gen.PULPNNDataAllocation(in_data_t=in_precision, out_data_t=out_precision, wt_data_t=wt_precision, quantization=type_of_quant, type=type_of_kernel, layer=layer)
     else:
         c = comp_gen.PULPNNDataAllocationNoQuant(in_data_t=in_precision, wt_data_t=wt_precision, type=type_of_kernel, layer=layer)
-    new_file = open(PULPNNSrcDirs[path_tag] + c.filename, 'w')
+    if act_prec == '32bit':
+        new_file = open(PULPNNSrcDirs32bit[path_tag] + c.filename, 'w')
+    elif act_prec == '64bit':
+        new_file = open(PULPNNSrcDirs64bit[path_tag] + c.filename, 'w')
     new_file.write(c.generate_code())
     new_file.close()
 
-def golden(path_tag, layer, golden_gen, in_precision=8, out_precision=8, wt_precision=8, quant=True):
+def golden(path_tag, layer, golden_gen, in_precision=8, out_precision=8, wt_precision=8, quant=True, act_prec='32bit'):
     torch.manual_seed(5)
     random.seed(5)
     if quant:
         c = comp_gen.PULPNNGoldenModel(in_data_t=in_precision, out_data_t=out_precision, wt_data_t=wt_precision)
-        new_file = open(PULPNNSrcDirs[path_tag] + c.filename, 'w')
+        if act_prec == '32bit':
+            new_file = open(PULPNNSrcDirs32bit[path_tag] + c.filename, 'w')
+        elif act_prec == '64bit':
+            new_file = open(PULPNNSrcDirs64bit[path_tag] + c.filename, 'w')
         new_file.write(c.generate_code() + "\n" + golden_gen(Cin=layer.ch_im_in, h=layer.dim_im_in_y, w=layer.dim_im_in_x, Cout=layer.ch_im_out, Kh=layer.dim_ker_x, Kw=layer.dim_ker_y, p=layer.pad_y_top, s=layer.stride_x, BitA=in_precision, BitW=wt_precision, BitO=out_precision) + "\n" + "\n" + "#endif")
         new_file.close()
     else:
         c = comp_gen.PULPNNGoldenModelNoQuant(in_data_t=in_precision, wt_data_t=wt_precision)
-        new_file = open(PULPNNSrcDirs[path_tag] + c.filename, 'w')
+        if act_prec == '32bit':
+            new_file = open(PULPNNSrcDirs32bit[path_tag] + c.filename, 'w')
+        elif act_prec == '64bit':
+            new_file = open(PULPNNSrcDirs64bit[path_tag] + c.filename, 'w')
         new_file.write(c.generate_code() + "\n" + golden_gen(layer.ch_im_in, layer.dim_im_in_y, layer.dim_im_in_x, layer.ch_im_out, in_precision, wt_precision, 32) + "\n" + "\n" + "#endif")
         new_file.close()
 
@@ -416,12 +434,18 @@ def generation(api, call, make, include, c):
 
     return api,call,make,include
 
-def makefile(path_tag, make):
-    new_file = open(PULPNNSrcDirs[path_tag] + "/Makefile", 'w')
+def makefile(path_tag, make, act_prec='32bit'):
+    if act_prec == '32bit':
+        new_file = open(PULPNNSrcDirs32bit[path_tag] + "/Makefile", 'w')
+    elif act_prec == '64bit':
+        new_file = open(PULPNNSrcDirs64bit[path_tag] + "/Makefile", 'w')
     new_file.write(Template(filename="templates/make").render(PULPNNMAKE=make))
     new_file.close()
 
-def main(path_tag, include, call, type):
-    new_file = open(PULPNNSrcDirs[path_tag] + "/main.c", 'w')
+def main(path_tag, include, call, type, act_prec='32bit'):
+    if act_prec == '32bit':
+        new_file = open(PULPNNSrcDirs32bit[path_tag] + "/main.c", 'w')
+    elif act_prec == '64bit':
+        new_file = open(PULPNNSrcDirs64bit[path_tag] + "/main.c", 'w')
     new_file.write(Template(filename="templates/main.c").render(PULPNNINCLUDE=include, PULPNNCALL=call, TYPE_OF_KERNEL=type))
     new_file.close()

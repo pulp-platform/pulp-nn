@@ -5,7 +5,6 @@ PULP_APP_FC_SRCS = main.c
 PULP_APP_FC_SRCS += src/SupportFunctions/pulp_nn_utils.c
 
 PULP_APP_FC_SRCS += src/DepthwiseConvolutions/pulp_nn_dw_u8_u8_i8.c
-PULP_APP_FC_SRCS += src/DepthwiseConvolutions/conv_kernel.c
 
 
 

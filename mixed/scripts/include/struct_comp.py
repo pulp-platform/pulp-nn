@@ -20,12 +20,22 @@
 import os
 
 PULPNNInstallPath = cwd = os.getcwd() + "/../"
-PULPNNSrcDirs = {'script': PULPNNInstallPath + "scripts/",
-                'src': PULPNNInstallPath + "src/",
-                'inc': PULPNNInstallPath + "inc/",
-                'pointwise_convolution': PULPNNInstallPath + "src/PointwiseConvolutions/",
-                'matmul': PULPNNInstallPath + "src/MatrixMultiplications/",
-                'depthwise_convolution': PULPNNInstallPath + "src/DepthwiseConvolutions/",
-                'linear_convolution_nq': PULPNNInstallPath + "src/LinearConvolutionsNoQuant/",
-                'linear_convolution_q': PULPNNInstallPath + "src/LinearConvolutionsQuant/",
-                'support_function': PULPNNInstallPath + "src/SupportFunctions/"}
+PULPNNSrcDirs = {'script': PULPNNInstallPath + "scripts/"}
+PULPNNInstallPath32bit = cwd = os.getcwd() + "/../32bit/" 
+PULPNNInstallPath64bit = cwd = os.getcwd() + "/../64bit/" 
+PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
+                'inc': PULPNNInstallPath32bit + "inc/",
+                'pointwise_convolution': PULPNNInstallPath32bit + "src/PointwiseConvolutions/",
+                'matmul': PULPNNInstallPath32bit + "src/MatrixMultiplications/",
+                'depthwise_convolution': PULPNNInstallPath32bit + "src/DepthwiseConvolutions/",
+                'linear_convolution_nq': PULPNNInstallPath32bit + "src/LinearConvolutionsNoQuant/",
+                'linear_convolution_q': PULPNNInstallPath32bit + "src/LinearConvolutionsQuant/",
+                'support_function': PULPNNInstallPath32bit + "src/SupportFunctions/"}
+PULPNNSrcDirs64bit = {'src': PULPNNInstallPath64bit + "src/",
+                'inc': PULPNNInstallPath64bit + "inc/",
+                'pointwise_convolution': PULPNNInstallPath64bit + "src/PointwiseConvolutions/",
+                'matmul': PULPNNInstallPath64bit + "src/MatrixMultiplications/",
+                'depthwise_convolution': PULPNNInstallPath64bit + "src/DepthwiseConvolutions/",
+                'linear_convolution_nq': PULPNNInstallPath64bit + "src/LinearConvolutionsNoQuant/",
+                'linear_convolution_q': PULPNNInstallPath64bit + "src/LinearConvolutionsQuant/",
+                'support_function': PULPNNInstallPath64bit + "src/SupportFunctions/"}

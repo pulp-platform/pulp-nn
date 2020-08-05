@@ -20,6 +20,7 @@
 PULPNNDataPrecisions = [8, 4, 2]
 PULPNNWeightsPrecisions = [8, 4, 2]
 PULPNNQuantizationMethods = ['shift_clip'] #,'thresholds']
+BN_ACTIVATIONS = ['32bit', '64bit']
 PULPNNAPI = ""
 PULPNNMAKE = ""
 PULPNNINCLUDE = ""
