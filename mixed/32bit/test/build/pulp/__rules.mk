@@ -82,7 +82,7 @@ main_OBJS += $(main_CL_OBJS) $(main_CL_ASM_OBJS) $(main_CL_OMP_OBJS)
 PULP_LIB_NAME_main ?= main
 
 
-PULP_FC_EXTRA_SRCS_main = /home/ilnaza/release_version/pulp_nn/test/build/pulp/rt_conf.c /home/ilnaza/release_version/pulp_nn/test/build/pulp/rt_pad_conf.c
+PULP_FC_EXTRA_SRCS_main = /home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/rt_conf.c /home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/rt_pad_conf.c
 PULP_FC_EXTRA_ASM_SRCS_main = 
 PULP_FC_EXTRA_OMP_SRCS_main = 
 

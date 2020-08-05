@@ -9537,7 +9537,7 @@
           "aes_key": 0,
           "aes_iv": 0
         },
-        "stim_file": "/home/ilnaza/release_version/pulp_nn/test/build/pulp/stimuli/flash.bin"
+        "stim_file": "/home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/stimuli/flash.bin"
       },
       "spiflash_clock": {
         "vp_class": "vp/clock_domain",

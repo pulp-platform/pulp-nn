@@ -11,8 +11,8 @@ export PULP_SDK_INSTALL=$(TARGET_INSTALL_DIR)
 export PULP_SDK_WS_INSTALL=$(INSTALL_DIR)
 endif
 
--include /home/ilnaza/release_version/pulp_nn/test/build/pulp/__flags.mk
+-include /home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/__flags.mk
 
 ifndef INCLUDE_NO_RULES
--include /home/ilnaza/release_version/pulp_nn/test/build/pulp/__rules.mk
+-include /home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/__rules.mk
 endif

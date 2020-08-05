@@ -1,6 +1,6 @@
-/home/ilnaza/release_version/pulp_nn/test/build/pulp/main/fc/src/DepthwiseConvolutions/pulp_nn_dw_u8_u8_i8.o: \
+/home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/main/fc/src/DepthwiseConvolutions/pulp_nn_dw_u8_u8_i8.o: \
  src/DepthwiseConvolutions/pulp_nn_dw_u8_u8_i8.c \
- /home/ilnaza/release_version/pulp_nn/test/build/pulp/fc_config.h \
+ /home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/fc_config.h \
  /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/archi/pulp_defs.h \
  /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/rt/rt_api.h \
  /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/rt/rt_api_decl.h \
@@ -160,7 +160,7 @@
  /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/rt/implem/udma.h \
  include/pulp_nn_utils.h
 
-/home/ilnaza/release_version/pulp_nn/test/build/pulp/fc_config.h:
+/home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/fc_config.h:
 
 /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/archi/pulp_defs.h:
 

@@ -1,5 +1,5 @@
-/home/ilnaza/release_version/pulp_nn/test/build/pulp/main/fc/main.o: \
- main.c /home/ilnaza/release_version/pulp_nn/test/build/pulp/fc_config.h \
+/home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/main/fc/main.o: main.c \
+ /home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/fc_config.h \
  /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/archi/pulp_defs.h \
  /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/rt/rt_api.h \
  /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/rt/rt_api_decl.h \
@@ -161,7 +161,7 @@
  include/GoldenModelDepthwiseConvolutions/golden_8_8_8.h \
  include/DataAllocationDepthwiseConvolutions/data_allocation_8_8_8.h
 
-/home/ilnaza/release_version/pulp_nn/test/build/pulp/fc_config.h:
+/home/ilnaza/pulp-nn/mixed/32bit/test/build/pulp/fc_config.h:
 
 /home/ilnaza/pulp-sdk/pkg/sdk/dev/install/include/archi/pulp_defs.h:
 
