@@ -1,0 +1,108 @@
+%if config.api == 'PULPNNConvolve':
+#if (KERNEL == ${config.in_data_t}${config.out_data_t}${config.wt_data_t})
+${config.fn_name}(IN_INT8_L1,
+					DIM_IM_IN_X,
+					DIM_IM_IN_Y,
+					CH_IM_IN,
+					WEIGHT_INT8_L1,
+					CH_IM_OUT,
+					DIM_KERNEL_X,
+					DIM_KERNEL_Y,
+					PADDING_Y_TOP,
+					PADDING_Y_BOTTOM,
+					PADDING_X_LEFT,
+					PADDING_X_RIGHT,
+					STRIDE_X,
+					STRIDE_Y,
+					BIAS_L1,
+					BIAS_SHIFT,
+          OUT_SHIFT,
+          OUT_MULT,
+					OUT_L1,
+					DIM_IM_OUT_X,
+					DIM_IM_OUT_Y,
+%if config.quantization == 'shift_clip':
+          KAPPA_L1,
+        	LAMBDA_L1,
+%else:
+%if config.out_data_t == 'u2':
+          THR_INT2_L1
+%elif config.out_data_t == 'u4':
+					THR_INT4_L1,
+%endif
+%endif
+					IM2COL_L1,
+          1,
+          1,
+        	NULL);
+#endif
+%elif config.api == 'PULPNNDepthwise':
+#if (KERNEL == ${config.in_data_t}${config.out_data_t}${config.wt_data_t})
+${config.fn_name}(IN_INT8_L1_CHW,
+					DIM_IM_IN_X,
+					DIM_IM_IN_Y,
+					CH_IM_IN,
+					WEIGHT_INT8_L1_CHW,
+					CH_IM_OUT,
+					DIM_KERNEL_X,
+					DIM_KERNEL_Y,
+					PADDING_Y_TOP,
+					PADDING_Y_BOTTOM,
+					PADDING_X_LEFT,
+					PADDING_X_RIGHT,
+					STRIDE_X,
+					STRIDE_Y,
+					BIAS_L1,
+					BIAS_SHIFT,
+          OUT_SHIFT,
+          OUT_MULT,
+					OUT_L1,
+					DIM_IM_OUT_X,
+					DIM_IM_OUT_Y,
+%if config.quantization == 'shift_clip':
+          KAPPA_L1,
+          LAMBDA_L1,
+%endif
+					IM2COL_L1,
+					WTBUFF_L1,
+        	1,
+          1,
+          NULL);
+#endif
+%elif config.api == 'PULPNNLinearNoQuant':
+#if (KERNEL == ${config.in_data_t}${config.wt_data_t})
+${config.fn_name}(
+		 	IN_INT8_L1,
+			WEIGHT_INT8_L1,
+			DIM_IM_IN_X*DIM_IM_IN_Y*CH_IM_IN,
+			CH_IM_OUT,
+			NULL,
+			0,
+			0,
+      0,
+			NULL,
+			NULL,
+			OUT_L1,
+			0,
+      0,
+      NULL);
+#endif
+%elif config.api == 'PULPNNLinearQuant':
+#if (KERNEL == ${config.in_data_t}${config.out_data_t}${config.wt_data_t})
+${config.fn_name}(
+		 	IN_INT8_L1,
+			WEIGHT_INT8_L1,
+			DIM_IM_IN_X*DIM_IM_IN_Y*CH_IM_IN,
+			CH_IM_OUT,
+			NULL,
+			0,
+			OUT_SHIFT,
+      0,
+			KAPPA_L1,
+			LAMBDA_L1,
+			OUT_L1,
+			1,
+      1,
+      NULL);
+#endif
+%endif

@@ -1,0 +1,6 @@
+0 ?DarkSlateGray3?ENTRY
+1 ?CadetBlue?FORK
+2 ?DarkSlateGrey?BARRIER
+3 ?DarkSlateGrey?CRITICAL
+4 ?DarkSlateGrey?DMA_PUSH
+5 ?DarkSlateGrey?DMA_WAIT
