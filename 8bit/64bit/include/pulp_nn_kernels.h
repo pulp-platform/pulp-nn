@@ -1,5 +1,5 @@
 /*
- * kernels.h
+ * pulp_nn_kernels.h
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  * Angelo Garofalo <angelo.garofalo@unibo.it>
  *

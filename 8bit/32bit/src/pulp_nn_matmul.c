@@ -20,7 +20,7 @@
 
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
-#include "kernels.h"
+#include "pulp_nn_kernels.h"
 
 #define SumDotp(a, b, c)    __builtin_pulp_sdotusp4(a, b, c)
 #define nn_round(out_shift) (0x1 << (out_shift -1))

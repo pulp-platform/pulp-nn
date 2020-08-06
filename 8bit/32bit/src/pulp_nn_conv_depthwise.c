@@ -20,7 +20,7 @@
 
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
-#include "kernels.h"
+#include "pulp_nn_kernels.h"
 
 
 
