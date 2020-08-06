@@ -6,15 +6,18 @@ It fully exploits the Xpulp ISA extension and the cluster's parallelism to achie
 
 The PULP-NN library is described and evaluated fully in Garofalo et al. [\[arXiv:1908.11263\]](https://arxiv.org/abs/1908.11263). If you intend to use or reference PULP-NN for an academic publication, please consider citing it:
 ```
+
 Garofalo Angelo, Rusci Manuele, Conti Francesco, Rossi Davide and Benini Luca 2020PULP-NN: accelerating quantized neural networks on parallel ultra-low-power RISC-V processorsPhil. Trans. R. Soc. A.37820190155
 http://doi.org/10.1098/rsta.2019.0155
+
 ```
 
 The version of this paper is available at the branch \[paper_version\](https://github.com/pulp-platform/pulp-nn/tree/paper_version) of this repository.
 
 An updated an evolved version of the library is now available on \[master\](https://github.com/pulp-platform/pulp-nn/tree/master) and it is composed by the kernels of previous version (``8bit`` directory) and mixed- and sub-byte precision (``mixed`` directory) ones.
-The latter are explained in detail in Bruschi et al. [\[arXiv:2007.07759\]](https://arxiv.org/abs/2007.07759). If you intend to use or reference PULP-NN mixed for an academic publication, please consider citing it:
+The latter is explained in detail in Bruschi et al. [\[arXiv:2007.07759\]](https://arxiv.org/abs/2007.07759). If you intend to use or reference PULP-NN Mixed for an academic publication, please consider citing it:
 ```
+
 @inproceedings{10.1145/3387902.3394038,
 author = {Bruschi, Nazareno and Garofalo, Angelo and Conti, Francesco and Tagliavini, Giuseppe and Rossi, Davide},
 title = {Enabling Mixed-Precision Quantized Neural Networks in Extreme-Edge Devices},
@@ -31,13 +34,14 @@ keywords = {embedded systems, quantized neural network, low power architectures}
 location = {Catania, Sicily, Italy},
 series = {CF ’20}
 }
+
 ```
 
 ## 8bit or mixed
 
 Both the sub-directories are structured as will explain below but the ``8bit`` directory contains kernels which are already tested in QNN inference applications and is completed. It isready to use if you want to write your applications.
 ``mixed`` directory instead, is a work-in-progress library in which every kernel is already tested "on banch" but not in a real QNN inference application. It contains a ``scripts`` directory in which you can generate tests to stimulate the kernels and study the beheviours.
-To start with PULP-NN mixed, please refer to the ``README`` in ``mixed`` directory.
+To start with PULP-NN Mixed, please refer to the ``README`` in ``mixed`` directory.
 
 ## Structure of the library
 
@@ -124,4 +128,4 @@ The ``pulp_nn_kernels.h`` header must be included in the main file of the applic
 
 ## Current limitations
 
-+ Refer to PULP-NN mixed ``README``;
++ Refer to PULP-NN Mixed ``README``;
