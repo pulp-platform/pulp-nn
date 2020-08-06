@@ -35,9 +35,9 @@ series = {CF ’20}
 
 ## 8bit or mixed
 
-Both the sub-directories are structured as will explain below but the ``8bit`` directory contains kernels which are already tested in QNN inference applications and is completed if you want to write your applications.
+Both the sub-directories are structured as will explain below but the ``8bit`` directory contains kernels which are already tested in QNN inference applications and is completed. It isready to use if you want to write your applications.
 ``mixed`` directory instead, is a work-in-progress library in which every kernel is already tested "on banch" but not in a real QNN inference application. It contains a ``scripts`` directory in which you can generate tests to stimulate the kernels and study the beheviours.
-To start with PULP-NN mixed, please refer to the ``README`` in that ``mixed`` directory.
+To start with PULP-NN mixed, please refer to the ``README`` in ``mixed`` directory.
 
 ## Structure of the library
 
@@ -46,7 +46,7 @@ The library is organized as follow:
 + To use the library the header file under the ``include`` directory should be inserted in your QNN inference code. They are ``pulp_nn_kernels.h`` and ``pulp_nn_utils.h``, which contains every kernel and useful function of PULP-NN library;
 + The directory ``src`` contains every computational kernel;
 
-## Convolution & Linear
+## Convolutions
 
 To  efficiently  execute  the  convolution  on  MCUs, it  is  decomposed  into  two  phases:  the im2colstep  loads the  3D  input  features  of  the  current  convolution  into  a  1D vector, while the dot product step is implemented as a Matrix Multiplication (MatMul).
 
@@ -108,7 +108,7 @@ The data-parallel execution exploits fully the PULP cluster, achieving almost li
 ## Getting Started with PULP-NN
 
 The PULP-NN kernels can be run either on the OpenPULP RTL platform either on any embodiment of the PULP cluster.
-To use the QNN kernels to run Neural Networks on PULP, it is necessary to compile the kernels before running the application.
+To use the QNN kernels to run Neural Networks on PULP, it is necessary to compile the kernels and the utils before running the application.
 The ``pulp_nn_kernels.h`` header must be included in the main file of the application code.
 
 ## Support and Contribution
@@ -116,7 +116,7 @@ The ``pulp_nn_kernels.h`` header must be included in the main file of the applic
 + **Nazareno Bruschi**, *University of Bologna*, [email](mailto:nazareno.bruschi@unibo.it)
 + **Angelo Garofalo**, *University of Bologna*, [email](mailto:angelo.garofalo@unibo.it)
 + **Alessio Burrello**, *University of Bologna*, [email](mailto:alessio.burrello@unibo.it)
-+ **Francesco Conti**, *University of Bologna and ETH Zurich*, [email](mailto:fconti@iis.ee.ethz.ch)
++ **Francesco Conti**, *University of Bologna*, [email](mailto:francesco.conti@unibo.it)
 + **Giuseppe Tagliavini**, *University of Bologna*, [email](mailto:giuseppe.tagliavini@unibo.it)
 + **Manuele Rusci**, *University of Bologna*, [email](mailto:manuele.rusci@unibo.it)
 + **Davide Rossi**, *University of Bologna*, [email](mailto:davide.rossi@unibo.it)

@@ -379,12 +379,12 @@ def pointwise_mixed_tests_generator_int8(IN_CH, IN_DIM_X, IN_DIM_Y, OUT_CH, OUT_
 def headers(act_prec='32bit'):
     if act_prec == '32bit':
         shutil.copyfile(PULPNNSrcDirs['script'] + "templates/stats.h", PULPNNSrcDirs32bit['include'] + "stats.h")
-        shutil.copyfile(PULPNNSrcDirs32bit['pulp_nn_inc'] + "pulp_nn_functions.h", PULPNNSrcDirs32bit['include'] + "pulp_nn_functions.h")
+        shutil.copyfile(PULPNNSrcDirs32bit['pulp_nn_inc'] + "pulp_nn_kernels.h", PULPNNSrcDirs32bit['include'] + "pulp_nn_kernels.h")
         shutil.copyfile(PULPNNSrcDirs32bit['pulp_nn_inc'] + "pulp_nn_utils.h", PULPNNSrcDirs32bit['include'] + "pulp_nn_utils.h")
         shutil.copyfile(PULPNNSrcDirs32bit['pulp_nn_support_function'] + "pulp_nn_utils.c", PULPNNSrcDirs32bit['support_function'] + "pulp_nn_utils.c")
     elif act_prec == '64bit':
         shutil.copyfile(PULPNNSrcDirs['script'] + "templates/stats.h", PULPNNSrcDirs64bit['include'] + "stats.h")
-        shutil.copyfile(PULPNNSrcDirs64bit['pulp_nn_inc'] + "pulp_nn_functions.h", PULPNNSrcDirs64bit['include'] + "pulp_nn_functions.h")
+        shutil.copyfile(PULPNNSrcDirs64bit['pulp_nn_inc'] + "pulp_nn_kernels.h", PULPNNSrcDirs64bit['include'] + "pulp_nn_kernels.h")
         shutil.copyfile(PULPNNSrcDirs64bit['pulp_nn_inc'] + "pulp_nn_utils.h", PULPNNSrcDirs64bit['include'] + "pulp_nn_utils.h")
         shutil.copyfile(PULPNNSrcDirs64bit['pulp_nn_support_function'] + "pulp_nn_utils.c", PULPNNSrcDirs64bit['support_function'] + "pulp_nn_utils.c")
 

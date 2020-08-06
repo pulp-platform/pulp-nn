@@ -90,10 +90,10 @@ for a in utils.BN_ACTIVATIONS:
                 new_file.close()
                     
     if a == '32bit':
-        new_file = open(PULPNNSrcDirs32bit['inc'] + "/pulp_nn_functions.h", 'w')
+        new_file = open(PULPNNSrcDirs32bit['inc'] + "/pulp_nn_kernels.h", 'w')
     elif a == '64bit':
-        new_file = open(PULPNNSrcDirs64bit['inc'] + "/pulp_nn_functions.h", 'w')
-    new_file.write(Template(filename="templates/pulp_nn_functions.h").render(PULPNNAPI=utils.PULPNNAPI))
+        new_file = open(PULPNNSrcDirs64bit['inc'] + "/pulp_nn_kernels.h", 'w')
+    new_file.write(Template(filename="templates/pulp_nn_kernels.h").render(PULPNNAPI=utils.PULPNNAPI))
     new_file.close()
 
     utils.PULPNNAPI = ""

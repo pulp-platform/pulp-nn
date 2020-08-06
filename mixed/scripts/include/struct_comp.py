@@ -24,7 +24,7 @@ PULPNNSrcDirs = {'script': PULPNNInstallPath + "scripts/"}
 PULPNNInstallPath32bit = cwd = os.getcwd() + "/../32bit/" 
 PULPNNInstallPath64bit = cwd = os.getcwd() + "/../64bit/" 
 PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
-                'inc': PULPNNInstallPath32bit + "inc/",
+                'inc': PULPNNInstallPath32bit + "include/",
                 'pointwise_convolution': PULPNNInstallPath32bit + "src/PointwiseConvolutions/",
                 'matmul': PULPNNInstallPath32bit + "src/MatrixMultiplications/",
                 'depthwise_convolution': PULPNNInstallPath32bit + "src/DepthwiseConvolutions/",
@@ -32,7 +32,7 @@ PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
                 'linear_convolution_q': PULPNNInstallPath32bit + "src/LinearConvolutionsQuant/",
                 'support_function': PULPNNInstallPath32bit + "src/SupportFunctions/"}
 PULPNNSrcDirs64bit = {'src': PULPNNInstallPath64bit + "src/",
-                'inc': PULPNNInstallPath64bit + "inc/",
+                'inc': PULPNNInstallPath64bit + "include/",
                 'pointwise_convolution': PULPNNInstallPath64bit + "src/PointwiseConvolutions/",
                 'matmul': PULPNNInstallPath64bit + "src/MatrixMultiplications/",
                 'depthwise_convolution': PULPNNInstallPath64bit + "src/DepthwiseConvolutions/",

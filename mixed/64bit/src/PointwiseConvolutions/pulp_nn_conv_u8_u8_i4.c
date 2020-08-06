@@ -19,7 +19,7 @@
 
 #include "rt/rt_api.h"
 #include "pulp_nn_utils.h"
-#include "pulp_nn_functions.h"
+#include "pulp_nn_kernels.h"
 
 #define log2(x) __builtin_pulp_fl1(x)
 #define min(a,b) ((a)<(b)?(a):(b))

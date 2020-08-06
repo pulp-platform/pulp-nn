@@ -25,7 +25,7 @@ PULPNNInstallPath32bit = cwd = os.getcwd() + "/../32bit/"
 PULPNNInstallPath64bit = cwd = os.getcwd() + "/../64bit/"
 PULPNNTestFolder32bit = PULPNNInstallPath32bit + "test/"
 PULPNNTestFolder64bit = PULPNNInstallPath64bit + "test/"
-PULPNNSrcDirs32bit = {'pulp_nn_inc': PULPNNInstallPath32bit + "inc/",
+PULPNNSrcDirs32bit = {'pulp_nn_inc': PULPNNInstallPath32bit + "include/",
                 'pulp_nn_pointwise_convolution': PULPNNInstallPath32bit + "src/PointwiseConvolutions/",
                 'pulp_nn_matmul': PULPNNInstallPath32bit + "src/MatrixMultiplications/",
                 'pulp_nn_depthwise_convolution': PULPNNInstallPath32bit + "src/DepthwiseConvolutions/",
@@ -49,7 +49,7 @@ PULPNNSrcDirs32bit = {'pulp_nn_inc': PULPNNInstallPath32bit + "inc/",
                 'golden_model_ln_nq': PULPNNTestFolder32bit + "include/GoldenModelLinearConvolutionsNoQuant/",
                 'golden_model_ln_q': PULPNNTestFolder32bit + "include/GoldenModelLinearConvolutionsQuant/",
                 'test': PULPNNTestFolder32bit}
-PULPNNSrcDirs64bit = {'pulp_nn_inc': PULPNNInstallPath64bit + "inc/",
+PULPNNSrcDirs64bit = {'pulp_nn_inc': PULPNNInstallPath64bit + "include/",
                 'pulp_nn_pointwise_convolution': PULPNNInstallPath64bit + "src/PointwiseConvolutions/",
                 'pulp_nn_matmul': PULPNNInstallPath64bit + "src/MatrixMultiplications/",
                 'pulp_nn_depthwise_convolution': PULPNNInstallPath64bit + "src/DepthwiseConvolutions/",

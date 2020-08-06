@@ -1,5 +1,5 @@
 /*
- * pulp_nn_functions.h
+ * pulp_nn_kernels.h
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  *
  * Copyright (C) 2019-2020 University of Bologna

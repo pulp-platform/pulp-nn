@@ -19,7 +19,7 @@
 
 #include "rt/rt_api.h"
 #include "stats.h"
-#include "pulp_nn_functions.h"
+#include "pulp_nn_kernels.h"
 
 #define STACK_SIZE      1024
 #define MOUNT           1
