@@ -6,10 +6,8 @@ It fully exploits the Xpulp ISA extension and the cluster's parallelism to achie
 
 The PULP-NN library is described and evaluated fully in Garofalo et al. [\[arXiv:1908.11263\]](https://arxiv.org/abs/1908.11263). If you intend to use or reference PULP-NN for an academic publication, please consider citing it:
 ```
-
 Garofalo Angelo, Rusci Manuele, Conti Francesco, Rossi Davide and Benini Luca 2020PULP-NN: accelerating quantized neural networks on parallel ultra-low-power RISC-V processorsPhil. Trans. R. Soc. A.37820190155
 http://doi.org/10.1098/rsta.2019.0155
-
 ```
 
 The version of this paper is available at the branch \[paper_version\](https://github.com/pulp-platform/pulp-nn/tree/paper_version) of this repository.
@@ -17,7 +15,6 @@ The version of this paper is available at the branch \[paper_version\](https://g
 An updated an evolved version of the library is now available on \[master\](https://github.com/pulp-platform/pulp-nn/tree/master) and it is composed by the kernels of previous version (``8bit`` directory) and mixed- and sub-byte precision (``mixed`` directory) ones.
 The latter is explained in detail in Bruschi et al. [\[arXiv:2007.07759\]](https://arxiv.org/abs/2007.07759). If you intend to use or reference PULP-NN Mixed for an academic publication, please consider citing it:
 ```
-
 @inproceedings{10.1145/3387902.3394038,
 author = {Bruschi, Nazareno and Garofalo, Angelo and Conti, Francesco and Tagliavini, Giuseppe and Rossi, Davide},
 title = {Enabling Mixed-Precision Quantized Neural Networks in Extreme-Edge Devices},
@@ -34,7 +31,6 @@ keywords = {embedded systems, quantized neural network, low power architectures}
 location = {Catania, Sicily, Italy},
 series = {CF ’20}
 }
-
 ```
 
 ## 8bit or mixed

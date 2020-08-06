@@ -2,7 +2,6 @@
 
 PULP-NN Mixed is an optimized library which works with sub-byte operands, typically in a scenario in which native operands reach INT8 at least. It is explained in detail in Bruschi et al. [\[arXiv:2007.07759\]](https://arxiv.org/abs/2007.07759). If you intend to use or reference PULP-NN Mixed for an academic publication, please consider citing it:
 ```
-
 @inproceedings{10.1145/3387902.3394038,
 author = {Bruschi, Nazareno and Garofalo, Angelo and Conti, Francesco and Tagliavini, Giuseppe and Rossi, Davide},
 title = {Enabling Mixed-Precision Quantized Neural Networks in Extreme-Edge Devices},
@@ -19,7 +18,6 @@ keywords = {embedded systems, quantized neural network, low power architectures}
 location = {Catania, Sicily, Italy},
 series = {CF ’20}
 }
-
 ```
 
 
@@ -39,20 +37,16 @@ In order to use the library in an existing project, you can copy the sources and
 
 If you want to test the library sources, you can generate the whole setup (pulp-sdk based) and golden models (python 3 and torch are required) using, from directory radix:
 ```
-
 > cd scripts
 > python3 pulp_nn_examples_generator.py
-
 ```
 
 In order to select the kernels to test, open scripts/setup.py and follow the instructions. You can test either a single kernel per type or all set of kernels per type (pointwise convolution, depthwise convolution, linear with 32-bit of outputs precision and linear with sub-byte of outputs precision)
 
 Then, you can run the simulation on your favorite target architecture using, from directory radix:
 ```
-
 > cd test
 > make clean all run cores=NUM_CORES kernel=KERNEL platform=PLATFORM
-
 ```
 
 Where, NUM_CORES is the number of cores (by default is set to 1) that you want to use and KERNEL is the precision configuration of the kernel (by default is set to 888 or 88) that you want to test (every permutation is already included).
@@ -63,10 +57,8 @@ example: make clean all run cores=8 kernel=888 (and you have selected pointwise 
 
 You could modify the kernel sources which are been generated or on the templates used for that, which are in scripts/templates. Then, you can regenerate them using, from directory radix:
 ```
-
 > cd scripts
 > python3 pulp_nn_kernels_generator.py
-
 ```
 
 ## Support and Contribution
