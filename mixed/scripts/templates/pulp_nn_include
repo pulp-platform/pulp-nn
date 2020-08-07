@@ -3,8 +3,8 @@
 #define INPUT ${config.in_data_t}
 #define OUTPUT ${config.out_data_t}
 #define WEIGHTS ${config.wt_data_t}
-#include "GoldenModelPointwiseConvolutions/golden_${config.in_data_t}_${config.out_data_t}_${config.wt_data_t}.h"
-#include "DataAllocationPointwiseConvolutions/data_allocation_${config.in_data_t}_${config.out_data_t}_${config.wt_data_t}.h"
+#include "GoldenModelStandardConvolutions/golden_${config.in_data_t}_${config.out_data_t}_${config.wt_data_t}.h"
+#include "DataAllocationStandardConvolutions/data_allocation_${config.in_data_t}_${config.out_data_t}_${config.wt_data_t}.h"
 #endif
 %elif config.api == 'PULPNNDepthwise':
 #if (KERNEL == ${config.in_data_t}${config.out_data_t}${config.wt_data_t})

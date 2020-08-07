@@ -74,5 +74,6 @@ You could modify the kernel sources which are been generated or on the templates
 
 ## Current limitations
 
-+ Some kernels lack in this version compared to ``8bit`` directory (add, maxpool and avgpool)
++ Some kernels lack in this version compared to ``8bit`` directory (add, maxpool and avgpool, pointwise);
++ Tests for ``64bit`` batch normalization parameters are not supported yet;
 + Channels of input/output feature maps must be multiple of 2 for INT4 precision and of 4 for INT2 one;

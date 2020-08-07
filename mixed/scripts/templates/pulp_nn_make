@@ -1,5 +1,5 @@
 %if config.api == "PULPNNConvolve":
-PULP_APP_FC_SRCS += src/PointwiseConvolutions/${config.filename}
+PULP_APP_FC_SRCS += src/StandardConvolutions/${config.filename}
 %elif config.api == "PULPNNMatMul":
 PULP_APP_FC_SRCS += src/MatrixMultiplications/${config.filename}
 %elif config.api == "PULPNNDepthwise":
