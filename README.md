@@ -1,4 +1,4 @@
-# PULP-NN: Enabling the QNN inference on PULP
+# PULP-NN: Enabling QNN inference on PULP
 
 PULP_NN is a multicore computing library for QNN inference on Parallel-Ultra-Low-Power (PULP) Clusters of RISC-V based processors. 
 It adopts the Height-Width-Channel (HWC) layout to store NN weights and activations and the implementation of the convolution-based kernels as a Matrix Multiplication operation, as proposed by ARM's CMSIS-NN open source library.
