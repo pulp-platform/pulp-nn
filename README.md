@@ -10,9 +10,9 @@ Garofalo Angelo, Rusci Manuele, Conti Francesco, Rossi Davide and Benini Luca 20
 http://doi.org/10.1098/rsta.2019.0155
 ```
 
-The version of this paper is available at the branch \[paper_version\](https://github.com/pulp-platform/pulp-nn/tree/paper_version) of this repository.
+The version of this paper is available at the branch [paper_version](https://github.com/pulp-platform/pulp-nn/tree/paper_version) of this repository.
 
-An updated an evolved version of the library is now available on \[master\](https://github.com/pulp-platform/pulp-nn/tree/master) and it is composed by the kernels of previous version (``8bit`` directory) and mixed- and sub-byte precision (``mixed`` directory) ones.
+An updated an evolved version of the library is now available on [master](https://github.com/pulp-platform/pulp-nn/tree/master) and it is composed by the kernels of previous version (``8bit`` directory) and mixed- and sub-byte precision (``mixed`` directory) ones.
 The latter is explained in detail in Bruschi et al. [\[arXiv:2007.07759\]](https://arxiv.org/abs/2007.07759). If you intend to use or reference PULP-NN Mixed for an academic publication, please consider citing it:
 ```
 @inproceedings{10.1145/3387902.3394038,
@@ -120,7 +120,7 @@ The ``pulp_nn_kernels.h`` header must be included in the main file of the applic
 + **Giuseppe Tagliavini**, *University of Bologna*, [email](mailto:giuseppe.tagliavini@unibo.it)
 + **Manuele Rusci**, *University of Bologna*, [email](mailto:manuele.rusci@unibo.it)
 + **Davide Rossi**, *University of Bologna*, [email](mailto:davide.rossi@unibo.it)
-
++ **Luca Benini**, *University of Bologna and ETH Zurich*, [email](mailto:luca.benini@unibo.it)
 
 ## Current limitations
 
