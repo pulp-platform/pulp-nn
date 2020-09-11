@@ -84,6 +84,26 @@ class PULPNNConvolve(PULPNNFactory):
         elif self.act_prec == '64bit':
             return Template(filename="templates/pulp_nn_conv_64bit_x_y_z.c").render(config=self)
 
+class PULPNNConvolvePointwise(PULPNNFactory):
+    def __init__(self, in_data_t, out_data_t, wt_data_t, quantization, act_prec):
+        super().__init__(in_data_t, out_data_t, wt_data_t, act_prec)
+        self.fn_name = "pulp_nn_conv_pointwise_u{0}_u{1}_i{2}{3}".format(str(in_data_t), str(out_data_t), str(wt_data_t),
+                                str("_" + quantization if quantization != "shift_clip" else ""))
+        self.filename = self.fn_name + ".c"
+        self.mat_mul_fn = "pulp_nn_matmul_u{0}_i{1}{2}".format(str(out_data_t), str(wt_data_t),
+                                str("_" + quantization if quantization != "shift_clip" else ""))
+        self.unpack_fn = "pulp_nn_i{0}_to_i{1}".format(str(wt_data_t), '8')
+        self.bn_fn = "pulp_nn_bn_quant_u{0}".format(str(out_data_t))
+        self.relu_fn = "pulp_nn_quant_u{0}".format(str(out_data_t))
+        self.quantization = quantization
+        self.api = self.__class__.__name__
+        self.act_prec = act_prec
+    def generate_code(self):
+        if self.act_prec == '32bit':
+            return Template(filename="templates/pulp_nn_conv_pointwise_x_y_z.c").render(config=self)
+        elif self.act_prec == '64bit':
+            return Template(filename="templates/pulp_nn_conv_pointwise_64bit_x_y_z.c").render(config=self)
+
 class PULPNNMatMul(PULPNNFactory):
     def __init__(self, out_data_t, wt_data_t, quantization, act_prec):
         super().__init__("", out_data_t, wt_data_t, act_prec)
@@ -105,7 +125,7 @@ class PULPNNMatMul(PULPNNFactory):
 class PULPNNDepthwise(PULPNNFactory):
     def __init__(self, in_data_t, out_data_t, wt_data_t, quantization, act_prec):
         super().__init__(in_data_t, out_data_t, wt_data_t, act_prec)
-        self.fn_name = "pulp_nn_dw_u{0}_u{1}_i{2}{3}".format(str(in_data_t), str(out_data_t), str(wt_data_t),
+        self.fn_name = "pulp_nn_conv_depthwise_u{0}_u{1}_i{2}{3}".format(str(in_data_t), str(out_data_t), str(wt_data_t),
                         str("_" + quantization if quantization != "shift_clip" else ""))
         self.bn_fn = "pulp_nn_bn_quant_u{0}".format(str(out_data_t))
         self.relu_fn = "pulp_nn_quant_u{0}".format(str(out_data_t))

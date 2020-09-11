@@ -45,6 +45,21 @@ uint8_t __attribute__((always_inline)) pulp_nn_quant_u8(
   return res;
 }
 
+uint8_t __attribute__((always_inline)) pulp_nn_add_quant_u8 (
+  uint8_t pix1,
+  uint8_t pix2,
+  int16_t m1,
+  int16_t m2,
+  int8_t  d
+) {
+  /* Integer Batch Normalization */
+  uint32_t integer_image = pix1*m1 + pix2*m2;
+  /* Quantization */
+  uint16_t x = (integer_image) >> d;
+  uint8_t res = __builtin_pulp_clipu(x, 0, 255);
+  return res;
+}
+
 uint8_t __attribute__((always_inline)) pulp_nn_bn_quant_u4 (
   int32_t phi,
   int32_t k,
@@ -63,6 +78,21 @@ uint8_t __attribute__((always_inline)) pulp_nn_quant_u4(
   int8_t  d
 ) {
   int32_t x = (m * phi) >> d;
+  uint8_t res = __builtin_pulp_clipu(x, 0, 15);
+  return res;
+}
+
+uint8_t __attribute__((always_inline)) pulp_nn_add_quant_u4 (
+  uint8_t* pix1,
+  uint8_t* pix2,
+  int16_t m1,
+  int16_t m2,
+  int8_t  d
+) {
+  /* Integer Batch Normalization */
+  uint32_t integer_image = pix1*m1 + pix2*m2;
+  /* Quantization */
+  uint16_t x = (integer_image) >> d;
   uint8_t res = __builtin_pulp_clipu(x, 0, 15);
   return res;
 }
@@ -89,6 +119,20 @@ uint8_t __attribute__((always_inline)) pulp_nn_quant_u2(
   return res;
 }
 
+uint8_t __attribute__((always_inline)) pulp_nn_add_quant_u2 (
+  uint8_t pix1,
+  uint8_t pix2,
+  int16_t m1,
+  int16_t m2,
+  int8_t  d
+) {
+  /* Integer Batch Normalization */
+  uint32_t integer_image = pix1*m1 + pix2*m2;
+  /* Quantization */
+  uint16_t x = (integer_image) >> d;
+  uint8_t res = __builtin_pulp_clipu(x, 0, 3);
+  return res;
+}
 
 v4s __attribute__((always_inline))pulp_nn_i4_to_i8_r( int8_t *pSrc)
 {

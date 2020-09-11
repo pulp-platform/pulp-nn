@@ -19,7 +19,7 @@
 
 # If is 1 only the selected-below kernel is created (SINGLE KERNEL SOLUTION). Otherwise, all kernels are created (ALL KERNELS SOLUTION)
 
-SINGLE_KERNEL = 0
+SINGLE_KERNEL = 1
 
 # Select layer dimensions from supported ones:
 
@@ -58,12 +58,12 @@ out_precision = 8
 quantization_type = 'shift_clip'
 
 # if depthwise CH_IM_IN must be equal to CH_IM_OUT
-DIM_IM_IN_X = 16
-DIM_IM_IN_Y = 16
-CH_IM_IN = 32
-DIM_IM_OUT_X = 16
-DIM_IM_OUT_Y = 16
-CH_IM_OUT = 64
+DIM_IM_IN_X = 8
+DIM_IM_IN_Y = 8
+CH_IM_IN = 8
+DIM_IM_OUT_X = 8
+DIM_IM_OUT_Y = 8
+CH_IM_OUT = 4
 # if is not linear
 DIM_KERNEL_X = 3
 DIM_KERNEL_Y = 3

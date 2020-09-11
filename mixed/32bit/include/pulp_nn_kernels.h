@@ -800,6 +800,789 @@ void pulp_nn_conv_u2_u2_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
+void pulp_nn_conv_pointwise_u8_u8_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u8_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u8_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u4_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u4_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u4_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u2_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u2_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u8_u2_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u8_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u8_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u8_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u4_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u4_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u4_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u2_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u2_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u4_u2_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u8_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u8_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u8_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u4_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u4_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u4_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u2_i8(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u2_i4(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
+void pulp_nn_conv_pointwise_u2_u2_i2(
+    const uint8_t *pInBuffer,
+    const uint16_t dim_in_x,
+    const uint16_t dim_in_y,
+    const uint16_t ch_in,
+    const int8_t *pWeight,
+    const uint16_t ch_out,
+    const uint16_t dim_kernel_x,
+    const uint16_t dim_kernel_y,
+    const uint16_t padding_y_top,
+    const uint16_t padding_y_bottom,
+    const uint16_t padding_x_left,
+    const uint16_t padding_x_right,
+    const uint16_t stride_x,
+    const uint16_t stride_y,
+    const int8_t *bias,
+    const uint16_t bias_shift,
+    const int8_t out_shift,
+    const uint16_t out_mult,
+    uint8_t *pOutBuffer,
+    const uint16_t dim_out_x,
+    const uint16_t dim_out_y,
+    int32_t *k,
+    int32_t *lambda,
+    uint8_t *pIm2ColBuffer,
+    int flag_relu,
+    int flag_batch_norm,
+    unsigned int * memory_chan);
+
 int8_t *pulp_nn_matmul_u8_i8(
     const int8_t * pWeight,
     uint8_t * pInBuffer,
@@ -935,7 +1718,7 @@ int8_t *pulp_nn_matmul_u2_i2(
     int flag_relu,
     int flag_batch_norm);
 
-void pulp_nn_dw_u8_u8_i8(
+void pulp_nn_conv_depthwise_u8_u8_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -965,7 +1748,7 @@ void pulp_nn_dw_u8_u8_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u8_i4(
+void pulp_nn_conv_depthwise_u8_u8_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -995,7 +1778,7 @@ void pulp_nn_dw_u8_u8_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u8_i2(
+void pulp_nn_conv_depthwise_u8_u8_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1025,7 +1808,7 @@ void pulp_nn_dw_u8_u8_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u4_i8(
+void pulp_nn_conv_depthwise_u8_u4_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1055,7 +1838,7 @@ void pulp_nn_dw_u8_u4_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u4_i4(
+void pulp_nn_conv_depthwise_u8_u4_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1085,7 +1868,7 @@ void pulp_nn_dw_u8_u4_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u4_i2(
+void pulp_nn_conv_depthwise_u8_u4_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1115,7 +1898,7 @@ void pulp_nn_dw_u8_u4_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u2_i8(
+void pulp_nn_conv_depthwise_u8_u2_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1145,7 +1928,7 @@ void pulp_nn_dw_u8_u2_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u2_i4(
+void pulp_nn_conv_depthwise_u8_u2_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1175,7 +1958,7 @@ void pulp_nn_dw_u8_u2_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u8_u2_i2(
+void pulp_nn_conv_depthwise_u8_u2_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1205,7 +1988,7 @@ void pulp_nn_dw_u8_u2_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u8_i8(
+void pulp_nn_conv_depthwise_u4_u8_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1235,7 +2018,7 @@ void pulp_nn_dw_u4_u8_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u8_i4(
+void pulp_nn_conv_depthwise_u4_u8_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1265,7 +2048,7 @@ void pulp_nn_dw_u4_u8_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u8_i2(
+void pulp_nn_conv_depthwise_u4_u8_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1295,7 +2078,7 @@ void pulp_nn_dw_u4_u8_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u4_i8(
+void pulp_nn_conv_depthwise_u4_u4_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1325,7 +2108,7 @@ void pulp_nn_dw_u4_u4_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u4_i4(
+void pulp_nn_conv_depthwise_u4_u4_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1355,7 +2138,7 @@ void pulp_nn_dw_u4_u4_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u4_i2(
+void pulp_nn_conv_depthwise_u4_u4_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1385,7 +2168,7 @@ void pulp_nn_dw_u4_u4_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u2_i8(
+void pulp_nn_conv_depthwise_u4_u2_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1415,7 +2198,7 @@ void pulp_nn_dw_u4_u2_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u2_i4(
+void pulp_nn_conv_depthwise_u4_u2_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1445,7 +2228,7 @@ void pulp_nn_dw_u4_u2_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u4_u2_i2(
+void pulp_nn_conv_depthwise_u4_u2_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1475,7 +2258,7 @@ void pulp_nn_dw_u4_u2_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u8_i8(
+void pulp_nn_conv_depthwise_u2_u8_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1505,7 +2288,7 @@ void pulp_nn_dw_u2_u8_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u8_i4(
+void pulp_nn_conv_depthwise_u2_u8_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1535,7 +2318,7 @@ void pulp_nn_dw_u2_u8_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u8_i2(
+void pulp_nn_conv_depthwise_u2_u8_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1565,7 +2348,7 @@ void pulp_nn_dw_u2_u8_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u4_i8(
+void pulp_nn_conv_depthwise_u2_u4_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1595,7 +2378,7 @@ void pulp_nn_dw_u2_u4_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u4_i4(
+void pulp_nn_conv_depthwise_u2_u4_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1625,7 +2408,7 @@ void pulp_nn_dw_u2_u4_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u4_i2(
+void pulp_nn_conv_depthwise_u2_u4_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1655,7 +2438,7 @@ void pulp_nn_dw_u2_u4_i2(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u2_i8(
+void pulp_nn_conv_depthwise_u2_u2_i8(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1685,7 +2468,7 @@ void pulp_nn_dw_u2_u2_i8(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u2_i4(
+void pulp_nn_conv_depthwise_u2_u2_i4(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,
@@ -1715,7 +2498,7 @@ void pulp_nn_dw_u2_u2_i4(
     int flag_batch_norm,
     unsigned int * memory_chan);
 
-void pulp_nn_dw_u2_u2_i2(
+void pulp_nn_conv_depthwise_u2_u2_i2(
     const uint8_t * pInBuffer,
     const uint16_t dim_in_x,
     const uint16_t dim_in_y,

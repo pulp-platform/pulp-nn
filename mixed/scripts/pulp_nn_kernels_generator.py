@@ -42,6 +42,19 @@ for a in utils.BN_ACTIVATIONS:
                     new_file.close()
 
     for i in utils.PULPNNDataPrecisions:
+        for j in utils.PULPNNDataPrecisions:
+            for z in utils.PULPNNWeightsPrecisions:
+                for q in utils.PULPNNQuantizationMethods:
+                    c = comp_gen.PULPNNConvolvePointwise(in_data_t=i, out_data_t=j, wt_data_t=z, quantization=q, act_prec=a)
+                    utils.PULPNNAPI += c.generate_api() + "\n"
+                    if a == '32bit':
+                        new_file = open(PULPNNSrcDirs32bit['pointwise'] + c.filename, 'w')
+                    elif a == '64bit':
+                        new_file = open(PULPNNSrcDirs64bit['pointwise'] + c.filename, 'w')
+                    new_file.write(c.generate_code())
+                    new_file.close()
+
+    for i in utils.PULPNNDataPrecisions:
         for j in utils.PULPNNWeightsPrecisions:
             for q in utils.PULPNNQuantizationMethods:
                 c = comp_gen.PULPNNMatMul(out_data_t=i, wt_data_t=j, quantization=q, act_prec=a)
