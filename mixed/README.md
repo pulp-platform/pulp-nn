@@ -73,6 +73,38 @@ You could modify the kernel sources which are been generated or on the templates
 > python3 pulp_nn_kernels_generator.py
 ```
 
+## Getting Started with PULP-NN
+
+Firstly, you should clone the repository on your workstation, using:
+
+```
+> git clone https://github.com/pulp-platform/pulp-nn.git
+```
+
+now you have your local copy of the repository.
+Then, you should build the sdk (as done in its ``README``), targeting an architecture and a platform.
+For example, if you want to try pulp-open architecture on virtual platform (gvsoc) you should type, from pulp-sdk radix:
+
+```
+> export PULP_RISCV_GCC_TOOLCHAIN = <toolchain_path>
+> source configs/pulp.sh
+> source configs/platform-gvsoc.sh
+> make all
+> source pkg/sdk/dev/sourceme.sh
+```
+
+now you can compile and run applications on your favorite platform.
+For example, if you want to try convolutional kernels you should modify from ``scripts/setup.py`` the layer parameters such as H, W and channels, the type of kernel, introducing 'pointwise' and then generate ``test`` folder, using, from ``scripts`` folder:
+
+```
+> python3 pulp_nn_examples_generator.py
+> cd ../32bit/test
+> make clean all run cores=NUM_CORES kernel=KERNEL platform=PLATFORM
+```
+
+as seen above.
+In ``test`` folder there are everything as you will need to run the example, headers and sources will be copied and Makefile and main will be generated.
+
 ## Support and Contribution
 
 + **Nazareno Bruschi**, *University of Bologna*, [email](mailto:nazareno.bruschi@unibo.it)
