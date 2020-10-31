@@ -66,7 +66,7 @@ void __attribute__ ((noinline)) pulp_nn_conv(
   uint8_t * pIm2ColBase = pIm2ColBuffer + (2*core_id*ch_in*dim_kernel_x*dim_kernel_y);
 
   // local vars
-  int16_t i_out_y, i_out_x, i_ker_y, i_ker_x;
+  int i_out_y, i_out_x, i_ker_y, i_ker_x;
   int Log2Core = log2(NUM_CORES);
 
   /*chunks are built along the spatial dimension of the OFM */
@@ -235,7 +235,7 @@ void __attribute__ ((noinline)) pulp_nn_conv(
         *pOut = pulp_nn_bn_quant_u8(sum, *k, *lambda, out_shift);
         k++;
         lambda++;
-        *pOut++;
+        pOut++;
       }
       else
       {
