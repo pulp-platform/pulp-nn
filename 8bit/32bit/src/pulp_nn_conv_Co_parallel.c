@@ -26,9 +26,7 @@
 #define log2(x) __builtin_pulp_fl1(x)
 #define min(a,b) ((a)<(b)?(a):(b))
 #define SumDotp(a, b, c)        __builtin_pulp_sdotusp4(a, b, c)
-#define nn_round(out_shift)     (0x1 << (out_shift -1))
 #define clip8(x)                __builtin_pulp_clipu_r(x, 255)
-#define max4(a,b)         __builtin_pulp_max4(a,b)
 
 void pulp_nn_conv_Co_parallel(
   const uint8_t * pInBuffer,
@@ -61,22 +59,25 @@ void pulp_nn_conv_Co_parallel(
 ) {
   int core_id = pi_core_id();
 
-  uint8_t * pIm2ColBase = pIm2ColBuffer + (2*core_id*ch_in*dim_kernel_x*dim_kernel_y);
-
   // local vars
   int i_out_y, i_out_x, i_ker_y, i_ker_x;
 
   int Log2Core = log2(NUM_CORES);
   /*chunks are built along the spatial dimension of the OFM */
-  int chunk = (ch_out >> Log2Core) + ((ch_out & (NUM_CORES-1))!=0);
+  int chunk = (ch_out >> Log2Core) + ((ch_out & (NUM_CORES - 1)) != 0);
 
   /* defining the specific channels computed by each core */
   int start_channel, stop_channel;
-  start_channel = min(chunk*core_id, ch_out);
-  stop_channel = min(start_channel+chunk, ch_out);
+  start_channel = min(chunk * core_id, ch_out);
+  stop_channel = min(start_channel + chunk, ch_out);
 
+  uint8_t *pIm2ColBase = pIm2ColBuffer + (2 * core_id * ch_in * dim_kernel_x * dim_kernel_y);
   uint8_t *pIm2Col = pIm2ColBase;
-  uint8_t *pOut    = pOutBuffer + start_channel;
+  int8_t *pW = pWeight + (start_channel * ch_in * dim_kernel_x * dim_kernel_y);
+
+  uint8_t *pOut = pOutBuffer + start_channel;
+  int32_t *k0 = k + start_channel;
+  int32_t *lambda0 = lambda + start_channel;
 
   if((stop_channel - start_channel))
   {
@@ -87,9 +88,9 @@ void pulp_nn_conv_Co_parallel(
         if(i_out_y < padding_y_top)
         {
           /* This part implements the im2col function */
-          for (i_ker_y = i_out_y * stride_y - padding_y_top; i_ker_y < i_out_y * stride_y - padding_y_top + dim_kernel_y;i_ker_y++)
+          for (i_ker_y = i_out_y * stride_y - padding_y_top; i_ker_y < i_out_y * stride_y - padding_y_top + dim_kernel_y; i_ker_y++)
           {
-            for (i_ker_x = i_out_x * stride_x - padding_x_left; i_ker_x < i_out_x * stride_x - padding_x_left + dim_kernel_x;i_ker_x++)
+            for (i_ker_x = i_out_x * stride_x - padding_x_left; i_ker_x < i_out_x * stride_x - padding_x_left + dim_kernel_x; i_ker_x++)
             {
               if (i_ker_y < 0 || i_ker_y >= dim_in_y || i_ker_x < 0 || i_ker_x >= dim_in_x)
               {
@@ -97,7 +98,7 @@ void pulp_nn_conv_Co_parallel(
               }
               else
               {
-                pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in,pIm2Col, ch_in);
+                pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
               }
               pIm2Col += ch_in;
             }
@@ -117,7 +118,7 @@ void pulp_nn_conv_Co_parallel(
                 }
                 else
                 {
-                  pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+                  pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
                 }
                 pIm2Col += ch_in;
               }
@@ -127,7 +128,7 @@ void pulp_nn_conv_Co_parallel(
           {
             for (i_ker_y = i_out_y * stride_y - padding_y_top; i_ker_y < i_out_y * stride_y - padding_y_top + dim_kernel_y; i_ker_y++)
             {
-              pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_out_x * stride_x - padding_x_left) * ch_in, pIm2Col, ch_in * dim_kernel_x);
+              pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_out_x * stride_x - padding_x_left) * ch_in, pIm2Col, ch_in * dim_kernel_x);
               pIm2Col += ch_in * dim_kernel_x;
             }
           }
@@ -144,7 +145,7 @@ void pulp_nn_conv_Co_parallel(
                   }
                   else
                   {
-                    pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in,pIm2Col, ch_in);
+                    pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
                   }
                   pIm2Col += ch_in;
                 }
@@ -155,7 +156,7 @@ void pulp_nn_conv_Co_parallel(
         {
           for (i_ker_y = i_out_y * stride_y - padding_y_top; i_ker_y < i_out_y * stride_y - padding_y_top + dim_kernel_y; i_ker_y++)
           {
-            for (i_ker_x = i_out_x * stride_x - padding_x_left; i_ker_x < i_out_x * stride_x - padding_x_left + dim_kernel_x;i_ker_x++)
+            for (i_ker_x = i_out_x * stride_x - padding_x_left; i_ker_x < i_out_x * stride_x - padding_x_left + dim_kernel_x; i_ker_x++)
             {
               if (i_ker_y < 0 || i_ker_y >= dim_in_y || i_ker_x < 0 || i_ker_x >= dim_in_x)
               {
@@ -163,7 +164,7 @@ void pulp_nn_conv_Co_parallel(
               }
               else
               {
-                pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+                pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
               }
               pIm2Col += ch_in;
             }
@@ -172,15 +173,15 @@ void pulp_nn_conv_Co_parallel(
         if (pIm2Col == pIm2ColBase + 2 * ch_in * dim_kernel_x * dim_kernel_y)
         {
           pOut = pulp_nn_matmul_Co_parallel(
-            pWeight,
+            pW,
             pIm2ColBase,
             ch_out,
             ch_in * dim_kernel_x * dim_kernel_y,
             bias_shift,
             out_shift,
             out_mult,
-            k + start_channel,
-            lambda + start_channel,
+            k0,
+            lambda0,
             bias,
             pOut,
             flag_relu,
@@ -194,18 +195,15 @@ void pulp_nn_conv_Co_parallel(
     /* check if there is left-over for compute */
     if (pIm2Col != pIm2ColBase)
     {
-      const int8_t *pA = pWeight + ch_in * dim_kernel_x * dim_kernel_y * start_channel;
-      int       i;
-      int32_t *k0 = k + start_channel;
-      int32_t *lambda0 = lambda + start_channel;
+      const int8_t *pA = pW;
+      int i;
       for (i = start_channel; i < stop_channel; i++)
       {
-        /* include the accumulation buffer in sum computation (probably doesn't work). Maybe the reloading partial result is needed as well as internally at mat mul function. */
         int sum = 0;
 
         if (bias != NULL)
         {
-          sum = ((int)(bias[i]) << bias_shift) + nn_round(out_shift);
+          sum = ((int)(bias[i]));
         }
 
         uint8_t *pB = pIm2ColBase;
