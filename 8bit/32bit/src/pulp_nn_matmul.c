@@ -23,7 +23,6 @@
 #include "pulp_nn_kernels.h"
 
 #define SumDotp(a, b, c)    __builtin_pulp_sdotusp4(a, b, c)
-#define nn_round(out_shift) (0x1 << (out_shift -1))
 #define clip8(x)            __builtin_pulp_clipu_r(x, 255)
 
 uint8_t __attribute__ ((noinline)) *pulp_nn_matmul(
@@ -38,10 +37,10 @@ uint8_t __attribute__ ((noinline)) *pulp_nn_matmul(
   int32_t *      lambda,
   const int8_t * bias,
   uint8_t *      pOut,
+  uint8_t *      pOut2,
   int            flag_relu,
   int            flag_batch_norm
 ) {
-	uint8_t *pOut2 = pOut + ch_out;
   int8_t  *pA = pWeight;
   uint16_t chan_left = ch_out & 0x3;
 
@@ -72,10 +71,10 @@ uint8_t __attribute__ ((noinline)) *pulp_nn_matmul(
 
     if(bias != NULL)
     {
-      bias1 = ((int) (*bias++)  << bias_shift) + nn_round(out_shift);
-      bias2 = ((int) (*bias++)  << bias_shift) + nn_round(out_shift);
-      bias3 = ((int) (*bias++)  << bias_shift) + nn_round(out_shift);
-      bias4 = ((int) (*bias++)  << bias_shift) + nn_round(out_shift);
+      bias1 = ((int) (*bias++));
+      bias2 = ((int) (*bias++));
+      bias3 = ((int) (*bias++));
+      bias4 = ((int) (*bias++));
 
       bias5 = bias1;
       bias6 = bias2;
@@ -231,7 +230,7 @@ uint8_t __attribute__ ((noinline)) *pulp_nn_matmul(
 
     if (bias != NULL)
     {
-      bias1 = ((int) (*bias++)  << bias_shift) + nn_round(out_shift);
+      bias1 = ((int) (*bias++));
       bias2 = bias1;
     }
 

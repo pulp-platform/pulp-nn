@@ -1,5 +1,5 @@
 /*
- * pulp_nn_conv_pointwise.c
+ * pulp_nn_pointwise_Ho_parallel.c
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  * Angelo Garofalo <angelo.garofalo@unibo.it>
  *
@@ -26,11 +26,9 @@
 #define log2(x) __builtin_pulp_fl1(x)
 #define min(a,b) ((a)<(b)?(a):(b))
 #define SumDotp(a, b, c)        __builtin_pulp_sdotusp4(a, b, c)
-#define nn_round(out_shift)     (0x1 << (out_shift -1))
 #define clip8(x)                __builtin_pulp_clipu_r(x, 255)
-#define max4(a,b)  		    __builtin_pulp_max4(a,b)
 
-void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
+void __attribute__ ((noinline)) pulp_nn_pointwise_Ho_parallel(
   const uint8_t * pInBuffer,
   const uint16_t  dim_in_x,
   const uint16_t  dim_in_y,
@@ -52,8 +50,8 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
   uint8_t *       pOutBuffer,
   const uint16_t  dim_out_x,
   const uint16_t  dim_out_y,
-  int32_t *       k,
-  int32_t *       lambda,
+  int64_t *       k,
+  int64_t *       lambda,
   uint8_t *       pIm2ColBuffer,
   int             flag_relu,
   int             flag_batch_norm,
@@ -78,7 +76,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
   for (i_out_y = start_pixel; i_out_y < stop_pixel; i_out_y++)
   {
     i_out_x = 0;
-    // for (i_out_x = 0; i_out_x < (dim_out_x >> 1); i_out_x++)
+
     for (int n = 0; n < dim_out_x; n++)
     {
       if((n & 0x0001) != 0)
@@ -96,6 +94,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
           lambda,
           bias,
           pOut,
+          pOut + ch_out,
           flag_relu,
           flag_batch_norm
         );
@@ -106,15 +105,15 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
     if ((dim_out_x & 0x0001) != 0)
     {
       const int8_t *pA = pWeight;
-      int32_t *k1 = k;
-      int32_t *lambda1 = lambda;
+      int64_t *k1 = k;
+      int64_t *lambda1 = lambda;
       for (int i = 0; i < ch_out; i++)
       {
         int sum = 0;
 
         if (bias != NULL)
         {
-          sum = ((int)(bias[i]) << bias_shift) + nn_round(out_shift);
+          sum = ((int)(bias[i]));
         }
 
         uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));;

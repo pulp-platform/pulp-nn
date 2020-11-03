@@ -1,5 +1,5 @@
 /*
- * pulp_nn_conv_pointwise.c
+ * pulp_nn_pointwise_HoWo_parallel.c
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  * Angelo Garofalo <angelo.garofalo@unibo.it>
  *
@@ -26,11 +26,9 @@
 #define log2(x) __builtin_pulp_fl1(x)
 #define min(a,b) ((a)<(b)?(a):(b))
 #define SumDotp(a, b, c)        __builtin_pulp_sdotusp4(a, b, c)
-#define nn_round(out_shift)     (0x1 << (out_shift -1))
 #define clip8(x)                __builtin_pulp_clipu_r(x, 255)
-#define max4(a,b)  		    __builtin_pulp_max4(a,b)
 
-void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
+void __attribute__ ((noinline)) pulp_nn_pointwise_HoWo_parallel(
   const uint8_t * pInBuffer,
   const uint16_t  dim_in_x,
   const uint16_t  dim_in_y,
@@ -52,8 +50,8 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
   uint8_t *       pOutBuffer,
   const uint16_t  dim_out_x,
   const uint16_t  dim_out_y,
-  int64_t *       k,
-  int64_t *       lambda,
+  int32_t *       k,
+  int32_t *       lambda,
   uint8_t *       pIm2ColBuffer,
   int             flag_relu,
   int             flag_batch_norm,
@@ -62,28 +60,52 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
    int core_id = pi_core_id();
 
   // local vars
-  int i_out_y, i_out_x, i_ker_y, i_ker_x;
+  int i_out_y, i_out_x;
   int Log2Core = log2(NUM_CORES);
 
-  /*chunks are built along the spatial dimension of the OFM */
-  int chunk = (dim_out_y >> Log2Core) + ((dim_out_y & (NUM_CORES-1))!=0);
 
-  /* defining the specific pixels computed by each core */
-  int start_pixel, stop_pixel;
-  start_pixel = min(chunk *  core_id, dim_out_y);
-  stop_pixel = min(start_pixel+chunk, dim_out_y);
+  uint8_t extra_chunk = ((dim_out_y & (NUM_CORES-1)) != 0);
+  uint8_t extra_chunk_r;
+  uint16_t dim_out_x_r;
+  uint8_t section;
+  int core_id_r;
 
-  uint8_t *pOut = pOutBuffer + start_pixel * ch_out * dim_out_x;
+  if(extra_chunk && dim_out_x > 1)
+  {
+    Log2Core = log2(NUM_CORES >> 1);
+    core_id_r = (core_id >> 1);
+    dim_out_x_r = (dim_out_x >> 1);
+    section = (core_id & 0x1);
+    extra_chunk_r = ((dim_out_y & ((NUM_CORES >> 1) - 1)) != 0);
+  }
+  else
+  {
+    Log2Core = log2(NUM_CORES);
+    core_id_r = core_id;
+    dim_out_x_r = dim_out_x;
+    section = 0;
+    extra_chunk_r = extra_chunk;
+    extra_chunk = 0;
+  }
+
+  uint8_t flag_dim_out_x_odd = dim_out_x & 0x0001;
+
+  int chunk = (dim_out_y >> Log2Core) + extra_chunk_r;
+
+  int start_pixel = min((chunk * core_id_r), dim_out_y);
+  int stop_pixel = min(start_pixel + chunk, dim_out_y);
+
+  uint8_t *pOut = pOutBuffer + (start_pixel * ch_out * dim_out_x) + (section * ch_out * dim_out_x_r);
 
   for (i_out_y = start_pixel; i_out_y < stop_pixel; i_out_y++)
   {
-    i_out_x = 0;
-    // for (i_out_x = 0; i_out_x < (dim_out_x >> 1); i_out_x++)
-    for (int n = 0; n < dim_out_x; n++)
+    i_out_x= (section * dim_out_x_r);
+
+    for(int n = 0; n<(dim_out_x_r + (section * flag_dim_out_x_odd)); n++)
     {
       if((n & 0x0001) != 0)
       {
-        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
+        uint8_t * pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
         pOut = pulp_nn_matmul(
           pWeight,
           pB,
@@ -96,6 +118,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
           lambda,
           bias,
           pOut,
+          pOut + ch_out,
           flag_relu,
           flag_batch_norm
         );
@@ -103,21 +126,21 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
       }
     }
     /* check if there is left-over for compute */
-    if ((dim_out_x & 0x0001) != 0)
+    if ((dim_out_x_r & 0x0001) != 0)
     {
       const int8_t *pA = pWeight;
-      int64_t *k1 = k;
-      int64_t *lambda1 = lambda;
+      int32_t *k1 = k;
+      int32_t *lambda1 = lambda;
       for (int i = 0; i < ch_out; i++)
       {
         int sum = 0;
 
         if (bias != NULL)
         {
-          sum = ((int)(bias[i]) << bias_shift) + nn_round(out_shift);
+          sum = ((int)(bias[i]));
         }
 
-        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));;
+        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
         /* basically each time it process 4 entries */
         uint16_t  col_cnt_im2col = ch_in >> 2;
 
@@ -163,7 +186,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise(
         }
       }
     }
+    pOut+=(extra_chunk * ((dim_out_x_r + ((1 - section) * flag_dim_out_x_odd)) * ch_out));
   }
-  // }
   pi_cl_team_barrier(0);
 }

@@ -98,7 +98,7 @@ void pulp_nn_conv_Co_parallel(
               }
               else
               {
-                pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+                pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
               }
               pIm2Col += ch_in;
             }
@@ -118,7 +118,7 @@ void pulp_nn_conv_Co_parallel(
                 }
                 else
                 {
-                  pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+                  pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
                 }
                 pIm2Col += ch_in;
               }
@@ -128,7 +128,7 @@ void pulp_nn_conv_Co_parallel(
           {
             for (i_ker_y = i_out_y * stride_y - padding_y_top; i_ker_y < i_out_y * stride_y - padding_y_top + dim_kernel_y; i_ker_y++)
             {
-              pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_out_x * stride_x - padding_x_left) * ch_in, pIm2Col, ch_in * dim_kernel_x);
+              pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_out_x * stride_x - padding_x_left) * ch_in, pIm2Col, ch_in * dim_kernel_x);
               pIm2Col += ch_in * dim_kernel_x;
             }
           }
@@ -145,7 +145,7 @@ void pulp_nn_conv_Co_parallel(
                   }
                   else
                   {
-                    pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+                    pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
                   }
                   pIm2Col += ch_in;
                 }
@@ -164,7 +164,7 @@ void pulp_nn_conv_Co_parallel(
               }
               else
               {
-                pulp_nn_im2col_u8_to_u8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+                pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
               }
               pIm2Col += ch_in;
             }
@@ -172,10 +172,10 @@ void pulp_nn_conv_Co_parallel(
         }
         if (pIm2Col == pIm2ColBase + 2 * ch_in * dim_kernel_x * dim_kernel_y)
         {
-          pOut = pulp_nn_matmul_Co_parallel(
+          pOut = ((ch_out - chunk) << 1) + pulp_nn_matmul_Co_parallel(
             pW,
             pIm2ColBase,
-            ch_out,
+            chunk,
             ch_in * dim_kernel_x * dim_kernel_y,
             bias_shift,
             out_shift,
@@ -184,6 +184,7 @@ void pulp_nn_conv_Co_parallel(
             lambda0,
             bias,
             pOut,
+            pOut + ch_out;
             flag_relu,
             flag_batch_norm
           );

@@ -1,5 +1,5 @@
 /*
- * pulp_nn_conv_depthwise.c
+ * pulp_nn_depthwise_generic.c
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  * Angelo Garofalo <angelo.garofalo@unibo.it>
  *
@@ -28,10 +28,9 @@
 #define SumDotp(a, b, c) __builtin_pulp_sdotusp4(a, b, c)
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define clip8(x) __builtin_pulp_clipu_r(x, 255)
-#define NN_ROUND(out_shift) ((out_shift) ? (0x1 << (out_shift -1)) : (0))
 
 
-void pulp_nn_conv_depthwise(
+void pulp_nn_depthwise_generic(
   const uint8_t * Im_in,
   const uint16_t  dim_im_in_x,
   const uint16_t  dim_im_in_y,

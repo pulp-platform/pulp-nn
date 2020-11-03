@@ -1,5 +1,5 @@
 /*
- * pulp_nn_conv_pointwise_small_spatial_dim.c
+ * pulp_nn_pointwise_Co_parallel.c
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  * Angelo Garofalo <angelo.garofalo@unibo.it>
  *
@@ -26,11 +26,9 @@
 #define log2(x) __builtin_pulp_fl1(x)
 #define min(a,b) ((a)<(b)?(a):(b))
 #define SumDotp(a, b, c)        __builtin_pulp_sdotusp4(a, b, c)
-#define nn_round(out_shift)     (0x1 << (out_shift -1))
 #define clip8(x)                __builtin_pulp_clipu_r(x, 255)
-#define max4(a,b)  		    __builtin_pulp_max4(a,b)
 
-void __attribute__ ((noinline)) pulp_nn_conv_pointwise_small_spatial_dim(
+void __attribute__ ((noinline)) pulp_nn_pointwise_Co_parallel(
   const uint8_t * pInBuffer,
   const uint16_t  dim_in_x,
   const uint16_t  dim_in_y,
@@ -52,8 +50,8 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise_small_spatial_dim(
   uint8_t *       pOutBuffer,
   const uint16_t  dim_out_x,
   const uint16_t  dim_out_y,
-  int64_t *       k,
-  int64_t *       lambda,
+  int32_t *       k,
+  int32_t *       lambda,
   uint8_t *       pIm2ColBuffer,
   int             flag_relu,
   int             flag_batch_norm,
@@ -62,88 +60,65 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise_small_spatial_dim(
   int core_id = pi_core_id();
 
   // local vars
-  int i_out_y, i_out_x;
+  int i_out_y, i_out_x, i_ker_y, i_ker_x;
   int Log2Core = log2(NUM_CORES);
 
+  int chunk = (ch_out >> Log2Core) + ((ch_out & (NUM_CORES - 1)) != 0);
 
-  uint8_t extra_chunk = ((dim_out_y & (NUM_CORES-1)) != 0);
-  uint8_t extra_chunk_r;
-  uint16_t dim_out_x_r;
-  uint8_t section;
-  int core_id_r;
+  /* defining the specific channels computed by each core */
+  int start_channel, stop_channel;
+  start_channel = min(chunk * core_id, ch_out);
+  stop_channel = min(start_channel + chunk, ch_out);
 
-  if(extra_chunk && dim_out_x > 1)
+  int8_t *pW = pWeight + (start_channel * ch_in * dim_kernel_x * dim_kernel_y);
+
+  uint8_t *pOut = pOutBuffer + start_channel;
+  int32_t *k0 = k + start_channel;
+  int32_t *lambda0 = lambda + start_channel;
+
+  for (i_out_y = 0; i_out_y < dim_out_y; i_out_y++)
   {
-    Log2Core = log2(NUM_CORES >> 1);
-    core_id_r = (core_id >> 1);
-    dim_out_x_r = (dim_out_x >> 1);
-    section = (core_id & 0x1);
-    extra_chunk_r = ((dim_out_y & ((NUM_CORES >> 1) - 1)) != 0);
-  }
-  else
-  {
-    Log2Core = log2(NUM_CORES);
-    core_id_r = core_id;
-    dim_out_x_r = dim_out_x;
-    section = 0;
-    extra_chunk_r = extra_chunk;
-    extra_chunk = 0;
-  }
+    i_out_x = 0;
 
-  uint8_t flag_dim_out_x_odd = dim_out_x & 0x0001;
-
-  int chunk = (dim_out_y >> Log2Core) + extra_chunk_r;
-
-  int start_pixel = min((chunk * core_id_r), dim_out_y);
-  int stop_pixel = min(start_pixel + chunk, dim_out_y);
-
-  uint8_t *pOut = pOutBuffer + (start_pixel * ch_out * dim_out_x) + (section * ch_out * dim_out_x_r);
-
-  for (i_out_y = start_pixel; i_out_y < stop_pixel; i_out_y++)
-  {
-    i_out_x= (section * dim_out_x_r);
-    // for(i_out_x=(section * dim_out_x_r); i_out_x<(dim_out_x_r + (section * (dim_out_x_r + flag_dim_out_x_odd))); i_out_x++)
-    for(int n = 0; n<(dim_out_x_r + (section * flag_dim_out_x_odd)); n++)
+    for (int n = 0; n < dim_out_x; n++)
     {
       if((n & 0x0001) != 0)
       {
-        uint8_t * pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
-        pOut = pulp_nn_matmul(
+        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
+        pOut = ((ch_out - chunk) << 1) + pulp_nn_matmul(
           pWeight,
           pB,
-          ch_out,
+          chunk,
           ch_in,
           bias_shift,
           out_shift,
           out_mult,
-          k,
-          lambda,
+          k0,
+          lambda0,
           bias,
           pOut,
+          pOut + ch_out,
           flag_relu,
           flag_batch_norm
         );
         i_out_x+=2;
       }
     }
-    // pOut+=(extra_chunk * (dim_out_x_r * ch_out));
     /* check if there is left-over for compute */
-    // if ((section*dim_out_x & 0x0001) != 0)
-    if ((dim_out_x_r & 0x0001) != 0)
+    if ((dim_out_x & 0x0001) != 0)
     {
       const int8_t *pA = pWeight;
-      int64_t *k1 = k;
-      int64_t *lambda1 = lambda;
-      for (int i = 0; i < ch_out; i++)
+
+      for (int i = start_channel; i < stop_channel; i++)
       {
         int sum = 0;
 
         if (bias != NULL)
         {
-          sum = ((int)(bias[i]) << bias_shift) + nn_round(out_shift);
+          sum = ((int)(bias[i]));
         }
 
-        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
+        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));;
         /* basically each time it process 4 entries */
         uint16_t  col_cnt_im2col = ch_in >> 2;
 
@@ -169,9 +144,9 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise_small_spatial_dim(
         /* if activation layer follows batch normalization */
         if (flag_batch_norm && flag_relu)
         {
-          *pOut = pulp_nn_bn_quant_u8(sum, *k1, *lambda1, out_shift);
-          k1++;
-          lambda1++;
+          *pOut = pulp_nn_bn_quant_u8(sum, *k0, *lambda0, out_shift);
+          k0++;
+          lambda0++;
           pOut++;
         }
         else
@@ -189,7 +164,6 @@ void __attribute__ ((noinline)) pulp_nn_conv_pointwise_small_spatial_dim(
         }
       }
     }
-    pOut+=(extra_chunk * ((dim_out_x_r + ((1 - section) * flag_dim_out_x_odd)) * ch_out));
   }
   pi_cl_team_barrier(0);
 }

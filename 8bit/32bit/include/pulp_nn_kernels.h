@@ -54,7 +54,7 @@ void pulp_nn_avgpool (
 );
 
 
-void pulp_nn_conv(
+void pulp_nn_conv_Ho_parallel(
   const uint8_t * pInBuffer,
   const uint16_t  dim_in_x,
   const uint16_t  dim_in_y,
@@ -114,7 +114,7 @@ void pulp_nn_conv_Co_parallel(
   unsigned int * memory_chan
 );
 
-void pulp_nn_conv_pointwise_small_spatial_dim(
+void pulp_nn_conv_HoWo_parallel(
   const uint8_t * pInBuffer,
   const uint16_t  dim_in_x,
   const uint16_t  dim_in_y,
@@ -144,7 +144,67 @@ void pulp_nn_conv_pointwise_small_spatial_dim(
   unsigned int * memory_chan
 );
 
-void pulp_nn_conv_pointwise(
+void pulp_nn_pointwise_HoWo_parallel(
+  const uint8_t * pInBuffer,
+  const uint16_t  dim_in_x,
+  const uint16_t  dim_in_y,
+  const uint16_t  ch_in,
+  const int8_t *  pWeight,
+  const uint16_t  ch_out,
+  const uint16_t  dim_kernel_x,
+  const uint16_t  dim_kernel_y,
+  const uint16_t  padding_y_top,
+  const uint16_t  padding_y_bottom,
+  const uint16_t  padding_x_left,
+  const uint16_t  padding_x_right,
+  const uint16_t  stride_x,
+  const uint16_t  stride_y,
+  const int8_t *  bias,
+  const uint16_t  bias_shift,
+  const uint16_t  out_shift,
+  const uint16_t  out_mult,
+  uint8_t *       pOutBuffer,
+  const uint16_t  dim_out_x,
+  const uint16_t  dim_out_y,
+  int32_t *       k,
+  int32_t *       lambda,
+  uint8_t *       pIm2ColBuffer,
+  int             flag_relu,
+  int             flag_batch_norm,
+  unsigned int * memory_chan
+);
+
+void pulp_nn_pointwise_Ho_parallel(
+  const uint8_t * pInBuffer,
+  const uint16_t  dim_in_x,
+  const uint16_t  dim_in_y,
+  const uint16_t  ch_in,
+  const int8_t *  pWeight,
+  const uint16_t  ch_out,
+  const uint16_t  dim_kernel_x,
+  const uint16_t  dim_kernel_y,
+  const uint16_t  padding_y_top,
+  const uint16_t  padding_y_bottom,
+  const uint16_t  padding_x_left,
+  const uint16_t  padding_x_right,
+  const uint16_t  stride_x,
+  const uint16_t  stride_y,
+  const int8_t *  bias,
+  const uint16_t  bias_shift,
+  const uint16_t  out_shift,
+  const uint16_t  out_mult,
+  uint8_t *       pOutBuffer,
+  const uint16_t  dim_out_x,
+  const uint16_t  dim_out_y,
+  int32_t *       k,
+  int32_t *       lambda,
+  uint8_t *       pIm2ColBuffer,
+  int             flag_relu,
+  int             flag_batch_norm,
+  unsigned int * memory_chan
+);
+
+void pulp_nn_pointwise_Co_parallel(
   const uint8_t * pInBuffer,
   const uint16_t  dim_in_x,
   const uint16_t  dim_in_y,
@@ -220,22 +280,7 @@ uint8_t * pulp_nn_matmul(
   int32_t *       lambda,
   const int8_t *  bias,
   uint8_t *       pOut,
-  int             flag_relu,
-  int             flag_batch_norm
-);
-
-uint8_t * pulp_nn_matmul_Co_parallel(
-  const int8_t *  pWeight,
-  uint8_t *       pInBuffer,
-  uint16_t        ch_out,
-  uint16_t        num_col_im2col,
-  uint16_t        bias_shift,
-  uint16_t        out_shift,
-  uint16_t        out_mult,
-  int32_t *       k,
-  int32_t *       lambda,
-  const int8_t *  bias,
-  uint8_t *       pOut,
+  uint8_t *       pOut2,
   int             flag_relu,
   int             flag_batch_norm
 );
@@ -260,7 +305,7 @@ void pulp_nn_maxpool (
   int8_t    flag_first_ch_out
 );
 
-void pulp_nn_conv_depthwise(
+void pulp_nn_depthwise_generic(
   const uint8_t * Im_in,
   const uint16_t  dim_im_in_x,
   const uint16_t  dim_im_in_y,
@@ -290,3 +335,21 @@ void pulp_nn_conv_depthwise(
   int8_t          FLAG_BATCH_NORM,
   unsigned int * memory_chan
   );
+
+void pulp_nn_depthwise_3x3_s1(
+      uint8_t * In_Img,
+      uint8_t * Out_Img,
+      int R,
+      int C,
+      int CH,
+      int p_l,
+      int p_r,
+      int8_t  * Kernel,
+      int8_t out_shift,
+      uint16_t out_mult,
+      int32_t * kappa,
+      int32_t * lambda,
+      int flag_relu,
+      int flag_batch_norm,
+      unsigned int * memory_chan
+);

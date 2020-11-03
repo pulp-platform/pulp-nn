@@ -1,5 +1,5 @@
 /*
- * pulp_nn_conv_depthwise.c
+ * pulp_nn_depthwise_generic.c
  * Nazareno Bruschi <nazareno.bruschi@unibo.it>
  * Angelo Garofalo <angelo.garofalo@unibo.it>
  *
@@ -18,19 +18,19 @@
  * limitations under the License.
  */
 
+#include "pmsis.h"
 #include "pulp_nn_utils.h"
 #include "pulp_nn_kernels.h"
-#include "pmsis.h"
+
 
 
 #define log2(x) __builtin_pulp_fl1(x)
 #define SumDotp(a, b, c) __builtin_pulp_sdotusp4(a, b, c)
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define clip8(x) __builtin_pulp_clipu_r(x, 255)
-#define NN_ROUND(out_shift) ((out_shift) ? (0x1 << (out_shift -1)) : (0))
 
 
-void pulp_nn_conv_depthwise(
+void pulp_nn_depthwise_generic(
   const uint8_t * Im_in,
   const uint16_t  dim_im_in_x,
   const uint16_t  dim_im_in_y,
@@ -60,7 +60,7 @@ void pulp_nn_conv_depthwise(
   int8_t          FLAG_BATCH_NORM,
   unsigned int * memory_chan
 ){
-  uint8_t core_id = pi_core_id();
+  int core_id = pi_core_id();
   int chunk = (ch_im_out >> log2(NUM_CORES)) + ((ch_im_out & (NUM_CORES - 1)) != 0);
   int start_channel = MIN(chunk * core_id, ch_im_out);
   int stop_channel = MIN(start_channel + chunk, ch_im_out);
