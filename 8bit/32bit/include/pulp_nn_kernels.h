@@ -18,8 +18,6 @@
  * limitations under the License.
  */
 
-#include "pulp.h"
-
 void __attribute__ ((noinline))  pulp_nn_add (
   uint8_t * Im_in_1,             // pointer to the input feature map1
   uint8_t * Im_in_2,             // pointer to the input feature map2

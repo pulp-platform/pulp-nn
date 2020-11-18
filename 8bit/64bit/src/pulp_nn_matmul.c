@@ -20,7 +20,6 @@
 
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
-#include "pulp_nn_kernels.h"
 
 #define SumDotp(a, b, c)    __builtin_pulp_sdotusp4(a, b, c)
 #define clip8(x)            __builtin_pulp_clipu_r(x, 255)

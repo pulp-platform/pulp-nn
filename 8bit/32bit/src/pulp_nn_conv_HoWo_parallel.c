@@ -21,7 +21,6 @@
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
 #include "pulp_nn_kernels.h"
-#include "mchan_test.h"
 
 #define log2(x) __builtin_pulp_fl1(x)
 #define min(a,b) ((a)<(b)?(a):(b))
@@ -114,7 +113,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
             }
             else
             {
-              pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in,pIm2Col, ch_in);
+              pulp_nn_im2col_int8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in,pIm2Col, ch_in);
             }
             pIm2Col += ch_in;
           }
@@ -134,7 +133,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
               }
               else
               {
-                pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+                pulp_nn_im2col_int8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
               }
               pIm2Col += ch_in;
             }
@@ -144,7 +143,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
         {
           for (i_ker_y = i_out_y * stride_y - padding_y_top; i_ker_y < i_out_y * stride_y - padding_y_top + dim_kernel_y; i_ker_y++)
           {
-            pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_out_x * stride_x - padding_x_left) * ch_in, pIm2Col, ch_in * dim_kernel_x);
+            pulp_nn_im2col_int8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_out_x * stride_x - padding_x_left) * ch_in, pIm2Col, ch_in * dim_kernel_x);
             pIm2Col += ch_in * dim_kernel_x;
           }
         }
@@ -161,7 +160,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
                 }
                 else
                 {
-                  pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in,pIm2Col, ch_in);
+                  pulp_nn_im2col_int8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in,pIm2Col, ch_in);
                 }
                 pIm2Col += ch_in;
               }
@@ -180,7 +179,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
             }
             else
             {
-              pulp_nn_im2col_int8_dmafree((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
+              pulp_nn_im2col_int8((uint8_t *) pInBuffer + (i_ker_y * dim_in_x + i_ker_x) * ch_in, pIm2Col, ch_in);
             }
             pIm2Col += ch_in;
           }

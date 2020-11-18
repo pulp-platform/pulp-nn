@@ -20,15 +20,11 @@
 
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
-#include "pulp_nn_kernels.h"
-
-
 
 #define log2(x) __builtin_pulp_fl1(x)
 #define SumDotp(a, b, c) __builtin_pulp_sdotusp4(a, b, c)
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #define clip8(x) __builtin_pulp_clipu_r(x, 255)
-
 
 void pulp_nn_depthwise_generic(
   const uint8_t * Im_in,
