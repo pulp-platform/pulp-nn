@@ -49,8 +49,8 @@ void pulp_nn_linear(
 	int core_id = pi_core_id();
 	int Log2Core = log2(NUM_CORES);
 	int chunk = (num_o_neurons >> Log2Core) + ((num_o_neurons & (NUM_CORES-1))!=0);
-	volatile int start = min(chunk * core_id, num_o_neurons);
-	volatile int stop = min(start + chunk, num_o_neurons);
+	int start = min(chunk * core_id, num_o_neurons);
+	int stop = min(start + chunk, num_o_neurons);
 
 	v4u vecA;
 	v4s vecB;

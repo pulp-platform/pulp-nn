@@ -21,92 +21,68 @@
 
 ############################################################### Version 1.0 #########################################################
 
-from mako.template import Template
-from include import struct_comp_gen, comp_gen, utils
-from include.struct_comp import PULPNNSrcDirs32bit, PULPNNSrcDirs64bit
+from include import pulp_nn_factory, pulp_nn_init, pulp_nn_struct
 
-for a in utils.BN_ACTIVATIONS:
-    struct_comp_gen.mkdir_str(a)
+for a in pulp_nn_init.BN_ACTIVATIONS:
+    
+    pulp_nn_struct.mkdir_src(a)
 
-    for i in utils.PULPNNDataPrecisions:
-        for j in utils.PULPNNDataPrecisions:
-            for z in utils.PULPNNWeightsPrecisions:
-                for q in utils.PULPNNQuantizationMethods:
-                    c = comp_gen.PULPNNConvolve(in_data_t=i, out_data_t=j, wt_data_t=z, quantization=q, act_prec=a)
-                    utils.PULPNNAPI += c.generate_api() + "\n"
-                    if a == '32bit':
-                        new_file = open(PULPNNSrcDirs32bit['pointwise_convolution'] + c.filename, 'w')
-                    elif a == '64bit':
-                        new_file = open(PULPNNSrcDirs64bit['pointwise_convolution'] + c.filename, 'w')
-                    new_file.write(c.generate_code())
-                    new_file.close()
+    pulp_nn_factory.utils(a)
 
-    for i in utils.PULPNNDataPrecisions:
-        for j in utils.PULPNNDataPrecisions:
-            for z in utils.PULPNNWeightsPrecisions:
-                for q in utils.PULPNNQuantizationMethods:
-                    c = comp_gen.PULPNNConvolvePointwise(in_data_t=i, out_data_t=j, wt_data_t=z, quantization=q, act_prec=a)
-                    utils.PULPNNAPI += c.generate_api() + "\n"
-                    if a == '32bit':
-                        new_file = open(PULPNNSrcDirs32bit['pointwise'] + c.filename, 'w')
-                    elif a == '64bit':
-                        new_file = open(PULPNNSrcDirs64bit['pointwise'] + c.filename, 'w')
-                    new_file.write(c.generate_code())
-                    new_file.close()
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        for j in pulp_nn_init.PULPNNDataPrecisions:
+            for z in pulp_nn_init.PULPNNWeightsPrecisions:
+                for q in pulp_nn_init.PULPNNQuantizationMethods:
+                    kernel_to_test = pulp_nn_factory.PULPNNKernel(name='convolution', inp=i, out=j, wt=z, quant=q, act_prec=a)
+                    conv=pulp_nn_factory.PULPNNConvolve(kernel=kernel_to_test, layer=None)
+                    pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='convolution', comp=conv, api=pulp_nn_init.PULPNNAPI)
 
-    for i in utils.PULPNNDataPrecisions:
-        for j in utils.PULPNNWeightsPrecisions:
-            for q in utils.PULPNNQuantizationMethods:
-                c = comp_gen.PULPNNMatMul(out_data_t=i, wt_data_t=j, quantization=q, act_prec=a)
-                utils.PULPNNAPI += c.generate_api() + "\n"
-                if a == '32bit':
-                    new_file = open(PULPNNSrcDirs32bit['matmul'] + c.filename, 'w')
-                elif a == '64bit':
-                    new_file = open(PULPNNSrcDirs64bit['matmul'] + c.filename, 'w')
-                new_file.write(c.generate_code())
-                new_file.close()
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        for j in pulp_nn_init.PULPNNDataPrecisions:
+            for z in pulp_nn_init.PULPNNWeightsPrecisions:
+                for q in pulp_nn_init.PULPNNQuantizationMethods:
+                    kernel_to_test = pulp_nn_factory.PULPNNKernel(name='pointwise', inp=i, out=j, wt=z, quant=q, act_prec=a)
+                    pw=pulp_nn_factory.PULPNNConvolvePointwise(kernel=kernel_to_test, layer=None)
+                    pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='pointwise', comp=pw, api=pulp_nn_init.PULPNNAPI)
 
-    for i in utils.PULPNNDataPrecisions:
-        for j in utils.PULPNNDataPrecisions:
-            for z in utils.PULPNNWeightsPrecisions:
-                for q in utils.PULPNNQuantizationMethods:
-                    c = comp_gen.PULPNNDepthwise(in_data_t=i, out_data_t=j, wt_data_t=z, quantization=q, act_prec=a)
-                    utils.PULPNNAPI += c.generate_api() + "\n"
-                    if a == '32bit':
-                        new_file = open(PULPNNSrcDirs32bit['depthwise_convolution'] + c.filename, 'w')
-                    elif a == '64bit':
-                        new_file = open(PULPNNSrcDirs64bit['depthwise_convolution'] + c.filename, 'w')
-                    new_file.write(c.generate_code())
-                    new_file.close()
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        for j in pulp_nn_init.PULPNNWeightsPrecisions:
+            for q in pulp_nn_init.PULPNNQuantizationMethods:
+                kernel_to_test = pulp_nn_factory.PULPNNKernel(name='matmul', inp=8, out=i, wt=j, quant=q, act_prec=a)
+                matmul=pulp_nn_factory.PULPNNMatMul(kernel=kernel_to_test, layer=None)
+                pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='matmul', comp=matmul, api=pulp_nn_init.PULPNNAPI)
 
-    for i in utils.PULPNNDataPrecisions:
-        for z in utils.PULPNNWeightsPrecisions:
-            c = comp_gen.PULPNNLinearNoQuant(in_data_t=i, wt_data_t=z, act_prec=a)
-            utils.PULPNNAPI += c.generate_api() + "\n"
-            if a == '32bit':
-                new_file = open(PULPNNSrcDirs32bit['linear_convolution_nq'] + c.filename, 'w')
-            elif a == '64bit':
-                new_file = open(PULPNNSrcDirs64bit['linear_convolution_nq'] + c.filename, 'w')
-            new_file.write(c.generate_code())
-            new_file.close()
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        for j in pulp_nn_init.PULPNNDataPrecisions:
+            for z in pulp_nn_init.PULPNNWeightsPrecisions:
+                for q in pulp_nn_init.PULPNNQuantizationMethods:
+                    kernel_to_test = pulp_nn_factory.PULPNNKernel(name='depthwise', inp=i, out=j, wt=z, quant=q, act_prec=a)
+                    dw=pulp_nn_factory.PULPNNConvolveDepthwise(kernel=kernel_to_test, layer=None)
+                    pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='depthwise', comp=dw, api=pulp_nn_init.PULPNNAPI)
 
-    for i in utils.PULPNNDataPrecisions:
-        for j in utils.PULPNNDataPrecisions:
-            for z in utils.PULPNNWeightsPrecisions:
-                c = comp_gen.PULPNNLinearQuant(in_data_t=i, out_data_t=j, wt_data_t=z, act_prec=a)
-                utils.PULPNNAPI += c.generate_api() + "\n"
-                if a == '32bit':
-                    new_file = open(PULPNNSrcDirs32bit['linear_convolution_q'] + c.filename, 'w')
-                elif a == '64bit':
-                    new_file = open(PULPNNSrcDirs64bit['linear_convolution_q'] + c.filename, 'w')
-                new_file.write(c.generate_code())
-                new_file.close()
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        for z in pulp_nn_init.PULPNNWeightsPrecisions:
+            kernel_to_test = pulp_nn_factory.PULPNNKernel(name='linear_no_quant', inp=i, out=32, wt=z, quant=None, act_prec=a)
+            lin_nq=pulp_nn_factory.PULPNNLinearNoQuant(kernel=kernel_to_test, layer=None)
+            pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='linear_nq', comp=lin_nq, api=pulp_nn_init.PULPNNAPI)
+
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        for j in pulp_nn_init.PULPNNDataPrecisions:
+            for z in pulp_nn_init.PULPNNWeightsPrecisions:
+                for q in pulp_nn_init.PULPNNQuantizationMethods:
+                    kernel_to_test = pulp_nn_factory.PULPNNKernel(name='linear_quant', inp=i, out=j, wt=z, quant=q, act_prec=a)
+                    lin_q=pulp_nn_factory.PULPNNLinearQuant(kernel=kernel_to_test, layer=None)
+                    pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='linear_q', comp=lin_q, api=pulp_nn_init.PULPNNAPI)
+
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        kernel_to_test = pulp_nn_factory.PULPNNKernel(name='maxpool', inp=i, out=None, wt=None, quant=None, act_prec=a)
+        maxp=pulp_nn_factory.PULPNNMaxPool(kernel=kernel_to_test, layer=None)
+        pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='maxpool', comp=maxp, api=pulp_nn_init.PULPNNAPI)
+
+    for i in pulp_nn_init.PULPNNDataPrecisions:
+        kernel_to_test = pulp_nn_factory.PULPNNKernel(name='avgpool', inp=i, out=None, wt=None, quant=None, act_prec=a)
+        avgp=pulp_nn_factory.PULPNNAvgPool(kernel=kernel_to_test, layer=None)
+        pulp_nn_init.PULPNNAPI = pulp_nn_factory.kernel(path_tag='avgpool', comp=avgp, api=pulp_nn_init.PULPNNAPI)
                     
-    if a == '32bit':
-        new_file = open(PULPNNSrcDirs32bit['inc'] + "/pulp_nn_kernels.h", 'w')
-    elif a == '64bit':
-        new_file = open(PULPNNSrcDirs64bit['inc'] + "/pulp_nn_kernels.h", 'w')
-    new_file.write(Template(filename="templates/pulp_nn_kernels.h").render(PULPNNAPI=utils.PULPNNAPI))
-    new_file.close()
-
-    utils.PULPNNAPI = ""
+    pulp_nn_factory.header(act_prec=a, api=pulp_nn_init.PULPNNAPI)
+    pulp_nn_init.PULPNNAPI = ""
