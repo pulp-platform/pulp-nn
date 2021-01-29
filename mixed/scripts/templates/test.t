@@ -68,8 +68,50 @@ void test()
 %elif config.kernel.type == 'linear_quant':
     printf("MACs=%d\n", CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_OUT);
 %endif
-#endif
-#endif
+#endif /* VERBOSE */
+#endif /* PERFORMANCE */
+%if config.kernel.type == 'add':
+#if INPUT1 == 2
+    for(int i=0; i<((DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN) >> 2); i++)
+    {
+      uint8_t c_data = bitins(IN1_INT2_L2[4*i], n_mask2, IN1_INT2_L2[(4*i)+1], mask2, off2);
+      c_data = bitins(c_data, n_mask4, IN1_INT2_L2[(4*i)+2], mask4, off4);
+      IN1_INT8_L1[i] = bitins(c_data, n_mask6, IN1_INT2_L2[(4*i)+3], mask6, off6);
+    }
+#endif /* INPUT1 */
+#if INPUT1 == 4
+    for(int i=0; i<((DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN) >> 1); i++)
+    {
+      IN1_INT8_L1[i] = bitins(IN1_INT4_L2[2*i], n_mask, IN1_INT4_L2[(2*i)+1], mask, off);
+    }
+#endif /* INPUT1 */
+#if INPUT1 == 8
+    for(int i=0; i<(DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN); i++)
+    {
+      IN1_INT8_L1[i] = IN1_INT8_L2[i];
+    }
+#endif /* INPUT1 */
+#if INPUT2 == 2
+    for(int i=0; i<((DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN) >> 2); i++)
+    {
+      uint8_t c_data = bitins(IN2_INT2_L2[4*i], n_mask2, IN2_INT2_L2[(4*i)+1], mask2, off2);
+      c_data = bitins(c_data, n_mask4, IN2_INT2_L2[(4*i)+2], mask4, off4);
+      IN2_INT8_L1[i] = bitins(c_data, n_mask6, IN2_INT2_L2[(4*i)+3], mask6, off6);
+    }
+#endif /* INPUT2 */
+#if INPUT2 == 4
+    for(int i=0; i<((DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN) >> 1); i++)
+    {
+      IN2_INT8_L1[i] = bitins(IN2_INT4_L2[2*i], n_mask, IN2_INT4_L2[(2*i)+1], mask, off);
+    }
+#endif /* INPUT2 */
+#if INPUT2 == 8
+    for(int i=0; i<(DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN); i++)
+    {
+      IN2_INT8_L1[i] = IN2_INT8_L2[i];
+    }
+#endif /* INPUT2 */
+%else:
 #if INPUT == 2
 %if config.kernel.type == 'depthwise':
     for(int i=0; i<((DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN) >> 2); i++)
@@ -127,7 +169,7 @@ void test()
       IN_INT8_L1[i] = IN_INT8_L2[i];
     }
 %endif
-#endif
+#endif /* INPUT */
 %if config.kernel.type == 'depthwise':
 #if WEIGHTS == 2
     for(int i=0; i<(DIM_KERNEL_X * DIM_KERNEL_Y); i++)
@@ -174,7 +216,7 @@ void test()
     {
       WEIGHT_INT8_L1_CHW[i] = WEIGHT_INT8_L2_CHW[i];
     }
-#endif
+#endif /* WEIGHTS */
 %elif config.kernel.type == 'convolution' or config.kernel.type == 'pointwise':
 #if WEIGHTS == 2
     for(int i=0; i<((DIM_KERNEL_X * DIM_KERNEL_Y * CH_IM_IN * CH_IM_OUT) >> 2); i++)
@@ -193,7 +235,7 @@ void test()
     {
       WEIGHT_INT8_L1[i] = WEIGHT_INT8_L2[i];
     }
-#endif
+#endif /* WEIGHTS */
 %elif config.kernel.type == 'linear_no_quant' or config.kernel.type == 'linear_quant':
 #if WEIGHTS == 2
     for(int i=0; i<((DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_IN * CH_IM_OUT) >> 2); i++)
@@ -212,7 +254,7 @@ void test()
     {
       WEIGHT_INT8_L1[i] = WEIGHT_INT8_L2[i];
     }
-#endif
+#endif /* WEIGHTS */
 %endif
 %if config.layer.bn == True:
     for(int i=0; i<CH_IM_OUT; i++)
@@ -235,7 +277,8 @@ void test()
     {
       THR_INT4_L1[i] = THR_INT4_L2[i];
     }
-#endif
+#endif /*OUTPUT */
+%endif
 %endif
   }
   pi_cl_team_barrier(0);
@@ -264,9 +307,9 @@ for (int k=0; k < 13; k++)
   pi_perf_reset();                      
   pi_perf_stop();                       
   pi_perf_start(); 
-#endif
+#endif /* VERBOSE */
   pi_cl_team_barrier(0);
-#endif
+#endif /* PERFORMANCE */
 
 ${config.call}
 
@@ -301,7 +344,7 @@ ${config.call}
 %elif config.kernel.type == 'linear_quant':
   int MACs = CH_IM_IN * DIM_IM_IN_X * DIM_IM_IN_Y * CH_IM_OUT;
 %endif
-%if config.kernel.type != 'maxpool' and config.kernel.type != 'avgpool':
+%if config.kernel.type != 'maxpool' and config.kernel.type != 'avgpool' and config.kernel.type != 'add':
   float perf_MAC =  (float)MACs/perf_cyc;
   if (cid == 0)
   {
@@ -310,10 +353,15 @@ ${config.call}
     printf("[%d] : MAC/cycle: %f\n",cid,perf_MAC ); 
     printf("[%d] : n. of Cores: %d\n",cid,NUM_CORES); 
   }
+%else:
+  if (cid == 0)
+  {
+    printf("\n[%d] : num_cycles: %d\n",cid,perf_cyc); 
+  }
 %endif
-#endif
+#endif /* VERBOSE */
   pi_cl_team_barrier(0);
-#endif
+#endif /* PERFORMANCE */
 #ifdef CHECK
   if(pi_core_id()==0)
   {
@@ -322,9 +370,9 @@ ${config.call}
     {
       if(OUT_L1[i] != OUT_L2[i])
       {
-#ifdef VERBOSE_CHECK
+#ifdef VERBOSE
         printf("error at index %d, %d instead of %d\n", i, OUT_L1[i], OUT_L2[i]);
-#endif
+#endif /* VERBOSE */
         errors++;
       }
     }
@@ -355,12 +403,12 @@ ${config.call}
     }
     for (int i=0; i<CH_IM_OUT; i++)
     {
-#endif
+#endif /* OUTPUT */
       if(OUT_L2[i] != OUT_INT8_L2[i])
       {
 #ifdef VERBOSE
         printf("error at index %d, %d instead of %d\n", i, OUT_L2[i], OUT_INT8_L2[i]);
-#endif
+#endif /* VERBOSE */
         errors++;
       }
     }
@@ -391,12 +439,16 @@ ${config.call}
     }
     for (int i=0; i<(DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT); i++)
     {
-#endif
+#endif /* OUTPUT */
+%if config.kernel.type == 'avgpool':
+      if(OUT_L2[i] > OUT_INT8_L2[i] + 1 || OUT_L2[i] < OUT_INT8_L2[i] - 1)
+%else:
       if(OUT_L2[i] != OUT_INT8_L2[i])
+%endif
       {
 #ifdef VERBOSE
         printf("error at index %d, %d instead of %d\n", i, OUT_L2[i], OUT_INT8_L2[i]);
-#endif
+#endif /* VERBOSE */
         errors++;
       }
     }
@@ -404,7 +456,7 @@ ${config.call}
 %endif
   }
   pi_cl_team_barrier(0);
-#endif
+#endif /* CHECK */
 }
 
 ///////////////////////////////////////////////////////////////////

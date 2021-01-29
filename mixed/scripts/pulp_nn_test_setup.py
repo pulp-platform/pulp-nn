@@ -35,11 +35,11 @@ SINGLE_KERNEL = 0
 #       - all values for dim_x
 #       - all values for dim_y
 
-TYPE_OF_KERNEL = 'linear_no_quant'
+TYPE_OF_KERNEL = 'avgpool'
 
 # Select from the supported ones:
 
-# -> matmul, convolution, pointwise, depthwise, linear_no_quant, linear_quant, maxpool, avgpool
+# -> matmul, convolution, pointwise, depthwise, linear_no_quant, linear_quant, maxpool, avgpool, add
 
 # If SINGLE_KERNEL = 0 these will be ignored. Otherwise, select the possibilities from the supported ones
 #
@@ -54,16 +54,17 @@ TYPE_OF_KERNEL = 'linear_no_quant'
 
 in_precision = 8
 wt_precision = 8
-out_precision = 8
+out_precision = 8 # if is add layer, out_precision is the second input precision
 quantization_type = 'shift_clip'
 
 # if depthwise CH_IM_IN must be equal to CH_IM_OUT
 DIM_IM_IN_X = 8
 DIM_IM_IN_Y = 8
-CH_IM_IN = 16
-DIM_IM_OUT_X = 8
-DIM_IM_OUT_Y = 8
-CH_IM_OUT = 16
+CH_IM_IN = 8
+# if pooling, output dimensions must be relative to kernel and stride sizes
+DIM_IM_OUT_X = 4
+DIM_IM_OUT_Y = 4
+CH_IM_OUT = 8
 # if is not linear
 DIM_KERNEL_X = 1 # 1 if is pointwise, free otherwise
 DIM_KERNEL_Y = 1 # 1 if is pointwise, free otherwise

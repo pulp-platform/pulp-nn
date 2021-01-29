@@ -22,9 +22,10 @@
 
 #define bitext(x,size,off) __builtin_pulp_bextract(x,size,off)
 #define bitextu(x,size,off) __builtin_pulp_bextractu(x,size,off)
+#define bitins(dst,not_mask_imm,src,mask_imm,off) __builtin_pulp_binsert(dst,not_mask_imm,src,mask_imm,off)
 #define pack(x,y,z,t)      __builtin_pulp_pack4(x,y,z,t)
 #define max4(a,b)  		    __builtin_pulp_maxu4(a,b)
-#define avg4(a,b)         __builtin_pulp_avg4(a,b)
+#define avg4(a,b)         __builtin_pulp_avgu4(a,b)
 
 uint8_t __attribute__((always_inline)) pulp_nn_bn_quant_u8 (
   int32_t phi,
@@ -58,7 +59,7 @@ uint8_t __attribute__((always_inline)) pulp_nn_add_quant_u8 (
   /* Integer Batch Normalization */
   uint32_t integer_image = pix1*m1 + pix2*m2;
   /* Quantization */
-  uint16_t x = (integer_image) >> d;
+  uint32_t x = (integer_image) >> d;
   uint8_t res = __builtin_pulp_clipu(x, 0, 255);
   return res;
 }
@@ -95,7 +96,7 @@ uint8_t __attribute__((always_inline)) pulp_nn_add_quant_u4 (
   /* Integer Batch Normalization */
   uint32_t integer_image = pix1*m1 + pix2*m2;
   /* Quantization */
-  uint16_t x = (integer_image) >> d;
+  uint32_t x = (integer_image) >> d;
   uint8_t res = __builtin_pulp_clipu(x, 0, 15);
   return res;
 }
@@ -132,7 +133,7 @@ uint8_t __attribute__((always_inline)) pulp_nn_add_quant_u2 (
   /* Integer Batch Normalization */
   uint32_t integer_image = pix1*m1 + pix2*m2;
   /* Quantization */
-  uint16_t x = (integer_image) >> d;
+  uint32_t x = (integer_image) >> d;
   uint8_t res = __builtin_pulp_clipu(x, 0, 3);
   return res;
 }
@@ -373,8 +374,8 @@ void __attribute__((always_inline))pulp_nn_im2col_u2_to_u8(uint8_t * pInput, uin
 }
 
 void pulp_nn_compare_and_replace_if_larger_u8(uint8_t * base,
-						                                    uint8_t * target,
-						                                    uint16_t length)
+                                                uint8_t * target,
+                                                uint16_t length)
 {
   uint8_t *pIn = base;
   uint8_t *pCom = target;
@@ -386,9 +387,10 @@ void pulp_nn_compare_and_replace_if_larger_u8(uint8_t * base,
   {
     inp = *((v4u*)pIn);
     com = *((v4u*)pCom);
-    pCom+=4;
 
     *((v4u*)pIn) = max4(inp, com);
+
+    pCom+=4;
     pIn+=4;
     cnt--;
   }
@@ -398,37 +400,33 @@ void pulp_nn_compare_and_replace_if_larger_u8(uint8_t * base,
   {
     if(*pIn<*pCom)
       *pIn=*pCom;
+    
     pIn++;
     pCom++;
     left--;
   }
 }
 
-void pulp_nn_avg_and_replace_u8(int8_t * base,
-                                  int8_t * target,
+void pulp_nn_avg_and_replace_u8(uint8_t * base,
+                                  uint8_t * target,
                                   uint16_t length)
 {
-  int8_t *pIn = base;
-  int8_t *pCom = target;
-  v4s inp;
-  v4s com;
-  int cnt = length >> 2;
+  uint8_t *pIn = base;
+  uint8_t *pCom = target;
 
-  while(cnt > 0u)
+  while (length>0u)
   {
-    inp = *((v4s*)pIn);
-    com = *((v4s*)pCom);
-    pCom+=4;
+    *pIn = ((*pIn + *pCom) >> 1);
 
-    *((v4s*)pIn) = avg4(inp, com);
-    pIn+=4;
-    cnt--;
+    pIn++;
+    pCom++;
+    length--;
   }
 }
 
 void pulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,
-						                                    uint8_t * target,
-						                                    uint16_t length)
+                                                uint8_t * target,
+                                                uint16_t length)
 {
   int8_t mask = 0xf0;
   int8_t n_mask = ~ mask;
@@ -438,39 +436,39 @@ void pulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,
   uint8_t *pCom = target;
   v4u inp[2];
   v4u com[2];
-  v4u out;
-  int cnt = length >> 3;
+  uint8_t *out;
+  int cnt = length >> 2;
 
   while(cnt > 0u)
   {
-    pulp_nn_u4_u8(pIn, inp);
-    pulp_nn_u4_u8(pCom, com);
+    pulp_nn_u4_to_u8(pIn, inp);
+    pulp_nn_u4_to_u8(pCom, com);
 
-    out = max4(inp[0], com[0]);
+    *((v4u *)out) = max4(inp[0], com[0]);
 
-    *((uint8_t*)pIn) = bitins((unsigned int) out, n_mask, ((unsigned int) out + 1), mask, off);
+    *((uint8_t*)pIn) = bitins(*out, n_mask, *(out + 1), mask, off);
     pIn++;
-    *((uint8_t*)pIn) = bitins(((unsigned int) out + 2), n_mask, ((unsigned int) out + 3), mask, off);
+    *((uint8_t*)pIn) = bitins(*(out + 2), n_mask, *(out + 3), mask, off);
     pIn++;
 
-    out = max4(inp[1], com[1]);
+    *((v4u *)out) = max4(inp[1], com[1]);
 
-    *((uint8_t*)pIn) = bitins((unsigned int) out, n_mask, ((unsigned int) out + 1), mask, off);
+    *((uint8_t*)pIn) = bitins(*out, n_mask, *(out + 1), mask, off);
     pIn++;
-    *((uint8_t*)pIn) = bitins(((unsigned int) out + 2), n_mask, ((unsigned int) out + 3), mask, off);
+    *((uint8_t*)pIn) = bitins(*(out + 2), n_mask, *(out + 3), mask, off);
     pIn++;
 
     pCom+=4;
     cnt--;
   }
 
-  int left = length & 0x7;
+  int left = length & 0x3;
   while (left>0u)
   {
-  	uint8_t inA0 = (uint8_t) bitext((unsigned int) *pIn, 4, 0);
-  	uint8_t inA1 = (uint8_t) bitext((unsigned int) *(pIn + 1), 4, 4);
-  	uint8_t inB0 = (uint8_t) bitext((unsigned int) *pCom, 4, 0);
-  	uint8_t inB1 = (uint8_t) bitext((unsigned int) *(pCom + 1), 4, 4);
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 4, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 4, 4);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 4, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 4, 4);
 
     if(inA0<inB0)
       inA0=inB0;
@@ -479,15 +477,15 @@ void pulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,
       inA1=inB1;
 
     *((uint8_t*)pIn) = bitins(inA0, n_mask, inA1, mask, off);
-	  pIn++;
 
+    pIn++;
     pCom++;
     left--;
   }
 }
 
-void pulp_nn_avg_and_replace_u4(int8_t * base,
-                                  int8_t * target,
+void pulp_nn_avg_and_replace_u4(uint8_t * base,
+                                  uint8_t * target,
                                   uint16_t length)
 {
   int8_t mask = 0xf0;
@@ -496,59 +494,28 @@ void pulp_nn_avg_and_replace_u4(int8_t * base,
 
   uint8_t *pIn = base;
   uint8_t *pCom = target;
-  v4u inp[2];
-  v4u com[2];
-  v4u out;
-  int cnt = length >> 3;
 
-  while(cnt > 0u)
+  while (length>0u)
   {
-    pulp_nn_u4_u8(pIn, inp);
-    pulp_nn_u4_u8(pCom, com);
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 4, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 4, 4);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 4, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 4, 4);
 
-    out = avg4(inp[0], com[0]);
-
-    *((uint8_t*)pIn) = bitins((unsigned int) out, n_mask, ((unsigned int) out + 1), mask, off);
-    pIn++;
-    *((uint8_t*)pIn) = bitins(((unsigned int) out + 2), n_mask, ((unsigned int) out + 3), mask, off);
-    pIn++;
-
-    out = avg4(inp[1], com[1]);
-
-    *((uint8_t*)pIn) = bitins((unsigned int) out, n_mask, ((unsigned int) out + 1), mask, off);
-    pIn++;
-    *((uint8_t*)pIn) = bitins(((unsigned int) out + 2), n_mask, ((unsigned int) out + 3), mask, off);
-    pIn++;
-
-    pCom+=4;
-    cnt--;
-  }
-
-  int left = length & 0x7;
-  while (left>0u)
-  {
-  	uint8_t inA0 = (uint8_t) bitext((unsigned int) *pIn, 4, 0);
-  	uint8_t inA1 = (uint8_t) bitext((unsigned int) *(pIn + 1), 4, 4);
-  	uint8_t inB0 = (uint8_t) bitext((unsigned int) *pCom, 4, 0);
-  	uint8_t inB1 = (uint8_t) bitext((unsigned int) *(pCom + 1), 4, 4);
-
-    if(inA0<inB0)
-      inA0=inB0;
-
-    if(inA1<inB1)
-      inA1=inB1;
+    inA0 = ((inA0 + inB0) >> 1);
+    inA1 = ((inA1 + inB1) >> 1);
 
     *((uint8_t*)pIn) = bitins(inA0, n_mask, inA1, mask, off);
-	  pIn++;
 
+    pIn++;
     pCom++;
-    left--;
+    length--;
   }
 }
 
 void pulp_nn_compare_and_replace_if_larger_u2(uint8_t * base,
-						                                    uint8_t * target,
-						                                    uint16_t length)
+                                                uint8_t * target,
+                                                uint16_t length)
 {
   int8_t mask2 = 0x0c;
   int8_t n_mask2 = ~ mask2;
@@ -564,74 +531,74 @@ void pulp_nn_compare_and_replace_if_larger_u2(uint8_t * base,
   uint8_t *pCom = target;
   v4u inp[4];
   v4u com[4];
-  v4u out;
-  int cnt = length >> 4;
+  uint8_t *out;
+  int cnt = length >> 2;
 
   while(cnt > 0u)
   {
-    pulp_nn_u2_u8(pIn, inp);
-    pulp_nn_u2_u8(pCom, com);
+    pulp_nn_u2_to_u8(pIn, inp);
+    pulp_nn_u2_to_u8(pCom, com);
 
-    out = max4(inp[0], com[0]);
+    *((v4u*)out) = max4(inp[0], com[0]);
 
-    uint8_t inA = (uint8_t) bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
+    uint8_t inA = (uint8_t) bitins(*out, n_mask2, *(out + 1), mask2, off2);
+    inA = bitins(inA, n_mask4, *(out + 2), mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, *(out + 3), mask6, off6);
+    pIn++;
 
-	  out = max4(inp[1], com[1]);
+    *((v4u*)out) = max4(inp[1], com[1]);
 
-    inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
+    inA = (uint8_t) bitins(*out, n_mask2, *(out + 1), mask2, off2);
+    inA = bitins(inA, n_mask4, *(out + 2), mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, *(out + 3), mask6, off6);
+    pIn++;
 
-    out = max4(inp[2], com[2]);
+    *((v4u*)out) = max4(inp[2], com[2]);
 
-    inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
+    inA = (uint8_t) bitins(*out, n_mask2, *(out + 1), mask2, off2);
+    inA = bitins(inA, n_mask4, *(out + 2), mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, *(out + 3), mask6, off6);
+    pIn++;
 
-    out = max4(inp[3], com[3]);
+    *((v4u*)out) = max4(inp[3], com[3]);
 
-    inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
+    inA = (uint8_t) bitins(*out, n_mask2, *(out + 1), mask2, off2);
+    inA = bitins(inA, n_mask4, *(out + 2), mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, *(out + 3), mask6, off6);
+    pIn++;
 
     pCom+=4;
     cnt--;
   }
 
-  int left = length & 0xf;
+  int left = length & 0x3;
   while (left>0u)
   {
-  	uint8_t inA0 = (uint8_t) bitext((unsigned int) *pIn, 2, 0);
-  	uint8_t inA1 = (uint8_t) bitext((unsigned int) *(pIn + 1), 2, 2);
-  	uint8_t inA2 = (uint8_t) bitext((unsigned int) *(pIn + 2), 2, 4);
-  	uint8_t inA3 = (uint8_t) bitext((unsigned int) *(pIn + 3), 2, 6);
-	  v4u inA4 = pack((uint8_t) inA0, (uint8_t) inA1, (uint8_t) inA2, (uint8_t) inA3);
-  	uint8_t inB0 = (uint8_t) bitext((unsigned int) *pCom, 2, 0);
-  	uint8_t inB1 = (uint8_t) bitext((unsigned int) *(pCom + 1), 2, 2);
-  	uint8_t inB2 = (uint8_t) bitext((unsigned int) *(pCom + 2), 2, 4);
-  	uint8_t inB3 = (uint8_t) bitext((unsigned int) *(pCom + 3), 2, 6);
-	  v4u inB4 = pack((uint8_t) inB0, (uint8_t) inB1, (uint8_t) inB2, (uint8_t) inB3);
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 2, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 2, 2);
+    uint8_t inA2 = (uint8_t) bitextu((unsigned int) *pIn, 2, 4);
+    uint8_t inA3 = (uint8_t) bitextu((unsigned int) *pIn, 2, 6);
+    v4u inA4 = pack((uint8_t) inA0, (uint8_t) inA1, (uint8_t) inA2, (uint8_t) inA3);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 2, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 2, 2);
+    uint8_t inB2 = (uint8_t) bitextu((unsigned int) *pCom, 2, 4);
+    uint8_t inB3 = (uint8_t) bitextu((unsigned int) *pCom, 2, 6);
+    v4u inB4 = pack((uint8_t) inB0, (uint8_t) inB1, (uint8_t) inB2, (uint8_t) inB3);
 
-    out = max4(inA4, inB4);
+    *((v4u*)out) = max4(inA4, inB4);
 
-    uint8_t inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
+    uint8_t inA = (uint8_t) bitins(*out, n_mask2, *(out + 1), mask2, off2);
+    inA = bitins(inA, n_mask4, *(out + 2), mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, *(out + 3), mask6, off6);
 
+    pIn++;
     pCom++;
     left--;
   }
 }
 
-void pulp_nn_avg_and_replace_u2(int8_t * base,
-                                  int8_t * target,
+void pulp_nn_avg_and_replace_u2(uint8_t * base,
+                                  uint8_t * target,
                                   uint16_t length)
 {
   int8_t mask2 = 0x0c;
@@ -646,71 +613,31 @@ void pulp_nn_avg_and_replace_u2(int8_t * base,
 
   uint8_t *pIn = base;
   uint8_t *pCom = target;
-  v4u inp[4];
-  v4u com[4];
-  v4u out;
-  int cnt = length >> 4;
 
-  while(cnt > 0u)
+  while (length>0u)
   {
-    pulp_nn_u2_u8(pIn, inp);
-    pulp_nn_u2_u8(pCom, com);
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 2, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 2, 2);
+    uint8_t inA2 = (uint8_t) bitextu((unsigned int) *pIn, 2, 4);
+    uint8_t inA3 = (uint8_t) bitextu((unsigned int) *pIn, 2, 6);
 
-    out = avg4(inp[0], com[0]);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 2, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 2, 2);
+    uint8_t inB2 = (uint8_t) bitextu((unsigned int) *pCom, 2, 4);
+    uint8_t inB3 = (uint8_t) bitextu((unsigned int) *pCom, 2, 6);
 
-    uint8_t inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
+    inA0 = ((inA0 + inB0) >> 1);
+    inA1 = ((inA1 + inB1) >> 1);
+    inA2 = ((inA2 + inB2) >> 1);
+    inA3 = ((inA3 + inB3) >> 1);
 
-	  out = avg4(inp[1], com[1]);
+    uint8_t inA = (uint8_t) bitins(inA0, n_mask2, inA1, mask2, off2);
+    inA = bitins(inA, n_mask4, inA2, mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, inA3, mask6, off6);
 
-    inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
-
-    out = avg4(inp[2], com[2]);
-
-    inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
-
-    out = avg4(inp[3], com[3]);
-
-    inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
-
-    pCom+=4;
-    cnt--;
-  }
-
-  int left = length & 0xf;
-  while (left>0u)
-  {
-  	uint8_t inA0 = (uint8_t) bitext((unsigned int) *pIn, 2, 0);
-  	uint8_t inA1 = (uint8_t) bitext((unsigned int) *(pIn + 1), 2, 2);
-  	uint8_t inA2 = (uint8_t) bitext((unsigned int) *(pIn + 2), 2, 4);
-  	uint8_t inA3 = (uint8_t) bitext((unsigned int) *(pIn + 3), 2, 6);
-	  v4u inA4 = pack((uint8_t) inA0, (uint8_t) inA1, (uint8_t) inA2, (uint8_t) inA3);
-  	uint8_t inB0 = (uint8_t) bitext((unsigned int) *pCom, 2, 0);
-  	uint8_t inB1 = (uint8_t) bitext((unsigned int) *(pCom + 1), 2, 2);
-  	uint8_t inB2 = (uint8_t) bitext((unsigned int) *(pCom + 2), 2, 4);
-  	uint8_t inB3 = (uint8_t) bitext((unsigned int) *(pCom + 3), 2, 6);
-	  v4u inB4 = pack((uint8_t) inB0, (uint8_t) inB1, (uint8_t) inB2, (uint8_t) inB3);
-
-    out = avg4(inA4, inB4);
-
-    uint8_t inA = bitins((unsigned int) out, n_mask2, ((unsigned int) out + 1), mask2, off2);
-    inA = bitins(inA, n_mask4, ((unsigned int) out + 2), mask4, off4);
-    *((uint8_t*)pIn) = bitins(inA, n_mask6, ((unsigned int) out + 3), mask6, off6);
-	  pIn++;
-
+    pIn++;
     pCom++;
-    left--;
+    length--;
   }
 }
 

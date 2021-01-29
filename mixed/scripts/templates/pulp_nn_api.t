@@ -178,4 +178,16 @@ void ${config.fn_name}(
 	uint16_t dim_im_out,
 	uint8_t * Im_out,
 	unsigned int * memory_chan);
+%elif config.api=="PULPNNAdd":
+void ${config.fn_name}(
+	uint8_t * Im_in_1,    
+	uint8_t * Im_in_2,    
+	uint16_t  ch_im_in,   
+	uint16_t  dim_im_in_h,
+	uint16_t  dim_im_in_w,
+	uint8_t * Im_out,     
+	uint16_t out_mult1,   
+	uint16_t out_mult2,   
+	uint16_t out_shift    
+);
 %endif

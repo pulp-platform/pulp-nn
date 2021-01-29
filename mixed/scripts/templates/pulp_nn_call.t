@@ -239,4 +239,17 @@ ${config.fn_name}(
 					OUT_L1,
 				    NULL);
 #endif
+%elif config.api == 'PULPNNAdd':
+#if (KERNEL == ${config.in1_data_t}${config.in2_data_t})
+${config.fn_name}(
+					IN1_INT8_L1,
+					IN2_INT8_L1,
+					CH_IM_IN,
+					DIM_IM_IN_X,
+					DIM_IM_IN_Y,
+					OUT_L1,
+					OUT_MULT1,
+					OUT_MULT2,
+					OUT_SHIFT);
+#endif
 %endif

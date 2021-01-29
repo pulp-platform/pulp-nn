@@ -58,15 +58,15 @@ void pulp_nn_im2col_u2_to_u8(uint8_t * pInput, uint8_t * pOutput, unsigned int b
 
 void pulp_nn_compare_and_replace_if_larger_u8(uint8_t * base,uint8_t * target,uint16_t length);
 
-void pulp_nn_avg_and_replace_u8(int8_t * base,int8_t * target,uint16_t length);
+void pulp_nn_avg_and_replace_u8(uint8_t * base,uint8_t * target,uint16_t length);
 
 void pulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,uint8_t * target,uint16_t length);
 
-void pulp_nn_avg_and_replace_u4(int8_t * base,int8_t * target,uint16_t length);
+void pulp_nn_avg_and_replace_u4(uint8_t * base,uint8_t * target,uint16_t length);
 
 void pulp_nn_compare_and_replace_if_larger_u2(uint8_t * base,uint8_t * target,uint16_t length);
 
-void pulp_nn_avg_and_replace_u2(int8_t * base,int8_t * target,uint16_t length);
+void pulp_nn_avg_and_replace_u2(uint8_t * base,uint8_t * target,uint16_t length);
 
 int8_t pulp_nn_i4_quant(int input, int16_t * pThr);
 

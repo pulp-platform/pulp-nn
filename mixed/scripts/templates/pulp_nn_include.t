@@ -58,4 +58,12 @@
 #include "GoldenModelAvgPool/golden_${config.kernel.in_data_t}.h"
 #include "DataAllocationAvgPool/data_allocation_${config.kernel.in_data_t}.h"
 #endif
+%elif config.api == 'PULPNNAdd':
+#if (KERNEL == ${config.in1_data_t}${config.in2_data_t})
+#define INPUT1 ${config.in1_data_t}
+#define INPUT2 ${config.in2_data_t}
+#define OUTPUT ${config.max_precision}
+#include "GoldenModelAdd/golden_${config.in1_data_t}_${config.in2_data_t}.h"
+#include "DataAllocationAdd/data_allocation_${config.in1_data_t}_${config.in2_data_t}.h"
+#endif
 %endif

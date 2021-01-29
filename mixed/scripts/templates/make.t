@@ -15,7 +15,7 @@ endif
 %if config.kernel.type == 'maxpool' or config.kernel.type == 'avgpool':
 ifndef kernel
 kernel=8
-%elif config.kernel.type == 'matmul' or config.kernel.type == 'linear_no_quant':
+%elif config.kernel.type == 'matmul' or config.kernel.type == 'linear_no_quant' or config.kernel.type == 'add':
 ifndef kernel
 kernel=88
 %elif config.kernel.type == 'convolution' or config.kernel.type == 'pointwise' or config.kernel.type == 'depthwise' or config.kernel.type == 'linear_quant':

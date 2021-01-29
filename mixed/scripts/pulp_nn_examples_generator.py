@@ -25,9 +25,9 @@ from include import pulp_nn_factory, pulp_nn_init, pulp_nn_struct
 import pulp_nn_test_setup
 
 if pulp_nn_test_setup.TYPE_OF_KERNEL == 'depthwise' and pulp_nn_test_setup.CH_IM_IN != pulp_nn_test_setup.CH_IM_OUT:
-    print("ERROR! ch_in must be equal to ch_out in a depthwise convolution")
+    raise Exception("ERROR! ch_in must be equal to ch_out in a depthwise convolution")
 elif (pulp_nn_test_setup.TYPE_OF_KERNEL == 'pointwise') and ((pulp_nn_test_setup.DIM_KERNEL_X != 1) or (pulp_nn_test_setup.DIM_KERNEL_Y != 1)):
-    print("ERROR! kernel dimension must be equal to 1 in a pointwise convolution")
+    raise Exception("ERROR! kernel dimension must be equal to 1 in a pointwise convolution")
 
 layer_to_gen = pulp_nn_factory.PULPNNLayer(dim_in_x=pulp_nn_test_setup.DIM_IM_IN_X, dim_in_y=pulp_nn_test_setup.DIM_IM_IN_Y, ch_in=pulp_nn_test_setup.CH_IM_IN, ch_out=pulp_nn_test_setup.CH_IM_OUT, dim_out_x=pulp_nn_test_setup.DIM_IM_OUT_X,
                     dim_out_y=pulp_nn_test_setup.DIM_IM_OUT_Y, ker_x=pulp_nn_test_setup.DIM_KERNEL_X, ker_y=pulp_nn_test_setup.DIM_KERNEL_Y, stride_x=pulp_nn_test_setup.STRIDE_X, stride_y=pulp_nn_test_setup.STRIDE_Y, pad_y_top=pulp_nn_test_setup.PADDING_Y_TOP,
@@ -152,6 +152,18 @@ for a in pulp_nn_init.BN_ACTIVATIONS:
                     make=pulp_nn_init.PULPNNMAKE,
                     include=pulp_nn_init.PULPNNINCLUDE,
                     comp=avgp)
+
+        elif pulp_nn_test_setup.TYPE_OF_KERNEL == 'add':
+            kernel_to_test = pulp_nn_factory.PULPNNKernel(name='add', inp=pulp_nn_test_setup.in_precision, out=pulp_nn_test_setup.out_precision, wt=None, quant=None, act_prec=a)
+            add=pulp_nn_factory.PULPNNAdd(kernel=kernel_to_test, layer=layer_to_gen)
+            pulp_nn_factory.copy_file(src_tag='add', key=add, dest_tag='pulp_nn_add')
+            pulp_nn_factory.allocation(path_tag='data_allocation_add', comp=add)
+            pulp_nn_factory.golden(path_tag='golden_model_add', comp=add)
+            pulp_nn_init.PULPNNCALL,pulp_nn_init.PULPNNMAKE,pulp_nn_init.PULPNNINCLUDE=pulp_nn_factory.generation(
+                    call=pulp_nn_init.PULPNNCALL,
+                    make=pulp_nn_init.PULPNNMAKE,
+                    include=pulp_nn_init.PULPNNINCLUDE,
+                    comp=add)
 
 
     else:
@@ -296,6 +308,21 @@ for a in pulp_nn_init.BN_ACTIVATIONS:
                         make=pulp_nn_init.PULPNNMAKE,
                         include=pulp_nn_init.PULPNNINCLUDE,
                         comp=avg)
+
+        elif pulp_nn_test_setup.TYPE_OF_KERNEL == 'add':
+            for i in pulp_nn_init.PULPNNDataPrecisions:
+                for j in pulp_nn_init.PULPNNDataPrecisions:
+                    if j <= i:
+                        kernel_to_test = pulp_nn_factory.PULPNNKernel(name='add', inp=i, out=j, wt=None, quant=None, act_prec=a)
+                        add=pulp_nn_factory.PULPNNAdd(kernel=kernel_to_test, layer=layer_to_gen)
+                        pulp_nn_factory.copy_file(src_tag='add', key=add, dest_tag='pulp_nn_add')
+                        pulp_nn_factory.allocation(path_tag='data_allocation_add', comp=add)
+                        pulp_nn_factory.golden(path_tag='golden_model_add', comp=add)
+                        pulp_nn_init.PULPNNCALL,pulp_nn_init.PULPNNMAKE,pulp_nn_init.PULPNNINCLUDE=pulp_nn_factory.generation(
+                                call=pulp_nn_init.PULPNNCALL,
+                                make=pulp_nn_init.PULPNNMAKE,
+                                include=pulp_nn_init.PULPNNINCLUDE,
+                                comp=add)
 
     pulp_nn_factory.makefile('test', kernel=kernel_to_test, make=pulp_nn_init.PULPNNMAKE)
     pulp_nn_factory.test('test', kernel=kernel_to_test, layer=layer_to_gen, include=pulp_nn_init.PULPNNINCLUDE, call=pulp_nn_init.PULPNNCALL)

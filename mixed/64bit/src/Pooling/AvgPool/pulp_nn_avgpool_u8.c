@@ -78,7 +78,7 @@ void __attribute__ ((noinline))  pulp_nn_avgpool_u8(
       for (int i = 0; i< ch_im_in_r; i++) target[i] = win_start[i];
 
       /* start the avg operation (comparison) */
-      win_start += ch_im_in;
+      win_start += ch_im_in_r;
       for (; win_start < win_stop; win_start += ch_im_in_r)
       {
         pulp_nn_avg_and_replace_u8(target, win_start, ch_im_in_r);

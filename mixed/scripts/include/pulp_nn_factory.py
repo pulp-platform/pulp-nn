@@ -116,6 +116,8 @@ class PULPNNGoldenModel(PULPNNFactory):
             self.golden = linear_mixed_tests_generator(self.layer, self.kernel)
         elif self.kernel.type == 'maxpool' or self.kernel.type == 'avgpool': 
             self.golden = pooling_mixed_tests_generator(self.layer, self.kernel)
+        elif self.kernel.type == 'add':
+            self.golden = add_mixed_tests_generator(self.layer, self.kernel)
         return Template(filename="templates/golden_x_y_z.t").render(config=self)
 
 class PULPNNMakefile(PULPNNFactory):
@@ -270,6 +272,22 @@ class PULPNNAvgPool(PULPNNFactory):
 
     def generate_code(self):
         return Template(filename="templates/pulp_nn_avgpool_x.t").render(config=self)
+
+class PULPNNAdd(PULPNNFactory):
+    def __init__(self, kernel, layer):
+        super().__init__(kernel, layer)
+        self.in1_data_t = kernel.in_data_t
+        self.in2_data_t = kernel.out_data_t
+        self.fn_name = "pulp_nn_add_u{0}_u{1}".format(str(self.in1_data_t), str(self.in2_data_t))
+        self.filename = self.fn_name + ".c"
+        self.api = self.__class__.__name__
+        self.unpack_in1_fn = "pulp_nn_u{0}_to_u{1}_r".format(str(self.in1_data_t), '8')
+        self.unpack_in2_fn = "pulp_nn_u{0}_to_u{1}_r".format(str(self.in2_data_t), '8')
+        self.max_precision = max([self.in1_data_t, self.in2_data_t])
+        self.add_fn = "pulp_nn_add_quant_u{0}".format(str(self.max_precision))
+
+    def generate_code(self):
+        return Template(filename="templates/pulp_nn_add_x_y.t").render(config=self)
 
 ###################################################################################### Model Factory ################################################
 
@@ -758,12 +776,38 @@ def pooling_mixed_tests_generator(layer, kernel):
     # Setting input activations
     x = torch.Tensor(1,layer.ch_in,layer.dim_in_y,layer.dim_in_x).random_(0,(2**(kernel.in_data_t) - 1))
     # Setting the network
-    net = nn.MaxPool3d((1,2,2),(1,2,2)) if kernel.type=='maxpool' else nn.AvgPool3d()
+    net = nn.MaxPool2d(layer.pool_kernel, layer.pool_stride) if kernel.type=='maxpool' else nn.AvgPool2d(layer.pool_kernel, layer.pool_stride)
 
     # Running the network
     y = net(x)
 
     str_out = str_tensor(x, 'IN_INT'+ str(kernel.in_data_t))
     str_out += str_tensor(torch.Tensor(y), 'OUT_INT' + str(kernel.in_data_t))
+
+    return str_out
+
+def add_mixed_tests_generator(layer, kernel):
+    print("Add Mixed Test Generator (type: " + str(kernel.type) + ")")
+    torch.manual_seed(5)
+    random.seed(5)
+    # Setting input activations
+    x1 = torch.Tensor(1,layer.ch_in,layer.dim_in_y,layer.dim_in_x).random_(0,(2**(kernel.in_data_t) - 1))
+    x2 = torch.Tensor(1,layer.ch_in,layer.dim_in_y,layer.dim_in_x).random_(0,(2**(kernel.out_data_t) - 1))
+
+    # Setting scaling parameters
+    m1 = 5
+    m2 = 5
+    out_shift = 3
+
+    # Running the network
+    y = clip8(((x1 * m1)+(x2 * m2)) >> out_shift, kernel.in_data_t if kernel.in_data_t > kernel.out_data_t else kernel.out_data_t)
+
+    str_out = '#define OUT_MULT1 ' + str(m1) +'\n'
+    str_out += '#define OUT_MULT2 ' + str(m2) +'\n'
+    str_out += '#define OUT_SHIFT '+ str(out_shift) +'\n'   
+
+    str_out += str_tensor(x1, 'IN1_INT'+ str(kernel.in_data_t))
+    str_out += str_tensor(x2, 'IN2_INT'+ str(kernel.out_data_t))
+    str_out += str_tensor(torch.Tensor(y), 'OUT_INT' + str(kernel.in_data_t if kernel.in_data_t > kernel.out_data_t else kernel.out_data_t))
 
     return str_out  

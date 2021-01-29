@@ -3188,6 +3188,78 @@ void pulp_nn_avgpool_u2(
 	uint8_t * Im_out,
 	unsigned int * memory_chan);
 
+void pulp_nn_add_u8_u8(
+	uint8_t * Im_in_1,    
+	uint8_t * Im_in_2,    
+	uint16_t  ch_im_in,   
+	uint16_t  dim_im_in_h,
+	uint16_t  dim_im_in_w,
+	uint8_t * Im_out,     
+	uint16_t out_mult1,   
+	uint16_t out_mult2,   
+	uint16_t out_shift    
+);
+
+void pulp_nn_add_u8_u4(
+	uint8_t * Im_in_1,    
+	uint8_t * Im_in_2,    
+	uint16_t  ch_im_in,   
+	uint16_t  dim_im_in_h,
+	uint16_t  dim_im_in_w,
+	uint8_t * Im_out,     
+	uint16_t out_mult1,   
+	uint16_t out_mult2,   
+	uint16_t out_shift    
+);
+
+void pulp_nn_add_u8_u2(
+	uint8_t * Im_in_1,    
+	uint8_t * Im_in_2,    
+	uint16_t  ch_im_in,   
+	uint16_t  dim_im_in_h,
+	uint16_t  dim_im_in_w,
+	uint8_t * Im_out,     
+	uint16_t out_mult1,   
+	uint16_t out_mult2,   
+	uint16_t out_shift    
+);
+
+void pulp_nn_add_u4_u4(
+	uint8_t * Im_in_1,    
+	uint8_t * Im_in_2,    
+	uint16_t  ch_im_in,   
+	uint16_t  dim_im_in_h,
+	uint16_t  dim_im_in_w,
+	uint8_t * Im_out,     
+	uint16_t out_mult1,   
+	uint16_t out_mult2,   
+	uint16_t out_shift    
+);
+
+void pulp_nn_add_u4_u2(
+	uint8_t * Im_in_1,    
+	uint8_t * Im_in_2,    
+	uint16_t  ch_im_in,   
+	uint16_t  dim_im_in_h,
+	uint16_t  dim_im_in_w,
+	uint8_t * Im_out,     
+	uint16_t out_mult1,   
+	uint16_t out_mult2,   
+	uint16_t out_shift    
+);
+
+void pulp_nn_add_u2_u2(
+	uint8_t * Im_in_1,    
+	uint8_t * Im_in_2,    
+	uint16_t  ch_im_in,   
+	uint16_t  dim_im_in_h,
+	uint16_t  dim_im_in_w,
+	uint8_t * Im_out,     
+	uint16_t out_mult1,   
+	uint16_t out_mult2,   
+	uint16_t out_shift    
+);
+
 
 
 #endif

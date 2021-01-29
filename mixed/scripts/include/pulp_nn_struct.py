@@ -21,10 +21,10 @@ import errno
 import os
 import shutil
 
-PULPNNInstallPath = cwd = os.getcwd() + "/../"
+PULPNNInstallPath = os.getcwd() + "/../"
 PULPNNSrcDirs = {'script': PULPNNInstallPath + "scripts/"}
-PULPNNInstallPath32bit = cwd = os.getcwd() + "/../32bit/" 
-PULPNNInstallPath64bit = cwd = os.getcwd() + "/../64bit/"
+PULPNNInstallPath32bit = os.getcwd() + "/../32bit/" 
+PULPNNInstallPath64bit = os.getcwd() + "/../64bit/"
 PULPNNTestFolder32bit = PULPNNInstallPath32bit + "test/"
 PULPNNTestFolder64bit = PULPNNInstallPath64bit + "test/"
 PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
@@ -39,6 +39,7 @@ PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
                 'pooling': PULPNNInstallPath32bit + "src/Pooling/",
                 'maxpool': PULPNNInstallPath32bit + "src/Pooling/MaxPool/",
                 'avgpool': PULPNNInstallPath32bit + "src/Pooling/AvgPool/",
+                'add': PULPNNInstallPath32bit + "src/Add/",
                 'pulp_nn_include': PULPNNTestFolder32bit + "include/",
                 'pulp_nn_src': PULPNNTestFolder32bit + "src/",
                 'pulp_nn_convolution': PULPNNTestFolder32bit + "src/Convolution/",
@@ -49,6 +50,7 @@ PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
                 'pulp_nn_linear_q': PULPNNTestFolder32bit + "src/LinearQuant/",
                 'pulp_nn_maxpool': PULPNNTestFolder32bit + "src/Pooling/MaxPool/",
                 'pulp_nn_avgpool': PULPNNTestFolder32bit + "src/Pooling/AvgPool/",
+                'pulp_nn_add': PULPNNTestFolder32bit + "src/Add/",
                 'pulp_nn_support_function': PULPNNTestFolder32bit + "src/SupportFunctions/",
                 'data_allocation_matm': PULPNNTestFolder32bit + "include/DataAllocationMatMul/",
                 'data_allocation_conv': PULPNNTestFolder32bit + "include/DataAllocationConvolution/",
@@ -58,6 +60,7 @@ PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
                 'data_allocation_ln_q': PULPNNTestFolder32bit + "include/DataAllocationLinearQuant/",
                 'data_allocation_maxp': PULPNNTestFolder32bit + "include/DataAllocationMaxPool/",
                 'data_allocation_avgp': PULPNNTestFolder32bit + "include/DataAllocationAvgPool/",
+                'data_allocation_add': PULPNNTestFolder32bit + "include/DataAllocationAdd/",
                 'golden_model_matm': PULPNNTestFolder32bit + "include/GoldenModelMatMul/",
                 'golden_model_conv': PULPNNTestFolder32bit + "include/GoldenModelConvolution/",
                 'golden_model_pw': PULPNNTestFolder32bit + "include/GoldenModelPointwise/",
@@ -66,6 +69,7 @@ PULPNNSrcDirs32bit = {'src': PULPNNInstallPath32bit + "src/",
                 'golden_model_ln_q': PULPNNTestFolder32bit + "include/GoldenModelLinearQuant/",
                 'golden_model_maxp': PULPNNTestFolder32bit + "include/GoldenModelMaxPool/",
                 'golden_model_avgp': PULPNNTestFolder32bit + "include/GoldenModelAvgPool/",
+                'golden_model_add': PULPNNTestFolder32bit + "include/GoldenModelAdd/",
                 'test': PULPNNTestFolder32bit}
 PULPNNSrcDirs64bit = {'src': PULPNNInstallPath64bit + "src/",
                 'inc': PULPNNInstallPath64bit + "include/",
@@ -79,6 +83,7 @@ PULPNNSrcDirs64bit = {'src': PULPNNInstallPath64bit + "src/",
                 'pooling': PULPNNInstallPath64bit + "src/Pooling/",
                 'maxpool': PULPNNInstallPath64bit + "src/Pooling/MaxPool/",
                 'avgpool': PULPNNInstallPath64bit + "src/Pooling/AvgPool/",
+                'add': PULPNNInstallPath64bit + "src/Add/",
                 'pulp_nn_include': PULPNNTestFolder64bit + "include/",
                 'pulp_nn_src': PULPNNTestFolder64bit + "src/",
                 'pulp_nn_convolution': PULPNNTestFolder64bit + "src/Convolution/",
@@ -89,6 +94,7 @@ PULPNNSrcDirs64bit = {'src': PULPNNInstallPath64bit + "src/",
                 'pulp_nn_linear_q': PULPNNTestFolder64bit + "src/LinearQuant/",
                 'pulp_nn_maxpool': PULPNNTestFolder64bit + "src/Pooling/MaxPool/",
                 'pulp_nn_avgpool': PULPNNTestFolder64bit + "src/Pooling/AvgPool/",
+                'pulp_nn_add': PULPNNTestFolder64bit + "src/Add/",
                 'pulp_nn_support_function': PULPNNTestFolder64bit + "src/SupportFunctions/",
                 'data_allocation_matm': PULPNNTestFolder64bit + "include/DataAllocationMatMul/",
                 'data_allocation_conv': PULPNNTestFolder64bit + "include/DataAllocationConvolution/",
@@ -97,8 +103,9 @@ PULPNNSrcDirs64bit = {'src': PULPNNInstallPath64bit + "src/",
                 'data_allocation_ln_nq': PULPNNTestFolder64bit + "include/DataAllocationLinearNoQuant/",
                 'data_allocation_ln_q': PULPNNTestFolder64bit + "include/DataAllocationLinearQuant/",
                 'data_allocation_maxp': PULPNNTestFolder64bit + "include/DataAllocationMaxPool/",
+                'data_allocation_avgp': PULPNNTestFolder64bit + "include/DataAllocationAvgPool/",
+                'data_allocation_add': PULPNNTestFolder64bit + "include/DataAllocationAdd/",
                 'golden_model_matm': PULPNNTestFolder64bit + "include/GoldenModelMatMul/",
-                'golden_model_conv': PULPNNTestFolder64bit + "include/GoldenModelConvolution/",
                 'golden_model_conv': PULPNNTestFolder64bit + "include/GoldenModelConvolution/",
                 'golden_model_pw': PULPNNTestFolder64bit + "include/GoldenModelPointwise/",
                 'golden_model_dw': PULPNNTestFolder64bit + "include/GoldenModelDepthwise/",
@@ -106,6 +113,7 @@ PULPNNSrcDirs64bit = {'src': PULPNNInstallPath64bit + "src/",
                 'golden_model_ln_q': PULPNNTestFolder64bit + "include/GoldenModelLinearQuant/",
                 'golden_model_maxp': PULPNNTestFolder64bit + "include/GoldenModelMaxPool/",
                 'golden_model_avgp': PULPNNTestFolder64bit + "include/GoldenModelAvgPool/",
+                'golden_model_add': PULPNNTestFolder64bit + "include/GoldenModelAdd/",
                 'test': PULPNNTestFolder64bit}
 
 def mkdir_p(path):
@@ -132,6 +140,7 @@ def mkdir_src(act_prec):
         mkdir_p(PULPNNSrcDirs32bit['pooling'])
         mkdir_p(PULPNNSrcDirs32bit['maxpool'])
         mkdir_p(PULPNNSrcDirs32bit['avgpool'])
+        mkdir_p(PULPNNSrcDirs32bit['add'])
 
     elif act_prec == '64bit':
         mkdir_p(PULPNNSrcDirs64bit['src'])
@@ -145,10 +154,12 @@ def mkdir_src(act_prec):
         mkdir_p(PULPNNSrcDirs64bit['support_function'])
         mkdir_p(PULPNNSrcDirs64bit['pooling'])
         mkdir_p(PULPNNSrcDirs64bit['maxpool'])
-        mkdir_p(PULPNNSrcDirs64bit['avgpool']) 
+        mkdir_p(PULPNNSrcDirs64bit['avgpool'])
+        mkdir_p(PULPNNSrcDirs64bit['add'])
 
 def mkdir_test(kernel, act_prec):
     if act_prec == '32bit':
+        mkdir_p(PULPNNTestFolder32bit)
         mkdir_p(PULPNNSrcDirs32bit['pulp_nn_src'])
         mkdir_p(PULPNNSrcDirs32bit['pulp_nn_support_function'])
         mkdir_p(PULPNNSrcDirs32bit['pulp_nn_include'])
@@ -186,6 +197,10 @@ def mkdir_test(kernel, act_prec):
             mkdir_p(PULPNNSrcDirs32bit['pulp_nn_avgpool'])
             mkdir_p(PULPNNSrcDirs32bit['data_allocation_avgp'])
             mkdir_p(PULPNNSrcDirs32bit['golden_model_avgp'])
+        elif kernel=='add':
+            mkdir_p(PULPNNSrcDirs32bit['pulp_nn_add'])
+            mkdir_p(PULPNNSrcDirs32bit['data_allocation_add'])
+            mkdir_p(PULPNNSrcDirs32bit['golden_model_add'])
 
         try:
             os.remove(PULPNNInstallPath32bit + "Makefile")
@@ -193,6 +208,7 @@ def mkdir_test(kernel, act_prec):
             if exc.errno == errno.ENOENT:
                 pass
     elif act_prec == '64bit':
+        mkdir_p(PULPNNTestFolder64bit)
         mkdir_p(PULPNNSrcDirs64bit['pulp_nn_src'])
         mkdir_p(PULPNNSrcDirs64bit['pulp_nn_support_function'])
         mkdir_p(PULPNNSrcDirs64bit['pulp_nn_include'])
@@ -230,6 +246,10 @@ def mkdir_test(kernel, act_prec):
             mkdir_p(PULPNNSrcDirs64bit['pulp_nn_avgpool'])
             mkdir_p(PULPNNSrcDirs64bit['data_allocation_avgp'])
             mkdir_p(PULPNNSrcDirs64bit['golden_model_avgp'])
+        elif kernel=='add':
+            mkdir_p(PULPNNSrcDirs64bit['pulp_nn_add'])
+            mkdir_p(PULPNNSrcDirs64bit['data_allocation_add'])
+            mkdir_p(PULPNNSrcDirs64bit['golden_model_add'])
 
         try:
             os.remove(PULPNNInstallPath64bit + "Makefile")

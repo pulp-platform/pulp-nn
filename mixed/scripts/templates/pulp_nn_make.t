@@ -14,4 +14,6 @@ APP_SRCS += src/LinearQuant/${config.filename}
 APP_SRCS += src/Pooling/MaxPool/${config.filename}
 %elif config.api == "PULPNNAvgPool":
 APP_SRCS += src/Pooling/AvgPool/${config.filename}
+%elif config.api == "PULPNNAdd":
+APP_SRCS += src/Add/${config.filename}
 %endif

@@ -84,7 +84,7 @@ void __attribute__ ((noinline))  ${config.fn_name}(
       for (int i = 0; i< ch_im_in_r; i++) target[i] = win_start[i];
 
       /* start the avg operation (comparison) */
-      win_start += ch_im_in;
+      win_start += ch_im_in_r;
       for (; win_start < win_stop; win_start += ch_im_in_r)
       {
         ${config.comp_and_avg_fn}(target, win_start, ch_im_in_r);
