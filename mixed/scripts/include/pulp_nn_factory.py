@@ -770,7 +770,7 @@ def linear_mixed_tests_generator(layer, kernel):
     return str_out
 
 def pooling_mixed_tests_generator(layer, kernel):
-    print("Pooling Mixed Test Generator (type: " + str(kernel.type) + ", bn: " + str(layer.bn) + ", relu: " + str(layer.relu) + ", quant: " + str(kernel.quantization) + ")")
+    print("Pooling Mixed Test Generator (type: " + str(kernel.type) + ")")
     torch.manual_seed(5)
     random.seed(5)
     # Setting input activations

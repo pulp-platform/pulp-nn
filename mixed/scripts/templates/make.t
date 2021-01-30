@@ -26,8 +26,12 @@ else
 kernel = $(kernel)
 endif
 
-ifeq ($(verbose), 1)
-APP_CFLAGS += -DVERBOSE
+ifeq ($(perf), 1)
+APP_CFLAGS += -DVERBOSE_PERF
+endif
+
+ifeq ($(check), 1)
+APP_CFLAGS += -DVERBOSE_CHECK
 endif
 
 APP_CFLAGS += -O3 -Iinclude -w #-flto

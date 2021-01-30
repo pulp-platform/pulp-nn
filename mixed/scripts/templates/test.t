@@ -22,6 +22,9 @@
 #include "pulp_nn_kernels.h"
 
 #define bitins(dst,not_mask_imm,src,mask_imm,off) __builtin_pulp_binsert(dst,not_mask_imm,src,mask_imm,off)
+%if config.kernel.type == 'avgpool':
+#define bitextu(x,size,off) __builtin_pulp_bextractu(x,size,off)
+%endif
 
 #define CHECK
 
@@ -58,7 +61,7 @@ void test()
   if(pi_core_id()==0)
   {
 #ifdef PERFORMANCE
-#ifdef VERBOSE
+#ifdef VERBOSE_PERF
 %if config.kernel.type == 'depthwise':
     printf("MACs=%d\n", DIM_KERNEL_X * DIM_KERNEL_Y * DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT);
 %elif config.kernel.type == 'convolution' or config.kernel.type == 'pointwise':
@@ -282,8 +285,9 @@ void test()
 %endif
   }
   pi_cl_team_barrier(0);
+
 #ifdef PERFORMANCE
-#ifdef VERBOSE
+#ifdef VERBOSE_PERF
 for (int k=0; k < 13; k++)
 {
   if ( (k>=3))
@@ -308,13 +312,12 @@ for (int k=0; k < 13; k++)
   pi_perf_stop();                       
   pi_perf_start(); 
 #endif /* VERBOSE */
-  pi_cl_team_barrier(0);
 #endif /* PERFORMANCE */
 
 ${config.call}
 
 #ifdef PERFORMANCE
-#ifdef VERBOSE
+#ifdef VERBOSE_PERF
   if( (k>=3 ))
   {
     pi_perf_stop();      
@@ -370,7 +373,7 @@ ${config.call}
     {
       if(OUT_L1[i] != OUT_L2[i])
       {
-#ifdef VERBOSE
+#ifdef VERBOSE_CHECK
         printf("error at index %d, %d instead of %d\n", i, OUT_L1[i], OUT_L2[i]);
 #endif /* VERBOSE */
         errors++;
@@ -406,7 +409,7 @@ ${config.call}
 #endif /* OUTPUT */
       if(OUT_L2[i] != OUT_INT8_L2[i])
       {
-#ifdef VERBOSE
+#ifdef VERBOSE_CHECK
         printf("error at index %d, %d instead of %d\n", i, OUT_L2[i], OUT_INT8_L2[i]);
 #endif /* VERBOSE */
         errors++;
@@ -440,19 +443,32 @@ ${config.call}
     for (int i=0; i<(DIM_IM_OUT_X * DIM_IM_OUT_Y * CH_IM_OUT); i++)
     {
 #endif /* OUTPUT */
-%if config.kernel.type == 'avgpool':
-      if(OUT_L2[i] > OUT_INT8_L2[i] + 1 || OUT_L2[i] < OUT_INT8_L2[i] - 1)
-%else:
       if(OUT_L2[i] != OUT_INT8_L2[i])
-%endif
       {
-#ifdef VERBOSE
+%if config.kernel.type == 'maxpool':
+#if defined(VERBOSE_CHECK) && defined(VERBOSE_PERF)
+#else
+#ifdef VERBOSE_CHECK
+        printf("error at index %d, %d instead of %d\n", i, OUT_L2[i], OUT_INT8_L2[i]);
+#endif
+#endif /* VERBOSE */
+%elif config.kernel.type == 'avgpool':
+
+%else:
+#ifdef VERBOSE_CHECK
         printf("error at index %d, %d instead of %d\n", i, OUT_L2[i], OUT_INT8_L2[i]);
 #endif /* VERBOSE */
+%endif
         errors++;
       }
     }
+%if config.kernel.type == 'maxpool':
+    printf("errors: %d\nNOTE: Errors detection may not work if you have used perf=1. Pooling kernels overwrites the inputs located in L1\n", errors);
+%elif config.kernel.type == 'avgpool':
+    printf("Errors detection must be done inside the kernel, before output compression\n");
+%else:
     printf("errors: %d\n", errors);
+%endif
 %endif
   }
   pi_cl_team_barrier(0);
