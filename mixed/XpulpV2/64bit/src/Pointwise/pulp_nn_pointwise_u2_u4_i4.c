@@ -151,7 +151,7 @@ void pulp_nn_pointwise_u2_u4_i4(
 
           pB+=4;
 
-          pulp_nn_i4_to_i8(pA,inA);
+          pA = pulp_nn_i4_to_i8(pA,inA);
 
           sum = SumDotp(inB, inA[0], sum);
 
@@ -160,7 +160,7 @@ void pulp_nn_pointwise_u2_u4_i4(
           sum = SumDotp(inB, inA[1], sum);
 
           pB+=4;
-          pA+=4;
+          //pA+=4;
         }
         col_cnt_im2col = (ch_in * dim_kernel_y * dim_kernel_x) & 0x7;
         while (col_cnt_im2col)

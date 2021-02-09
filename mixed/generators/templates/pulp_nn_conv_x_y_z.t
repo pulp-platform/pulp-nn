@@ -298,7 +298,7 @@ void ${config.fn_name}(
 
           pB+=4;
 
-          ${config.unpack_fn}(pA,inA);
+          pA = ${config.unpack_fn}(pA,inA);
 
           sum = SumDotp(inB, inA[0], sum);
 
@@ -320,13 +320,13 @@ void ${config.fn_name}(
 
           sum = SumDotp(inB, inA[3], sum);
 
-          pA+=4;
+          //pA+=4;
   %elif config.kernel.wt_data_t == 4:
           inB = *((v4u*) pB);
 
           pB+=4;
 
-          ${config.unpack_fn}(pA,inA);
+          pA = ${config.unpack_fn}(pA,inA);
 
           sum = SumDotp(inB, inA[0], sum);
 
@@ -335,7 +335,7 @@ void ${config.fn_name}(
           sum = SumDotp(inB, inA[1], sum);
 
           pB+=4;
-          pA+=4;
+          //pA+=4;
   %else:
           v4s inA = *((v4s*) pA);
           v4u inB = *((v4u*) pB);

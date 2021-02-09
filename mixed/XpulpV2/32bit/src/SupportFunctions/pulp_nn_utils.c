@@ -20,12 +20,16 @@
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
 
-#define bitext(x,size,off) __builtin_pulp_bextract(x,size,off)
-#define bitextu(x,size,off) __builtin_pulp_bextractu(x,size,off)
-#define bitins(dst,not_mask_imm,src,mask_imm,off) __builtin_pulp_binsert(dst,not_mask_imm,src,mask_imm,off)
-#define pack(x,y,z,t)      __builtin_pulp_pack4(x,y,z,t)
-#define max4(a,b)  		    __builtin_pulp_maxu4(a,b)
-#define avg4(a,b)         __builtin_pulp_avgu4(a,b)
+#define bitext(x,size,off)                            __builtin_pulp_bextract(x,size,off)
+#define bitextu(x,size,off)                           __builtin_pulp_bextractu(x,size,off)
+#define bitins(dst,not_mask_imm,src,mask_imm,off)     __builtin_pulp_binsert(dst,not_mask_imm,src,mask_imm,off)
+#define pack(x,y,z,t)                                 __builtin_pulp_pack4(x,y,z,t)
+#define max4(a,b)  		                                __builtin_pulp_maxu4(a,b)
+#define max8(a,b)                                     __builtin_pulp_maxu8(a,b)
+#define max16(a,b)                                    __builtin_pulp_maxu16(a,b)
+#define avg4(a,b)                                     __builtin_pulp_avgu4(a,b)
+#define avg8(a,b)                                     __builtin_pulp_avgu8(a,b)
+#define avg16(a,b)                                    __builtin_pulp_avgu16(a,b)
 
 uint8_t __attribute__((always_inline)) pulp_nn_bn_quant_u8 (
   int32_t phi,
@@ -194,10 +198,75 @@ v4u __attribute__((always_inline))pulp_nn_u2_to_u8_r(uint8_t *pSrc)
 	return res;
 }
 
-void __attribute__((always_inline))pulp_nn_i4_to_i8( int8_t *pSrc, int8_t *pDst)
+v4s __attribute__((always_inline))pulp_nn_i2_to_i4_r(int8_t *pSrc)
+{
+  int8_t mask = 0xf0;
+  int8_t n_mask = ~ mask;
+  int8_t off = 0x04;
+
+  v4s Src = *((v4s*) pSrc);
+  int8_t bext1, bext2, bext3, bext4;
+  int8_t out1, out2, out3, out4;
+
+  bext1 = (int8_t) bitextu((int) Src, 2, 0);
+  bext2 = (int8_t) bitextu((int) Src, 2, 2);
+  bext3 = (int8_t) bitextu((int) Src, 2, 4);
+  bext4 = (int8_t) bitextu((int) Src, 2, 6);
+
+  out1 = bitins(bext1, n_mask, bext2, mask, off);
+  out2 = bitins(bext3, n_mask, bext4, mask, off);
+
+  bext1 = (int8_t) bitextu((int) Src, 2, 8);
+  bext2 = (int8_t) bitextu((int) Src, 2, 10);
+  bext3 = (int8_t) bitextu((int) Src, 2, 12);
+  bext4 = (int8_t) bitextu((int) Src, 2, 16);
+
+  out3 = bitins(bext1, n_mask, bext2, mask, off);
+  out4 = bitins(bext3, n_mask, bext4, mask, off);
+
+  v4s res = pack((int8_t) out1, (int8_t) out2, (int8_t) out3, (int8_t) out4);
+
+  return res;
+}
+
+v4u __attribute__((always_inline))pulp_nn_u2_to_u4_r(uint8_t *pSrc)
+{
+  int8_t mask = 0xf0;
+  int8_t n_mask = ~ mask;
+  int8_t off = 0x04;
+
+  v4u Src = *((v4u*) pSrc);
+  uint8_t bext1, bext2, bext3, bext4;
+  uint8_t out1, out2, out3, out4;
+
+  bext1 = (uint8_t) bitextu((unsigned int) Src, 2, 0);
+  bext2 = (uint8_t) bitextu((unsigned int) Src, 2, 2);
+  bext3 = (uint8_t) bitextu((unsigned int) Src, 2, 4);
+  bext4 = (uint8_t) bitextu((unsigned int) Src, 2, 6);
+
+  out1 = bitins(bext1, n_mask, bext2, mask, off);
+  out2 = bitins(bext3, n_mask, bext4, mask, off);
+
+  bext1 = (uint8_t) bitextu((unsigned int) Src, 2, 8);
+  bext2 = (uint8_t) bitextu((unsigned int) Src, 2, 10);
+  bext3 = (uint8_t) bitextu((unsigned int) Src, 2, 12);
+  bext4 = (uint8_t) bitextu((unsigned int) Src, 2, 16);
+
+  out3 = bitins(bext1, n_mask, bext2, mask, off);
+  out4 = bitins(bext3, n_mask, bext4, mask, off);
+
+  v4u res = pack((uint8_t) out1, (uint8_t) out2, (uint8_t) out3, (uint8_t) out4);
+
+  return res;
+}
+
+int8_t *__attribute__((always_inline))pulp_nn_i4_to_i8( int8_t *pSrc, int8_t *pDst)
 {
 	v4s Src = *((v4s*) pSrc);
 	int8_t bext1, bext2, bext3, bext4;
+
+  pSrc+=4;
+
 	bext1 = (int8_t) bitext((int) Src, 4, 0);
 	bext2 = (int8_t) bitext((int) Src, 4, 4);
 	bext3 = (int8_t) bitext((int) Src, 4, 8);
@@ -210,12 +279,17 @@ void __attribute__((always_inline))pulp_nn_i4_to_i8( int8_t *pSrc, int8_t *pDst)
 	bext3 = (int8_t) bitext((int) Src, 4, 24);
 	bext4 = (int8_t) bitext((int) Src, 4, 28);
 	*((v4s*)pDst) = pack((int8_t) bext1, (int8_t) bext2, (int8_t) bext3, (int8_t) bext4);
+
+  return pSrc;
 }
 
-void __attribute__((always_inline))pulp_nn_u4_to_u8(uint8_t *pSrc, uint8_t *pDst)
+uint8_t *__attribute__((always_inline))pulp_nn_u4_to_u8(uint8_t *pSrc, uint8_t *pDst)
 {
 	v4u Src = *((v4u*) pSrc);
 	uint8_t bext1, bext2, bext3, bext4;
+
+  pSrc+=4;
+
 	bext1 = (uint8_t) bitextu((unsigned int) Src, 4, 0);
 	bext2 = (uint8_t) bitextu((unsigned int) Src, 4, 4);
 	bext3 = (uint8_t) bitextu((unsigned int) Src, 4, 8);
@@ -228,12 +302,17 @@ void __attribute__((always_inline))pulp_nn_u4_to_u8(uint8_t *pSrc, uint8_t *pDst
 	bext3 = (uint8_t) bitextu((unsigned int) Src, 4, 24);
 	bext4 = (uint8_t) bitextu((unsigned int) Src, 4, 28);
 	*((v4u*)pDst) = pack((uint8_t) bext1, (uint8_t) bext2, (uint8_t) bext3, (uint8_t) bext4);
+
+  return pSrc;
 }
 
-void __attribute__((always_inline))pulp_nn_i2_to_i8( int8_t * pSrc, int8_t * pDst)
+int8_t *__attribute__((always_inline))pulp_nn_i2_to_i8( int8_t * pSrc, int8_t * pDst)
 {
 	v4s Src = *((v4s*) pSrc);
 	int8_t bext1, bext2, bext3, bext4;
+
+  pSrc+=4;
+
 	bext1 = (int8_t) bitext((int) Src, 2, 0);
 	bext2 = (int8_t) bitext((int) Src, 2, 2);
 	bext3 = (int8_t) bitext((int) Src, 2, 4);
@@ -260,12 +339,17 @@ void __attribute__((always_inline))pulp_nn_i2_to_i8( int8_t * pSrc, int8_t * pDs
 	bext3 = (int8_t) bitext((int) Src, 2, 28);
 	bext4 = (int8_t) bitext((int) Src, 2, 30);
 	*((v4s*)pDst) = pack((int8_t) bext1, (int8_t) bext2, (int8_t) bext3, (int8_t) bext4);
+
+  return pSrc;
 }
 
-void __attribute__((always_inline))pulp_nn_u2_to_u8(uint8_t * pSrc, uint8_t * pDst)
+uint8_t *__attribute__((always_inline))pulp_nn_u2_to_u8(uint8_t * pSrc, uint8_t * pDst)
 {
 	v4u Src = *((v4u*) pSrc);
 	uint8_t bext1, bext2, bext3, bext4;
+
+  pSrc+=4;
+
 	bext1 = (uint8_t) bitextu((unsigned int) Src, 2, 0);
 	bext2 = (uint8_t) bitextu((unsigned int) Src, 2, 2);
 	bext3 = (uint8_t) bitextu((unsigned int) Src, 2, 4);
@@ -292,6 +376,118 @@ void __attribute__((always_inline))pulp_nn_u2_to_u8(uint8_t * pSrc, uint8_t * pD
 	bext3 = (uint8_t) bitextu((unsigned int) Src, 2, 28);
 	bext4 = (uint8_t) bitextu((unsigned int) Src, 2, 30);
 	*((v4u*)pDst) = pack((uint8_t) bext1, (uint8_t) bext2, (uint8_t) bext3, (uint8_t) bext4);
+
+  return pSrc;
+}
+
+int8_t *__attribute__((always_inline))pulp_nn_i2_to_i4( int8_t * pSrc, int8_t * pDst)
+{
+  int8_t mask = 0xf0;
+  int8_t n_mask = ~ mask;
+  int8_t off = 0x04;
+
+  v4s Src = *((v4s*) pSrc);
+  int8_t bext1, bext2, bext3, bext4;
+  int8_t out1, out2, out3, out4;
+
+  pSrc+=4;
+
+  bext1 = (int8_t) bitext((int) Src, 2, 0);
+  bext2 = (int8_t) bitext((int) Src, 2, 2);
+  bext3 = (int8_t) bitext((int) Src, 2, 4);
+  bext4 = (int8_t) bitext((int) Src, 2, 6);
+
+  out1 = bitins(bext1, n_mask, bext2, mask, off);
+  out2 = bitins(bext3, n_mask, bext4, mask, off);
+  asm volatile(""::: "memory");
+
+  bext1 = (int8_t) bitext((int) Src, 2, 8);
+  bext2 = (int8_t) bitext((int) Src, 2, 10);
+  bext3 = (int8_t) bitext((int) Src, 2, 12);
+  bext4 = (int8_t) bitext((int) Src, 2, 14);
+
+  out3 = bitins(bext1, n_mask, bext2, mask, off);
+  out4 = bitins(bext3, n_mask, bext4, mask, off);
+
+  *((v4s*)pDst) = pack((int8_t) out1, (int8_t) out2, (int8_t) out3, (int8_t) out4);
+  asm volatile(""::: "memory");
+
+  pDst+=4;
+  bext1 = (int8_t) bitext((int) Src, 2, 16);
+  bext2 = (int8_t) bitext((int) Src, 2, 18);
+  bext3 = (int8_t) bitext((int) Src, 2, 20);
+  bext4 = (int8_t) bitext((int) Src, 2, 22);
+
+  out1 = bitins(bext1, n_mask, bext2, mask, off);
+  out2 = bitins(bext3, n_mask, bext4, mask, off);
+  asm volatile(""::: "memory");
+
+  bext1 = (int8_t) bitext((int) Src, 2, 24);
+  bext2 = (int8_t) bitext((int) Src, 2, 26);
+  bext3 = (int8_t) bitext((int) Src, 2, 28);
+  bext4 = (int8_t) bitext((int) Src, 2, 30);
+
+  out3 = bitins(bext1, n_mask, bext2, mask, off);
+  out4 = bitins(bext3, n_mask, bext4, mask, off);
+
+  *((v4s*)pDst) = pack((int8_t) out1, (int8_t) out2, (int8_t) out3, (int8_t) out4);
+
+  return pSrc;
+}
+
+uint8_t *__attribute__((always_inline))pulp_nn_u2_to_u4( uint8_t * pSrc, uint8_t * pDst)
+{
+  int8_t mask = 0xf0;
+  int8_t n_mask = ~ mask;
+  int8_t off = 0x04;
+
+  v4u Src = *((v4u*) pSrc);
+  uint8_t bext1, bext2, bext3, bext4;
+  uint8_t out1, out2, out3, out4;
+
+  pSrc+=4;
+
+  bext1 = (uint8_t) bitext((unsigned int) Src, 2, 0);
+  bext2 = (uint8_t) bitext((unsigned int) Src, 2, 2);
+  bext3 = (uint8_t) bitext((unsigned int) Src, 2, 4);
+  bext4 = (uint8_t) bitext((unsigned int) Src, 2, 6);
+
+  out1 = bitins(bext1, n_mask, bext2, mask, off);
+  out2 = bitins(bext3, n_mask, bext4, mask, off);
+  asm volatile(""::: "memory");
+
+  bext1 = (uint8_t) bitext((unsigned int) Src, 2, 8);
+  bext2 = (uint8_t) bitext((unsigned int) Src, 2, 10);
+  bext3 = (uint8_t) bitext((unsigned int) Src, 2, 12);
+  bext4 = (uint8_t) bitext((unsigned int) Src, 2, 14);
+
+  out3 = bitins(bext1, n_mask, bext2, mask, off);
+  out4 = bitins(bext3, n_mask, bext4, mask, off);
+
+  *((v4u*)pDst) = pack((uint8_t) out1, (uint8_t) out2, (uint8_t) out3, (uint8_t) out4);
+  asm volatile(""::: "memory");
+
+  pDst+=4;
+  bext1 = (uint8_t) bitext((unsigned int) Src, 2, 16);
+  bext2 = (uint8_t) bitext((unsigned int) Src, 2, 18);
+  bext3 = (uint8_t) bitext((unsigned int) Src, 2, 20);
+  bext4 = (uint8_t) bitext((unsigned int) Src, 2, 22);
+
+  out1 = bitins(bext1, n_mask, bext2, mask, off);
+  out2 = bitins(bext3, n_mask, bext4, mask, off);
+  asm volatile(""::: "memory");
+
+  bext1 = (uint8_t) bitext((unsigned int) Src, 2, 24);
+  bext2 = (uint8_t) bitext((unsigned int) Src, 2, 26);
+  bext3 = (uint8_t) bitext((unsigned int) Src, 2, 28);
+  bext4 = (uint8_t) bitext((unsigned int) Src, 2, 30);
+
+  out3 = bitins(bext1, n_mask, bext2, mask, off);
+  out4 = bitins(bext3, n_mask, bext4, mask, off);
+  
+  *((v4u*)pDst) = pack((uint8_t) out1, (uint8_t) out2, (uint8_t) out3, (uint8_t) out4);
+
+  return pSrc;
 }
 
 void __attribute__((always_inline))pulp_zero_mem(uint8_t * pBuffer, unsigned int size)
@@ -337,9 +533,9 @@ void pulp_nn_im2col_u4_to_u8(uint8_t * pInput, uint8_t * pOutput, unsigned int b
 
   for (int i = 0; i<blkCnt; i++)
   {
-    pulp_nn_u4_to_u8(pInput, pOutput);
+    pInput = pulp_nn_u4_to_u8(pInput, pOutput);
     asm volatile("":::"memory");
-    pInput+=4;
+    //pInput+=4;
     pOutput+=8;
   }
   while(lfover)
@@ -360,8 +556,8 @@ void __attribute__((always_inline))pulp_nn_im2col_u2_to_u8(uint8_t * pInput, uin
 
   for(int i = 0; i<blkCnt; i++)
   {
-    pulp_nn_u2_to_u8(pInput, pOutput);
-    pInput+=4;
+    pInput = pulp_nn_u2_to_u8(pInput, pOutput);
+    //pInput+=4;
     pOutput+=16;
   }
   while(lfover)
@@ -484,6 +680,51 @@ void pulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,
   }
 }
 
+void xpulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,
+                                                uint8_t * target,
+                                                uint16_t length)
+{
+  int8_t mask = 0xf0;
+  int8_t n_mask = ~ mask;
+  int8_t off = 0x04;
+
+  uint8_t *pIn = base;
+  uint8_t *pCom = target;
+
+  int cnt = length >> 2;
+
+  while(cnt > 0u)
+  {
+    *((uint32_t *)pIn) = max8((uint32_t *)pIn, (uint32_t *)pCom);
+
+    pIn+=4;
+    pCom+=4;
+
+    cnt--;
+  }
+
+  int left = length & 0x3;
+  while (left>0u)
+  {
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 4, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 4, 4);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 4, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 4, 4);
+
+    if(inA0<inB0)
+      inA0=inB0;
+
+    if(inA1<inB1)
+      inA1=inB1;
+
+    *((uint8_t*)pIn) = bitins(inA0, n_mask, inA1, mask, off);
+
+    pIn++;
+    pCom++;
+    left--;
+  }
+}
+
 void pulp_nn_avg_and_replace_u4(uint8_t * base,
                                   uint8_t * target,
                                   uint16_t length)
@@ -496,6 +737,48 @@ void pulp_nn_avg_and_replace_u4(uint8_t * base,
   uint8_t *pCom = target;
 
   while (length>0u)
+  {
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 4, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 4, 4);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 4, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 4, 4);
+
+    inA0 = ((inA0 + inB0) >> 1);
+    inA1 = ((inA1 + inB1) >> 1);
+
+    *((uint8_t*)pIn) = bitins(inA0, n_mask, inA1, mask, off);
+
+    pIn++;
+    pCom++;
+    length--;
+  }
+}
+
+void xpulp_nn_avg_and_replace_u4(uint8_t * base,
+                                  uint8_t * target,
+                                  uint16_t length)
+{
+  int8_t mask = 0xf0;
+  int8_t n_mask = ~ mask;
+  int8_t off = 0x04;
+
+  uint8_t *pIn = base;
+  uint8_t *pCom = target;
+
+  int cnt = length >> 2;
+
+  while (cnt > 0u)
+  {
+    *((uint32_t *)pIn) = avg8((uint32_t *)pIn, (uint32_t *)pCom);
+
+    pIn+=4;
+    pCom+=4;
+    cnt--;
+  }
+
+  int left = length & 0x3;
+
+  while (left>0u)
   {
     uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 4, 0);
     uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 4, 4);
@@ -597,6 +880,61 @@ void pulp_nn_compare_and_replace_if_larger_u2(uint8_t * base,
   }
 }
 
+void xpulp_nn_compare_and_replace_if_larger_u2(uint8_t * base,
+                                                uint8_t * target,
+                                                uint16_t length)
+{
+  int8_t mask2 = 0x0c;
+  int8_t n_mask2 = ~ mask2;
+  int8_t mask4 = 0x30;
+  int8_t n_mask4 = ~ mask4;
+  int8_t mask6 = 0xc0;
+  int8_t n_mask6 = ~ mask6;
+  int8_t off2 = 2;
+  int8_t off4 = 4;
+  int8_t off6 = 6;
+
+  uint8_t *pIn = base;
+  uint8_t *pCom = target;
+  uint8_t *out;
+
+  int cnt = length >> 2;
+
+  while(cnt > 0u)
+  {
+    *((uint32_t *)out) = max16(pIn, pCom);
+
+    pIn+=4;
+    pCom+=4;
+    cnt--;
+  }
+
+  int left = length & 0x3;
+  while (left>0u)
+  {
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 2, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 2, 2);
+    uint8_t inA2 = (uint8_t) bitextu((unsigned int) *pIn, 2, 4);
+    uint8_t inA3 = (uint8_t) bitextu((unsigned int) *pIn, 2, 6);
+    v4u inA4 = pack((uint8_t) inA0, (uint8_t) inA1, (uint8_t) inA2, (uint8_t) inA3);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 2, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 2, 2);
+    uint8_t inB2 = (uint8_t) bitextu((unsigned int) *pCom, 2, 4);
+    uint8_t inB3 = (uint8_t) bitextu((unsigned int) *pCom, 2, 6);
+    v4u inB4 = pack((uint8_t) inB0, (uint8_t) inB1, (uint8_t) inB2, (uint8_t) inB3);
+
+    *((v4u*)out) = max4(inA4, inB4);
+
+    uint8_t inA = (uint8_t) bitins(*out, n_mask2, *(out + 1), mask2, off2);
+    inA = bitins(inA, n_mask4, *(out + 2), mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, *(out + 3), mask6, off6);
+
+    pIn++;
+    pCom++;
+    left--;
+  }
+}
+
 void pulp_nn_avg_and_replace_u2(uint8_t * base,
                                   uint8_t * target,
                                   uint16_t length)
@@ -638,6 +976,61 @@ void pulp_nn_avg_and_replace_u2(uint8_t * base,
     pIn++;
     pCom++;
     length--;
+  }
+}
+
+void xpulp_nn_avg_and_replace_u2(uint8_t * base,
+                                  uint8_t * target,
+                                  uint16_t length)
+{
+  int8_t mask2 = 0x0c;
+  int8_t n_mask2 = ~ mask2;
+  int8_t mask4 = 0x30;
+  int8_t n_mask4 = ~ mask4;
+  int8_t mask6 = 0xc0;
+  int8_t n_mask6 = ~ mask6;
+  int8_t off2 = 2;
+  int8_t off4 = 4;
+  int8_t off6 = 6;
+
+  uint8_t *pIn = base;
+  uint8_t *pCom = target;
+  uint8_t *out;
+
+  int cnt = length >> 2;
+
+  while(cnt > 0u)
+  {
+    *((uint32_t *)pIn) = avg16((uint32_t *)pIn, (uint32_t *)pCom);
+
+    pIn+=4;
+    pCom+=4;
+    cnt--;
+  }
+
+  int left = length & 0x3;
+  while (left>0u)
+  {
+    uint8_t inA0 = (uint8_t) bitextu((unsigned int) *pIn, 2, 0);
+    uint8_t inA1 = (uint8_t) bitextu((unsigned int) *pIn, 2, 2);
+    uint8_t inA2 = (uint8_t) bitextu((unsigned int) *pIn, 2, 4);
+    uint8_t inA3 = (uint8_t) bitextu((unsigned int) *pIn, 2, 6);
+    v4u inA4 = pack((uint8_t) inA0, (uint8_t) inA1, (uint8_t) inA2, (uint8_t) inA3);
+    uint8_t inB0 = (uint8_t) bitextu((unsigned int) *pCom, 2, 0);
+    uint8_t inB1 = (uint8_t) bitextu((unsigned int) *pCom, 2, 2);
+    uint8_t inB2 = (uint8_t) bitextu((unsigned int) *pCom, 2, 4);
+    uint8_t inB3 = (uint8_t) bitextu((unsigned int) *pCom, 2, 6);
+    v4u inB4 = pack((uint8_t) inB0, (uint8_t) inB1, (uint8_t) inB2, (uint8_t) inB3);
+
+    *((v4u*)out) = avg4(inA4, inB4);
+
+    uint8_t inA = (uint8_t) bitins(*out, n_mask2, *(out + 1), mask2, off2);
+    inA = bitins(inA, n_mask4, *(out + 2), mask4, off4);
+    *((uint8_t*)pIn) = bitins(inA, n_mask6, *(out + 3), mask6, off6);
+
+    pIn++;
+    pCom++;
+    left--;
   }
 }
 

@@ -116,7 +116,7 @@ uint8_t *pulp_nn_matmul_u2_i2(
       pB+=16;
       pB2+=16;
 
-      pulp_nn_i2_to_i8(pA,vecA);
+      pA = pulp_nn_i2_to_i8(pA,vecA);
 
       sum = SumDotp(vecB, vecA[0], sum);
       sum5 = SumDotp(vecB2, vecA[0], sum5);
@@ -127,7 +127,7 @@ uint8_t *pulp_nn_matmul_u2_i2(
       sum = SumDotp(vecB7, vecA[3], sum);
       sum5 = SumDotp(vecB8, vecA[3], sum5);
 
-      pulp_nn_i2_to_i8(pA2,vecA2);
+      pA2 = pulp_nn_i2_to_i8(pA2,vecA2);
 
       sum2 = SumDotp(vecB, vecA2[0], sum2);
       sum6 = SumDotp(vecB2, vecA2[0], sum6);
@@ -138,7 +138,7 @@ uint8_t *pulp_nn_matmul_u2_i2(
       sum2 = SumDotp(vecB7, vecA2[3], sum2);
       sum6 = SumDotp(vecB8, vecA2[3], sum6);
 
-      pulp_nn_i2_to_i8(pA3,vecA3);
+      pA3 = pulp_nn_i2_to_i8(pA3,vecA3);
 
       sum3 = SumDotp(vecB, vecA3[0], sum3);
       sum7 = SumDotp(vecB2, vecA3[0], sum7);
@@ -149,7 +149,7 @@ uint8_t *pulp_nn_matmul_u2_i2(
       sum3 = SumDotp(vecB7, vecA3[3], sum3);
       sum7 = SumDotp(vecB8, vecA3[3], sum7);
 
-      pulp_nn_i2_to_i8(pA4,vecA4);
+      pA4 = pulp_nn_i2_to_i8(pA4,vecA4);
 
       sum4 = SumDotp(vecB, vecA4[0], sum4);
       sum8 = SumDotp(vecB2, vecA4[0], sum8);
@@ -160,10 +160,10 @@ uint8_t *pulp_nn_matmul_u2_i2(
       sum4 = SumDotp(vecB7, vecA4[3], sum4);
       sum8 = SumDotp(vecB8, vecA4[3], sum8);
 
-      pA+=4;
-      pA2+=4;
-      pA3+=4;
-      pA4+=4;
+      // pA+=4;
+      // pA2+=4;
+      // pA3+=4;
+      // pA4+=4;
     }
     uint16_t col_cnt_im2col = num_col_im2col & 0xf;
     while (col_cnt_im2col)

@@ -80,9 +80,9 @@ void pulp_nn_linear_u8_u8_i8(
 		  vecB2 = *((v4s*)pB2);
 		  sum = SumDotp(vecA, vecB, sum);
 		  sum2 = SumDotp(vecA, vecB2, sum2);
-	      pA+=4;
-	      pB+=4;
-	      pB2+=4;
+	      //pA+=4;
+	      //pB+=4;
+	      //pB2+=4;
 		}
     	uint16_t col_cnt = dim_vec & 0x3;
 	    while (col_cnt)
@@ -136,8 +136,8 @@ void pulp_nn_linear_u8_u8_i8(
 		    vecA = *((v4u*)pA);
 		    vecB = *((v4s*)pB);
 		    sum = SumDotp(vecA, vecB, sum);
-		    pA+=4;
-		    pB+=4;
+		    //pA+=4;
+		    //pB+=4;
 		}
     	uint16_t col_cnt = dim_vec & 0x3;
 	    while (col_cnt)

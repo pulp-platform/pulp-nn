@@ -36,17 +36,25 @@ v4s pulp_nn_i4_to_i8_r( int8_t *pSrc);
 
 v4s pulp_nn_i2_to_i8_r( int8_t *pSrc);
 
+v4s pulp_nn_i2_to_i4_r( int8_t *pSrc);
+
 v4u pulp_nn_u4_to_u8_r(uint8_t *pSrc);
 
 v4u pulp_nn_u2_to_u8_r(uint8_t *pSrc);
 
-void pulp_nn_i4_to_i8( int8_t *pSrc, int8_t *pDst);
+v4u pulp_nn_u2_to_u4_r(uint8_t *pSrc);
 
-void pulp_nn_i2_to_i8( int8_t * pSrc, int8_t * pDst);
+int8_t *pulp_nn_i4_to_i8( int8_t *pSrc, int8_t *pDst);
 
-void pulp_nn_u4_to_u8(uint8_t *pSrc, uint8_t *pDst);
+int8_t *pulp_nn_i2_to_i8( int8_t * pSrc, int8_t * pDst);
 
-void pulp_nn_u2_to_u8(uint8_t * pSrc, uint8_t * pDst);
+int8_t *pulp_nn_i2_to_i4( int8_t * pSrc, int8_t * pDst);
+
+uint8_t *pulp_nn_u4_to_u8(uint8_t *pSrc, uint8_t *pDst);
+
+uint8_t *pulp_nn_u2_to_u8(uint8_t * pSrc, uint8_t * pDst);
+
+uint8_t *pulp_nn_u2_to_u4(uint8_t * pSrc, uint8_t * pDst);
 
 void pulp_zero_mem(uint8_t * pBuffer, unsigned int size);
 
@@ -62,11 +70,19 @@ void pulp_nn_avg_and_replace_u8(uint8_t * base,uint8_t * target,uint16_t length)
 
 void pulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,uint8_t * target,uint16_t length);
 
+void xpulp_nn_compare_and_replace_if_larger_u4(uint8_t * base,uint8_t * target,uint16_t length);
+
 void pulp_nn_avg_and_replace_u4(uint8_t * base,uint8_t * target,uint16_t length);
+
+void xpulp_nn_avg_and_replace_u4(uint8_t * base,uint8_t * target,uint16_t length);
 
 void pulp_nn_compare_and_replace_if_larger_u2(uint8_t * base,uint8_t * target,uint16_t length);
 
+void xpulp_nn_compare_and_replace_if_larger_u2(uint8_t * base,uint8_t * target,uint16_t length);
+
 void pulp_nn_avg_and_replace_u2(uint8_t * base,uint8_t * target,uint16_t length);
+
+void xpulp_nn_avg_and_replace_u2(uint8_t * base,uint8_t * target,uint16_t length);
 
 int8_t pulp_nn_i4_quant(int input, int16_t * pThr);
 

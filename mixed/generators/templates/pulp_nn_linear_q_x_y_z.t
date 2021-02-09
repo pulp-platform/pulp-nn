@@ -206,7 +206,7 @@ void ${config.fn_name}(
 		  pA+=4;
 		  vecA[1] = *((v4u*)pA);
 %else:
-		  ${config.unpack_in_fn}(pA,vecA);
+		  pA = ${config.unpack_in_fn}(pA,vecA);
 %endif
 %if config.kernel.wt_data_t == 8:
 		  vecB[0] = *((v4s*)pB);
@@ -228,11 +228,11 @@ void ${config.fn_name}(
 	   	  vecB4[1] = *((v4s*)pB4);
 %endif
 %else:
-		  ${config.unpack_wt_fn}(pB,vecB);
-		  ${config.unpack_wt_fn}(pB2,vecB2);
+		  pB = ${config.unpack_wt_fn}(pB,vecB);
+		  pB2 = ${config.unpack_wt_fn}(pB2,vecB2);
 %if config.kernel.out_data_t == 2:
-		  ${config.unpack_wt_fn}(pB3,vecB3);
-		  ${config.unpack_wt_fn}(pB4,vecB4);
+		  pB3 = ${config.unpack_wt_fn}(pB3,vecB3);
+		  pB4 = ${config.unpack_wt_fn}(pB4,vecB4);
 %endif
 %endif
 		  sum = SumDotp(vecA[0], vecB[0], sum);
@@ -255,11 +255,11 @@ void ${config.fn_name}(
 		  pA+=4;
 		  vecA[3] = *((v4u*)pA);
 %elif config.kernel.in_data_t == 4:
-	      ${config.unpack_in_fn}(pA,vecA);
-	      pA+=4;
-	      ${config.unpack_in_fn}(pA,vecA + 2);
+	      pA = ${config.unpack_in_fn}(pA,vecA);
+	      //pA+=4;
+	      pA = ${config.unpack_in_fn}(pA,vecA + 2);
 %elif config.kernel.in_data_t == 2:
-	      ${config.unpack_in_fn}(pA,vecA);
+	      pA = ${config.unpack_in_fn}(pA,vecA);
 %endif
 %if config.kernel.wt_data_t == 8:
 		  vecB[0] = *((v4s*)pB);
@@ -305,30 +305,30 @@ void ${config.fn_name}(
 	      vecB4[3] = *((v4s*)pB4);
 %endif
 %elif config.kernel.wt_data_t == 4:
-		  ${config.unpack_wt_fn}(pB,vecB);
-	      ${config.unpack_wt_fn}(pB2,vecB2);
+		  pB = ${config.unpack_wt_fn}(pB,vecB);
+	      pB2 = ${config.unpack_wt_fn}(pB2,vecB2);
 %if config.kernel.out_data_t == 2:
-		  ${config.unpack_wt_fn}(pB3,vecB3);
-	      ${config.unpack_wt_fn}(pB4,vecB4);
+		  pB3 = ${config.unpack_wt_fn}(pB3,vecB3);
+	      pB4 = ${config.unpack_wt_fn}(pB4,vecB4);
 %endif
-	      pB+=4;
-		  pB2+=4;
+	      //pB+=4;
+		  //pB2+=4;
 %if config.kernel.out_data_t == 2:
-	      pB3+=4;
-		  pB4+=4;
+	      //pB3+=4;
+		  //pB4+=4;
 %endif
-	      ${config.unpack_wt_fn}(pB,vecB + 2);
-	      ${config.unpack_wt_fn}(pB2,vecB2 + 2);
+	      pB = ${config.unpack_wt_fn}(pB,vecB + 2);
+	      pB2 = ${config.unpack_wt_fn}(pB2,vecB2 + 2);
 %if config.kernel.out_data_t == 2:
-		  ${config.unpack_wt_fn}(pB,vecB3 + 2);
-	      ${config.unpack_wt_fn}(pB2,vecB4 + 2);
+		  pB = ${config.unpack_wt_fn}(pB,vecB3 + 2);
+	      pB2 = ${config.unpack_wt_fn}(pB2,vecB4 + 2);
 %endif
 %elif config.kernel.wt_data_t == 2:
-		  ${config.unpack_wt_fn}(pB,vecB);
-		  ${config.unpack_wt_fn}(pB2,vecB2);
+		  pB = ${config.unpack_wt_fn}(pB,vecB);
+		  pB2 = ${config.unpack_wt_fn}(pB2,vecB2);
 %if config.kernel.out_data_t == 2:
-		  ${config.unpack_wt_fn}(pB3,vecB3);
-		  ${config.unpack_wt_fn}(pB4,vecB4);
+		  pB3 = ${config.unpack_wt_fn}(pB3,vecB3);
+		  pB4 = ${config.unpack_wt_fn}(pB4,vecB4);
 %endif
 %endif
 		  sum = SumDotp(vecA[0], vecB[0], sum);
@@ -350,12 +350,12 @@ void ${config.fn_name}(
 		  sum4 = SumDotp(vecA[3], vecB4[3], sum4);
 %endif
 %endif
-	      pA+=4;
-	      pB+=4;
-	      pB2+=4;
+	      //pA+=4;
+	      //pB+=4;
+	      //pB2+=4;
 %if config.kernel.out_data_t == 2:
-		  pB3+=4;
-	      pB4+=4;
+		  //pB3+=4;
+	      //pB4+=4;
 %endif
 		}
 %if config.less_precision == 2:
@@ -678,14 +678,14 @@ void ${config.fn_name}(
 			pA+=4;
 			vecA[1] = *((v4u*)pA);
 %else:
-		    ${config.unpack_in_fn}(pA,vecA);
+		    pA = ${config.unpack_in_fn}(pA,vecA);
 %endif
 %if config.kernel.wt_data_t == 8:
 		    vecB[0] = *((v4s*)pB);
 		    pB+=4;
 		    vecB[1] = *((v4s*)pB);
 %else:
-		    ${config.unpack_wt_fn}(pB,vecB);
+		    pB = ${config.unpack_wt_fn}(pB,vecB);
 %endif
 		    sum = SumDotp(vecA[0], vecB[0], sum);
 	        sum = SumDotp(vecA[1], vecB[1], sum);
@@ -699,11 +699,11 @@ void ${config.fn_name}(
 		  	pA+=4;
 		  	vecA[3] = *((v4u*)pA);
 %elif config.kernel.in_data_t == 4:
-		    ${config.unpack_in_fn}(pA,vecA);
-		    pA+=4;
-		    ${config.unpack_in_fn}(pA,vecA + 2);
+		    pA = ${config.unpack_in_fn}(pA,vecA);
+		    //pA+=4;
+		    pA = ${config.unpack_in_fn}(pA,vecA + 2);
 %elif config.kernel.in_data_t == 2:
-	    	${config.unpack_in_fn}(pA,vecA);
+	    	pA = ${config.unpack_in_fn}(pA,vecA);
 %if config.kernel.wt_data_t == 8:
 		  	vecB[0] = *((v4s*)pB);
 		  	pB+=4;
@@ -713,11 +713,11 @@ void ${config.fn_name}(
 		  	pB+=4;
 		  	vecB[3] = *((v4s*)pB);
 %elif config.kernel.wt_data_t == 4:
-		  	${config.unpack_wt_fn}(pB,vecB);
-		    pB+=4;
-		    ${config.unpack_wt_fn}(pB,vecB + 2);
+		  	pB = ${config.unpack_wt_fn}(pB,vecB);
+		    //pB+=4;
+		    pB = ${config.unpack_wt_fn}(pB,vecB + 2);
 %elif config.kernel.wt_data_t == 2:
-			${config.unpack_wt_fn}(pB,vecB);
+			pB = ${config.unpack_wt_fn}(pB,vecB);
 %endif
 			sum = SumDotp(vecA[0], vecB[0], sum);
 		    sum = SumDotp(vecA[1], vecB[1], sum);
@@ -725,8 +725,8 @@ void ${config.fn_name}(
 		    sum = SumDotp(vecA[3], vecB[3], sum);
 %endif
 %endif
-		    pA+=4;
-		    pB+=4;
+		    //pA+=4;
+		    //pB+=4;
 		}
 %if config.less_precision == 2:
     	uint16_t col_cnt = dim_vec & 0xf;

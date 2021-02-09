@@ -39,4 +39,11 @@ APP_CFLAGS += -DNUM_CORES=$(cores) -DKERNEL=$(kernel)
 
 APP_LDFLAGS += -lm #-flto
 
+%if config.kernel.extentions == 'XpulpNN':
+PULP_ARCH_CFLAGS = -march=rv32imXpulpnn -D__riscv__
+PULP_ARCH_LDFLAGS =  -march=rv32imXpulpnn -D__riscv__
+
+disopt = --disassembler-options="march=rv32imcXpulpnn" -d
+%endif
+
 include $(RULES_DIR)/pmsis_rules.mk

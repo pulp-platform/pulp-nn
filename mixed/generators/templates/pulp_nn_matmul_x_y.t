@@ -164,7 +164,7 @@ uint8_t *${config.fn_name}(
       pB+=16;
       pB2+=16;
 
-      ${config.unpack_fn}(pA,vecA);
+      pA = ${config.unpack_fn}(pA,vecA);
 
       sum = SumDotp(vecB, vecA[0], sum);
       sum5 = SumDotp(vecB2, vecA[0], sum5);
@@ -175,7 +175,7 @@ uint8_t *${config.fn_name}(
       sum = SumDotp(vecB7, vecA[3], sum);
       sum5 = SumDotp(vecB8, vecA[3], sum5);
 
-      ${config.unpack_fn}(pA2,vecA2);
+      pA2 = ${config.unpack_fn}(pA2,vecA2);
 
       sum2 = SumDotp(vecB, vecA2[0], sum2);
       sum6 = SumDotp(vecB2, vecA2[0], sum6);
@@ -186,7 +186,7 @@ uint8_t *${config.fn_name}(
       sum2 = SumDotp(vecB7, vecA2[3], sum2);
       sum6 = SumDotp(vecB8, vecA2[3], sum6);
 
-      ${config.unpack_fn}(pA3,vecA3);
+      pA3 = ${config.unpack_fn}(pA3,vecA3);
 
       sum3 = SumDotp(vecB, vecA3[0], sum3);
       sum7 = SumDotp(vecB2, vecA3[0], sum7);
@@ -197,7 +197,7 @@ uint8_t *${config.fn_name}(
       sum3 = SumDotp(vecB7, vecA3[3], sum3);
       sum7 = SumDotp(vecB8, vecA3[3], sum7);
 
-      ${config.unpack_fn}(pA4,vecA4);
+      pA4 = ${config.unpack_fn}(pA4,vecA4);
 
       sum4 = SumDotp(vecB, vecA4[0], sum4);
       sum8 = SumDotp(vecB2, vecA4[0], sum8);
@@ -208,10 +208,10 @@ uint8_t *${config.fn_name}(
       sum4 = SumDotp(vecB7, vecA4[3], sum4);
       sum8 = SumDotp(vecB8, vecA4[3], sum8);
 
-      pA+=4;
-      pA2+=4;
-      pA3+=4;
-      pA4+=4;
+      // pA+=4;
+      // pA2+=4;
+      // pA3+=4;
+      // pA4+=4;
 %elif config.kernel.wt_data_t == 4:
       vecB = *((v4u*)pB);
       vecB2 = *((v4u*)pB2);
@@ -221,7 +221,7 @@ uint8_t *${config.fn_name}(
       pB+=8;
       pB2+=8;
 
-      ${config.unpack_fn}(pA,vecA);
+      pA = ${config.unpack_fn}(pA,vecA);
 
       sum = SumDotp(vecB, vecA[0], sum);
       sum5 = SumDotp(vecB2, vecA[0], sum5);
@@ -229,7 +229,7 @@ uint8_t *${config.fn_name}(
       sum = SumDotp(vecB3, vecA[1], sum);
       sum5 = SumDotp(vecB4, vecA[1], sum5);
 
-			${config.unpack_fn}(pA2,vecA2);
+			pA2 = ${config.unpack_fn}(pA2,vecA2);
 
       sum2 = SumDotp(vecB, vecA2[0], sum2);
       sum6 = SumDotp(vecB2, vecA2[0], sum6);
@@ -237,7 +237,7 @@ uint8_t *${config.fn_name}(
       sum2 = SumDotp(vecB3, vecA2[1], sum2);
       sum6 = SumDotp(vecB4, vecA2[1], sum6);
 
-      ${config.unpack_fn}(pA3,vecA3);
+      pA3 = ${config.unpack_fn}(pA3,vecA3);
 
       sum3 = SumDotp(vecB, vecA3[0], sum3);
       sum7 = SumDotp(vecB2, vecA3[0], sum7);
@@ -245,7 +245,7 @@ uint8_t *${config.fn_name}(
       sum3 = SumDotp(vecB3, vecA3[1], sum3);
       sum7 = SumDotp(vecB4, vecA3[1], sum7);
 
-      ${config.unpack_fn}(pA4,vecA4);
+      pA4 = ${config.unpack_fn}(pA4,vecA4);
 
       sum4 = SumDotp(vecB, vecA4[0], sum4);
       sum8 = SumDotp(vecB2, vecA4[0], sum8);
@@ -253,10 +253,10 @@ uint8_t *${config.fn_name}(
       sum4 = SumDotp(vecB3, vecA4[1], sum4);
       sum8 = SumDotp(vecB4, vecA4[1], sum8);
 
-      pA+=4;
-      pA2+=4;
-      pA3+=4;
-      pA4+=4;
+      // pA+=4;
+      // pA2+=4;
+      // pA3+=4;
+      // pA4+=4;
 %else:
       vecA = *((v4s*)pA);
       vecA2 = *((v4s*)pA2);
@@ -716,7 +716,7 @@ uint8_t *${config.fn_name}(
       vecB7 = *((v4u*)(pB + 12));
       vecB8 = *((v4u*)(pB2 + 12));
 
-      ${config.unpack_fn}(pA,vecA);
+      pA = ${config.unpack_fn}(pA,vecA);
 
       sum = SumDotp(vecB, vecA[0], sum);
       sum2 = SumDotp(vecB2, vecA[0], sum2);
@@ -727,7 +727,7 @@ uint8_t *${config.fn_name}(
       sum = SumDotp(vecB7, vecA[3], sum);
       sum2 = SumDotp(vecB8, vecA[3], sum2);
 
-      pA+=4;
+      //pA+=4;
       pB+=16;
       pB2+=16;
 %elif config.kernel.wt_data_t == 4:
@@ -736,7 +736,7 @@ uint8_t *${config.fn_name}(
       vecB3 = *((v4u*)(pB + 4));
       vecB4 = *((v4u*)(pB2 + 4));
 
-      ${config.unpack_fn}(pA,vecA);
+      pA = ${config.unpack_fn}(pA,vecA);
 
       sum = SumDotp(vecB, vecA[0], sum);
       sum2 = SumDotp(vecB2, vecA[0], sum2);
@@ -744,7 +744,7 @@ uint8_t *${config.fn_name}(
       sum = SumDotp(vecB3, vecA[1], sum);
       sum2 = SumDotp(vecB4, vecA[1], sum2);
 
-      pA+=4;
+      //pA+=4;
       pB+=8;
       pB2+=8;
 %else:

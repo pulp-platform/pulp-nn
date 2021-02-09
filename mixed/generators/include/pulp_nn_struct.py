@@ -29,7 +29,7 @@ PULPNNInstallPath = os.getcwd() + "/../"
 # Generation scripts path
 PULPNNSrcDirs = PULPNNInstallPath + "generators/"
 
-# Extensions dependent: Software -> XpulpV2
+# Extentions dependent: Software -> XpulpV2
 PULPNNInstallSWPath = PULPNNInstallPath + "XpulpV2/"
 PULPNNInstallHWPath = PULPNNInstallPath + "XpulpNN/"
 
@@ -304,6 +304,11 @@ def mkdir_src(act_prec, ext):
 def mkdir_test(kernel, act_prec, ext):
     if ext == 'XpulpNN':
         if act_prec == '32bit':
+            try:
+                os.remove(PULPNNSrcDirsHW32bit['test'])
+            except OSError as exc:
+                if exc.errno == errno.ENOENT:
+                    pass
             mkdir_p(PULPNNTestFolderHW32bit)
             mkdir_p(PULPNNSrcDirsHW32bit['pulp_nn_src'])
             mkdir_p(PULPNNSrcDirsHW32bit['pulp_nn_support_function'])
@@ -347,13 +352,12 @@ def mkdir_test(kernel, act_prec, ext):
                 mkdir_p(PULPNNSrcDirsHW32bit['data_allocation_add'])
                 mkdir_p(PULPNNSrcDirsHW32bit['golden_model_add'])
 
+        elif act_prec == '64bit':
             try:
-                os.remove(PULPNNInstallPathHW32bit + "Makefile")
+                os.remove(PULPNNSrcDirsHW64bit['test'])
             except OSError as exc:
                 if exc.errno == errno.ENOENT:
                     pass
-
-        elif act_prec == '64bit':
             mkdir_p(PULPNNTestFolderHW64bit)
             mkdir_p(PULPNNSrcDirsHW64bit['pulp_nn_src'])
             mkdir_p(PULPNNSrcDirsHW64bit['pulp_nn_support_function'])
@@ -397,14 +401,13 @@ def mkdir_test(kernel, act_prec, ext):
                 mkdir_p(PULPNNSrcDirsHW64bit['data_allocation_add'])
                 mkdir_p(PULPNNSrcDirsHW64bit['golden_model_add'])
 
+    elif ext == 'XpulpV2':
+        if act_prec == '32bit':
             try:
-                os.remove(PULPNNInstallPathHW64bit + "Makefile")
+                os.remove(PULPNNSrcDirsSW32bit['test'])
             except OSError as exc:
                 if exc.errno == errno.ENOENT:
                     pass
-
-    elif ext == 'XpulpV2':
-        if act_prec == '32bit':
             mkdir_p(PULPNNTestFolderSW32bit)
             mkdir_p(PULPNNSrcDirsSW32bit['pulp_nn_src'])
             mkdir_p(PULPNNSrcDirsSW32bit['pulp_nn_support_function'])
@@ -448,13 +451,12 @@ def mkdir_test(kernel, act_prec, ext):
                 mkdir_p(PULPNNSrcDirsSW32bit['data_allocation_add'])
                 mkdir_p(PULPNNSrcDirsSW32bit['golden_model_add'])
 
+        elif act_prec == '64bit':
             try:
-                os.remove(PULPNNInstallPathSW32bit + "Makefile")
+                os.remove(PULPNNSrcDirsSW64bit['test'])
             except OSError as exc:
                 if exc.errno == errno.ENOENT:
                     pass
-
-        elif act_prec == '64bit':
             mkdir_p(PULPNNTestFolderSW64bit)
             mkdir_p(PULPNNSrcDirsSW64bit['pulp_nn_src'])
             mkdir_p(PULPNNSrcDirsSW64bit['pulp_nn_support_function'])
@@ -497,9 +499,3 @@ def mkdir_test(kernel, act_prec, ext):
                 mkdir_p(PULPNNSrcDirsSW64bit['pulp_nn_add'])
                 mkdir_p(PULPNNSrcDirsSW64bit['data_allocation_add'])
                 mkdir_p(PULPNNSrcDirsSW64bit['golden_model_add'])
-
-            try:
-                os.remove(PULPNNInstallPathSW64bit + "Makefile")
-            except OSError as exc:
-                if exc.errno == errno.ENOENT:
-                    pass      
