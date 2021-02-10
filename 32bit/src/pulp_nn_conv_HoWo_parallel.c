@@ -212,6 +212,8 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
     {
       const int8_t *pA = pWeight;
       int       i;
+      int32_t * k1 = k;
+      int32_t * lambda1 = lambda;
       for (i = 0; i < ch_out; i++)
       {
         /* include the accumulation buffer in sum computation (probably doesn't work). Maybe the reloading partial result is needed as well as internally at mat mul function. */
@@ -248,9 +250,9 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
         /* if activation layer follows batch normalization */
         if (flag_batch_norm && flag_relu)
         {
-          *pOut = pulp_nn_bn_quant_u8(sum, *k, *lambda, out_shift);
-          k++;
-          lambda++;
+          *pOut = pulp_nn_bn_quant_u8(sum, *k1, *lambda1, out_shift);
+          k1++;
+          lambda1++;
           pOut++;
         }
         else
