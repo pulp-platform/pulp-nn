@@ -94,7 +94,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
   int stop_pixel = min(start_pixel + chunk, dim_out_y);
 
   uint8_t *pIm2Col = pIm2ColBase;
-  uint8_t *pOut = pOutBuffer + (start_pixel * ch_out_r * dim_out_x) + (section * ch_out_r * dim_out_x_r);
+  uint8_t *pOut = pOutBuffer + (start_pixel * ch_out * dim_out_x) + (section * ch_out * dim_out_x_r);
 
   for (i_out_y = start_pixel; i_out_y < stop_pixel; i_out_y++)
   {
@@ -199,7 +199,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
           lambda,
           bias,
           pOut,
-          pOut + ch_out;
+          pOut + ch_out,
           flag_relu,
           flag_batch_norm
         );
@@ -268,7 +268,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
         }
       }
     }
-    pOut+=(extra_chunk * ((dim_out_x_r + ((1 - section) * flag_dim_out_x_odd)) * ch_out_r));
+    pOut+=(extra_chunk * ((dim_out_x_r + ((1 - section) * flag_dim_out_x_odd)) * ch_out));
     pIm2Col = pIm2ColBase;
   }
   pi_cl_team_barrier(0);
