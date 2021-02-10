@@ -260,11 +260,7 @@ void pulp_nn_depthwise_generic(
         }
         else
         {
-<<<<<<< HEAD
-          *pOut = (uint8_t) clip8((sum + out_shift) >> out_shift);
-=======
           *pOut = (uint8_t) clip8(sum >> out_shift);
->>>>>>> b9053e2a9e2c3d878d3ce564a9616dcd8c0feb2f
         }
         pOut+=(dim_im_out_x * ch_im_out);
         l++;
@@ -361,11 +357,7 @@ void pulp_nn_depthwise_generic(
         }
         else
         {
-<<<<<<< HEAD
-          *pOut = (uint8_t) clip8((sum + out_shift) >> out_shift);
-=======
           *pOut = (uint8_t) clip8(sum >> out_shift);
->>>>>>> b9053e2a9e2c3d878d3ce564a9616dcd8c0feb2f
         }
         pOut+=(dim_im_out_x * ch_im_out);
         l++;
