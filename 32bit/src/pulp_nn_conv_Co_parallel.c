@@ -171,7 +171,7 @@ void pulp_nn_conv_Co_parallel(
         }
         if (pIm2Col == pIm2ColBase + 2 * ch_in * dim_kernel_x * dim_kernel_y)
         {
-          pOut = ((ch_out - chunk) << 1) + pulp_nn_matmul_Co_parallel(
+          pOut = ((ch_out - chunk) << 1) + pulp_nn_matmul(
             pW,
             pIm2ColBase,
             chunk,
