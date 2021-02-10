@@ -43,7 +43,7 @@ uint8_t __attribute__((always_inline)) pulp_nn_bn_quant_u8 (
   return res;
 }
 
-uint8_t __attribute__((always_inline)) pulp_nn_add_quant_u8 (
+uint8_t pulp_nn_add_quant_u8 (
   uint8_t pix1,
   uint8_t pix2,
   int16_t m1,
