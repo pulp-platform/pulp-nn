@@ -199,7 +199,7 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
           lambda,
           bias,
           pOut,
-          pOut + ch_out;
+          pOut + ch_out,
           flag_relu,
           flag_batch_norm
         );
