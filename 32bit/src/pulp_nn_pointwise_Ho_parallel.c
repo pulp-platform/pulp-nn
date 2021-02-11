@@ -76,32 +76,29 @@ void __attribute__ ((noinline)) pulp_nn_pointwise_Ho_parallel(
   {
     i_out_x = 0;
 
-    for (int n = 0; n < dim_out_x; n++)
+    for (int n = 0; n < (dim_out_x >> 1); n++)
     {
-      if((n & 0x0001) != 0)
-      {
-        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
-        pOut = pulp_nn_matmul(
-          pWeight,
-          pB,
-          ch_out,
-          ch_in,
-          bias_shift,
-          out_shift,
-          out_mult,
-          k,
-          lambda,
-          bias,
-          pOut,
-          pOut + ch_out,
-          flag_relu,
-          flag_batch_norm
-        );
-        i_out_x+=2;
-      }
+      uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
+      pOut = pulp_nn_matmul(
+        pWeight,
+        pB,
+        ch_out,
+        ch_in,
+        bias_shift,
+        out_shift,
+        out_mult,
+        k,
+        lambda,
+        bias,
+        pOut,
+        pOut + ch_out,
+        flag_relu,
+        flag_batch_norm
+      );
+      i_out_x+=2;
     }
     /* check if there is left-over for compute */
-    if ((dim_out_x & 0x0001) != 0)
+    if (i_out_x != dim_out_x)
     {
       const int8_t *pA = pWeight;
       int32_t *k1 = k;
@@ -162,6 +159,5 @@ void __attribute__ ((noinline)) pulp_nn_pointwise_Ho_parallel(
       }
     }
   }
-  // }
   pi_cl_team_barrier(0);
 }

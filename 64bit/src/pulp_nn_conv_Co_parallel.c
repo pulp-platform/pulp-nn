@@ -70,6 +70,8 @@ void pulp_nn_conv_Co_parallel(
   start_channel = min(chunk * core_id, ch_out);
   stop_channel = min(start_channel + chunk, ch_out);
 
+  int eff_chunk = stop_channel - start_channel;
+
   uint8_t *pIm2ColBase = pIm2ColBuffer + (2 * core_id * ch_in * dim_kernel_x * dim_kernel_y);
   uint8_t *pIm2Col = pIm2ColBase;
   int8_t *pW = pWeight + (start_channel * ch_in * dim_kernel_x * dim_kernel_y);
@@ -78,7 +80,7 @@ void pulp_nn_conv_Co_parallel(
   int64_t *k0 = k + start_channel;
   int64_t *lambda0 = lambda + start_channel;
 
-  if((stop_channel - start_channel))
+  if(eff_chunk)
   {
     for (i_out_y = 0; i_out_y < dim_out_y; i_out_y++)
     {
@@ -171,10 +173,10 @@ void pulp_nn_conv_Co_parallel(
         }
         if (pIm2Col == pIm2ColBase + 2 * ch_in * dim_kernel_x * dim_kernel_y)
         {
-          pOut = ((ch_out - chunk) << 1) + pulp_nn_matmul_Co_parallel(
+          pOut = ((ch_out - eff_chunk) << 1) + pulp_nn_matmul(
             pW,
             pIm2ColBase,
-            chunk,
+            eff_chunk,
             ch_in * dim_kernel_x * dim_kernel_y,
             bias_shift,
             out_shift,

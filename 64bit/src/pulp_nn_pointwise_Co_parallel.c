@@ -69,25 +69,28 @@ void __attribute__ ((noinline)) pulp_nn_pointwise_Co_parallel(
   start_channel = min(chunk * core_id, ch_out);
   stop_channel = min(start_channel + chunk, ch_out);
 
-  int8_t *pW = pWeight + (start_channel * ch_in * dim_kernel_x * dim_kernel_y);
+  int eff_chunk = stop_channel - start_channel;
 
-  uint8_t *pOut = pOutBuffer + start_channel;
+  int8_t *pW = pWeight + (start_channel * ch_in);
+
   int64_t *k0 = k + start_channel;
   int64_t *lambda0 = lambda + start_channel;
 
-  for (i_out_y = 0; i_out_y < dim_out_y; i_out_y++)
+  if(eff_chunk)
   {
-    i_out_x = 0;
-
-    for (int n = 0; n < dim_out_x; n++)
+    for (i_out_y = 0; i_out_y < dim_out_y; i_out_y++)
     {
-      if((n & 0x0001) != 0)
+      i_out_x = 0;
+
+      uint8_t *pOut = pOutBuffer + start_channel + (i_out_y * dim_out_x * ch_out);
+
+      for (int n = 0; n < dim_out_x; n++)
       {
         uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));
-        pOut = ((ch_out - chunk) << 1) + pulp_nn_matmul(
-          pWeight,
+        pOut = ((ch_out - eff_chunk) << 1) + pulp_nn_matmul(
+          pW,
           pB,
-          chunk,
+          eff_chunk,
           ch_in,
           bias_shift,
           out_shift,
@@ -102,64 +105,64 @@ void __attribute__ ((noinline)) pulp_nn_pointwise_Co_parallel(
         );
         i_out_x+=2;
       }
-    }
-    /* check if there is left-over for compute */
-    if ((dim_out_x & 0x0001) != 0)
-    {
-      const int8_t *pA = pWeight;
-
-      for (int i = start_channel; i < stop_channel; i++)
+      /* check if there is left-over for compute */
+      if (i_out_x != dim_out_x)
       {
-        int sum = 0;
+        const int8_t *pA = pWeight;
 
-        if (bias != NULL)
+        for (int i = start_channel; i < stop_channel; i++)
         {
-          sum = ((int)(bias[i]));
-        }
+          int sum = 0;
 
-        uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));;
-        /* basically each time it process 4 entries */
-        uint16_t  col_cnt_im2col = ch_in >> 2;
-
-        for (int j=0 ; j < col_cnt_im2col; j++)
-        {
-          v4s inA = *((v4s*) pA);
-          v4u inB = *((v4u*) pB);
-
-          sum = SumDotp(inB, inA, sum);
-          pA+=4;
-          pB+=4;
-        }
-        col_cnt_im2col = ch_in & 0x3;
-        while (col_cnt_im2col)
-        {
-          int8_t      inA1 = *pA++;
-          uint8_t     inB1 = *pB++;
-          asm volatile("": : :"memory");
-          sum += inA1 * inB1;
-
-          col_cnt_im2col--;
-        }
-        /* if activation layer follows batch normalization */
-        if (flag_batch_norm && flag_relu)
-        {
-          *pOut = pulp_nn_bn_quant_u8(sum, *k0, *lambda0, out_shift);
-          k0++;
-          lambda0++;
-          pOut++;
-        }
-        else
-        {
-          /* if there isn't batch normalization but there is activation layer */
-          if(flag_relu == 1)
+          if (bias != NULL)
           {
-            *pOut = pulp_nn_quant_u8(sum, out_mult, out_shift);
+            sum = ((int)(bias[i]));
+          }
+
+          uint8_t *pB = (pInBuffer + (i_out_x * ch_in) + (i_out_y * dim_in_x * ch_in));;
+          /* basically each time it process 4 entries */
+          uint16_t  col_cnt_im2col = ch_in >> 2;
+
+          for (int j=0 ; j < col_cnt_im2col; j++)
+          {
+            v4s inA = *((v4s*) pA);
+            v4u inB = *((v4u*) pB);
+
+            sum = SumDotp(inB, inA, sum);
+            pA+=4;
+            pB+=4;
+          }
+          col_cnt_im2col = ch_in & 0x3;
+          while (col_cnt_im2col)
+          {
+            int8_t      inA1 = *pA++;
+            uint8_t     inB1 = *pB++;
+            asm volatile("": : :"memory");
+            sum += inA1 * inB1;
+
+            col_cnt_im2col--;
+          }
+          /* if activation layer follows batch normalization */
+          if (flag_batch_norm && flag_relu)
+          {
+            *pOut = pulp_nn_bn_quant_u8(sum, *k0, *lambda0, out_shift);
+            k0++;
+            lambda0++;
+            pOut++;
           }
           else
           {
-            *pOut = (uint8_t) clip8(sum >> out_shift);
+            /* if there isn't batch normalization but there is activation layer */
+            if(flag_relu == 1)
+            {
+              *pOut = pulp_nn_quant_u8(sum, out_mult, out_shift);
+            }
+            else
+            {
+              *pOut = (uint8_t) clip8(sum >> out_shift);
+            }
+            pOut++;
           }
-          pOut++;
         }
       }
     }
