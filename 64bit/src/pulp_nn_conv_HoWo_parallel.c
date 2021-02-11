@@ -212,8 +212,8 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
     {
       const int8_t *pA = pWeight;
       int       i;
-      int32_t * k1 = k;
-      int32_t * lambda1 = lambda;
+      int64_t * k1 = k;
+      int64_t * lambda1 = lambda;
       for (i = 0; i < ch_out; i++)
       {
         /* include the accumulation buffer in sum computation (probably doesn't work). Maybe the reloading partial result is needed as well as internally at mat mul function. */
