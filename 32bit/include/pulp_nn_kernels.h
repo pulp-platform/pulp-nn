@@ -288,7 +288,8 @@ void pulp_nn_maxpool (
   uint16_t  dim_im_in_x,       // spatial dimension of the input feature map
   uint16_t  dim_im_in_y,
   uint16_t  ch_im_in,          // number of channels of the IFM
-  uint16_t  dim_kernel,        // spatial dimension of the pooling filter
+  uint16_t  dim_kernel_x,        // spatial dimension of the pooling filter
+  uint16_t  dim_kernel_y,        // spatial dimension of the pooling filter
   uint16_t  padding_t,           // amount of padding
   uint16_t  padding_b,           // amount of padding
   uint16_t  padding_l,           // amount of padding
@@ -304,6 +305,37 @@ void pulp_nn_maxpool (
 );
 
 void pulp_nn_depthwise_generic(
+  const uint8_t * Im_in,
+  const uint16_t  dim_im_in_x,
+  const uint16_t  dim_im_in_y,
+  const uint16_t  ch_im_in,
+  const int8_t *  wt,
+  const uint16_t  ch_im_out,
+  const uint16_t  dim_kernel_x,
+  const uint16_t  dim_kernel_y,
+  const uint16_t  padding_y_top,
+  const uint16_t  padding_y_bottom,
+  const uint16_t  padding_x_left,
+  const uint16_t  padding_x_right,
+  const uint16_t  stride_x,
+  const uint16_t  stride_y,
+  const int8_t *  bias,
+  const uint16_t  bias_shift,
+  uint16_t        out_shift,
+  uint16_t        out_mult,
+  uint8_t *       Im_out,
+  const uint16_t  dim_im_out_x,
+  const uint16_t  dim_im_out_y,
+  int32_t *       k,
+  int32_t *       lambda,
+  uint8_t *       bufferC,
+  uint8_t *       bufferB,
+  int8_t          FLAG_RELU,
+  int8_t          FLAG_BATCH_NORM,
+  unsigned int * memory_chan
+  );
+
+void pulp_nn_depthwise_generic_less_4_weights(
   const uint8_t * Im_in,
   const uint16_t  dim_im_in_x,
   const uint16_t  dim_im_in_y,

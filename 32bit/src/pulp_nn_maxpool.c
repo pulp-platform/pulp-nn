@@ -29,7 +29,8 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
 	uint16_t  dim_im_in_x,       // spatial dimension of the input feature map
 	uint16_t  dim_im_in_y,
 	uint16_t  ch_im_in,          // number of channels of the IFM
-	uint16_t  dim_kernel,        // spatial dimension of the pooling filter
+	uint16_t  dim_kernel_x,        // spatial dimension of the pooling filter
+	uint16_t  dim_kernel_y,        // spatial dimension of the pooling filter
 	uint16_t  padding_t,           // amount of padding
 	uint16_t  padding_b,           // amount of padding
 	uint16_t  padding_l,           // amount of padding
@@ -74,13 +75,13 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
 				win_start = Im_in + (i_y * dim_im_in_x + i_x * stride - padding_l) * ch_im_in;//to test: prob dim_im_in_x
 			}
 
-			if (i_x * stride - padding_l + dim_kernel >= dim_im_in_x)
+			if (i_x * stride - padding_l + dim_kernel_x >= dim_im_in_x)
 			{
 				win_stop = Im_in + (i_y * dim_im_in_x + dim_im_in_x) * ch_im_in;//to test: prob dim_im_in_x
 			}
 			else
 			{
-				win_stop = Im_in + (i_y * dim_im_in_x + i_x * stride - padding_l + dim_kernel) * ch_im_in;//to test: prob dim_im_in_x
+				win_stop = Im_in + (i_y * dim_im_in_x + i_x * stride - padding_l + dim_kernel_x) * ch_im_in;//to test: prob dim_im_in_x
 			}
 
 			/* first step is to copy over initial data */
@@ -125,13 +126,13 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
       row_start = Im_in + (i_y * stride - padding_t) * dim_im_in_x * ch_im_in; //to test: prob dim_im_in_x
     }
     /* setting the stopping row */
-    if (i_y * stride - padding_t + dim_kernel >= dim_im_in_y)
+    if (i_y * stride - padding_t + dim_kernel_y >= dim_im_in_y)
     {
       row_end = Im_in + dim_im_in_x * dim_im_in_y * ch_im_in;//to test: prob dim_im_in_x
     }
     else
     {
-     	row_end = Im_in + (i_y * stride - padding_t + dim_kernel) * dim_im_in_x * ch_im_in; //to test: prob dim_im_in_x
+     	row_end = Im_in + (i_y * stride - padding_t + dim_kernel_y) * dim_im_in_x * ch_im_in; //to test: prob dim_im_in_x
     }
 
     /* copy over the first row */

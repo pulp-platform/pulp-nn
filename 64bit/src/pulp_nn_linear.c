@@ -61,8 +61,8 @@ void pulp_nn_linear(
 	int stop_even = stop - (stop & 0x01);
 	int i;
 
-	int32_t *k1 = k + start;
-	int32_t *lambda1 = lambda + start;
+	int64_t *k1 = k + start;
+	int64_t *lambda1 = lambda + start;
 
 	for(i=start; i<stop_even; i+=2)
 	{
