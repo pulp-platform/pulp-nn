@@ -51,9 +51,11 @@ void __attribute__ ((noinline))  pulp_nn_add (
 	uint8_t *target1 = Im_in_1 + start*ch_im_in*dim_im_in_w;
 	uint8_t *target2 = Im_in_2 + start*ch_im_in*dim_im_in_w;
 	uint8_t *pOut = Im_out + start*ch_im_in*dim_im_in_w;
+	uint8_t res = 0;
 	for (int spatial = 0; spatial<dim_im_in_w*ch_im_in*(stop-start); spatial+=1)
 	{
-		*pOut = pulp_nn_add_quant_u8(*target1, *target2, out_mult1, out_mult2, out_shift);
+		res = pulp_nn_add_quant_u8(*target1, *target2, out_mult1, out_mult2, out_shift);
+		*pOut = res;
 		target1 += 1;
 		target2 += 1;
 		pOut += 1;

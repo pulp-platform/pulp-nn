@@ -26,6 +26,8 @@ uint8_t pulp_nn_bn_quant_u8 (int32_t phi, int64_t k, int64_t lambda, int8_t  d);
 
 uint8_t pulp_nn_quant_u8(int32_t phi, int16_t m, int8_t  d);
 
+uint8_t pulp_nn_add_quant_u8(uint8_t pix1,uint8_t pix2,int16_t m1,int16_t m2,int8_t  d);
+
 void pulp_nn_im2col_int8_dmafree(uint8_t * pInput, uint8_t * pOutput, unsigned int blockSize);
 
 void pulp_nn_im2col_int8(uint8_t * pInput, uint8_t * pOutput, unsigned int blockSize);
