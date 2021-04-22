@@ -61,6 +61,11 @@ void pulp_nn_linear(
   {
     int sum = 0;
 
+    if (bias != NULL)
+    {
+      sum = ((int)(bias[i]));
+    }
+
     uint8_t *pA = pInBuffer;
     int8_t *pB = pWeights + (i * dim_vec);
 

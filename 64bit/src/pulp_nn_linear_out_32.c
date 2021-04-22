@@ -42,44 +42,49 @@ void pulp_nn_linear_out_32(
     unsigned int * memory_chan
     )
 {
-    int core_id = pi_core_id();
-    int Log2Core = log2(NUM_CORES);
-    int chunk = (num_o_neurons >> Log2Core) + ((num_o_neurons & (NUM_CORES-1))!=0);
-    int start = min(chunk * core_id, num_o_neurons);
-    int stop = min(start + chunk, num_o_neurons);
+  int core_id = pi_core_id();
+  int Log2Core = log2(NUM_CORES);
+  int chunk = (num_o_neurons >> Log2Core) + ((num_o_neurons & (NUM_CORES-1))!=0);
+  int start = min(chunk * core_id, num_o_neurons);
+  int stop = min(start + chunk, num_o_neurons);
 
-    v4u vecA;
-    v4s vecB;
+  v4u vecA;
+  v4s vecB;
 
-    int32_t *pOut = (int32_t *) pOutBuffer + start;
+  int32_t *pOut = (int32_t *) pOutBuffer + start;
 
-    for(int i=start; i<stop; i++)
+  for(int i=start; i<stop; i++)
+  {
+    int sum = 0;
+
+    if (bias != NULL)
     {
-        int sum = 0;
+      sum = ((int)(bias[i]));
+    }
 
-        uint8_t *pA = pInBuffer;
-        int8_t *pB = pWeights + (i * dim_vec);
+    uint8_t *pA = pInBuffer;
+    int8_t *pB = pWeights + (i * dim_vec);
 
-        for (int j=0; j<(dim_vec >> 2); j++)
-        {
-            vecA = *((v4u*)pA);
-            vecB = *((v4s*)pB);
-            sum = SumDotp(vecA, vecB, sum);
-            pA+=4;
-            pB+=4;
-        }
-        uint16_t col_cnt = dim_vec & 0x3;
-        while (col_cnt)
-        {
-          uint8_t inA = *pA;
-          pA++;
-          int8_t inB = *pB;
-          pB++;
-          sum += inA * inB;
-          col_cnt--;
-      }
-      *pOut = sum;
-      pOut++;
+    for (int j=0; j<(dim_vec >> 2); j++)
+    {
+      vecA = *((v4u*)pA);
+      vecB = *((v4s*)pB);
+      sum = SumDotp(vecA, vecB, sum);
+      pA+=4;
+      pB+=4;
+    }
+    uint16_t col_cnt = dim_vec & 0x3;
+    while (col_cnt)
+    {
+      uint8_t inA = *pA;
+      pA++;
+      int8_t inB = *pB;
+      pB++;
+      sum += inA * inB;
+      col_cnt--;
+    }
+    *pOut = sum;
+    pOut++;
   }
   pi_cl_team_barrier(0);
 }

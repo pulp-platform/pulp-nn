@@ -135,7 +135,13 @@ void pulp_nn_depthwise_generic_less_4_weights(
         do
         {
           int8_t *pW = wt + i_ch_ker;
+
           int sum = 0;
+
+          if (bias != NULL)
+          {
+            sum = ((int)(bias[i_out_ch]));
+          }
 
           pBuffer = bufferA + (l * stride_y * dim_kernel_x);
           int j=0;
@@ -226,7 +232,13 @@ void pulp_nn_depthwise_generic_less_4_weights(
       do
       {
         int8_t *pW = wt + i_ch_ker;
+
         int sum = 0;
+
+        if (bias != NULL)
+        {
+          sum = ((int)(bias[i_out_ch]));
+        }
 
         pBuffer = bufferA + (l * stride_y * dim_kernel_x);
         int j=0;
@@ -323,7 +335,13 @@ void pulp_nn_depthwise_generic_less_4_weights(
       do
       {
         int8_t *pW = wt + i_ch_ker;
+
         int sum = 0;
+
+        if (bias != NULL)
+        {
+          sum = ((int)(bias[i_out_ch]));
+        }
 
         pBuffer = bufferA + (l * stride_y * dim_kernel_x);
         int j=0;
