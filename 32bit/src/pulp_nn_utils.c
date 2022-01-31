@@ -20,9 +20,6 @@
 
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
-#ifdef PULPNN_USE_DMA
-#include "mchan_test.h"
-#endif
 
 #define bitext(x,size,off) __builtin_pulp_bextract(x,size,off)
 #define bitextu(x,size,off) __builtin_pulp_bextractu(x,size,off)
@@ -117,11 +114,15 @@ void pulp_nn_avg_and_replace_int8(int8_t * base,
 #ifdef PULPNN_USE_DMA
 void pulp_nn_im2col_int8(uint8_t * pInput, uint8_t * pOutput, unsigned int blockSize)
 {
-#if (MCHAN_VERSION < 7)
-  mchan_transfer(blockSize, 1, 1, 0, 1, 0, 0, (unsigned int) pInput, (unsigned int) pOutput, 0, 0);
-#elif (MCHAN_VERSION == 7)
-  mchan_transfer(blockSize, 1, 1, 0, 0, 1, 0, 0, (unsigned int) pInput, (unsigned int) pOutput, 0, 0, 0, 0);
-#endif
+  pi_cl_dma_copy_t copy;
+  copy.dir = 1;
+  copy.merge = 0;
+  copy.size = blockSize;
+  copy.id = 0;
+  copy.ext = (unsigned int)(pInput);
+  copy.loc = (unsigned int)(pOutput);
+  pi_cl_dma_memcpy(&copy);
+  pi_cl_dma_wait(&copy);
 }
 #else
 void pulp_nn_im2col_int8(uint8_t * pInput, uint8_t * pOutput, unsigned int blockSize)
