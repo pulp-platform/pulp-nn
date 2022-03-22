@@ -24,6 +24,7 @@
 #define log2(x) __builtin_pulp_fl1(x)
 #define SumDotp(a, b, c) __builtin_pulp_sdotusp4(a, b, c)
 #define MIN(a,b) ((a)<(b)?(a):(b))
+#define MAX(a,b) ((a)>(b)?(a):(b))
 #define clip8(x) __builtin_pulp_clipu_r(x, 255)
 
 void pulp_nn_depthwise_generic(
@@ -278,7 +279,7 @@ void pulp_nn_depthwise_generic(
         l++;
       }while(l<dim_im_out_y);
       i_out_x++;
-    }while((i_out_x * stride_x) < ((dim_im_out_x * stride_x) - padding_x_right));
+    }while((i_out_x * stride_x) < ((dim_im_out_x - padding_x_right) * stride_x ));
     for (i_out_x; i_out_x < dim_im_out_x; i_out_x++)
     {
       uint8_t *pOut = Im_out + i_out_ch + (i_out_x * ch_im_out);
@@ -304,6 +305,8 @@ void pulp_nn_depthwise_generic(
       {
         int i = 0;
         int idx = 0;
+        int p_decr = 0; // this will decrease the pBuffer when we have padding in our window, or if the kernel size is not a multiple of 4 (vector load is 4 Bytes).
+        int dim_incr_padding = 0; // this will decrease the pBuffer when we have padding in our window. The 0-padded Bytes will be added later
         do
         {
           *((v4u*) pBuffer) = *((v4u*) (base_ptr + idx));
@@ -312,8 +315,10 @@ void pulp_nn_depthwise_generic(
           i++;
         }while(i<dim_kernel_x_size_padded);
         base_ptr+=dim_im_in_x;
-        pBuffer-=(dim_incr + 1 + (i_out_x * stride_x) - (dim_im_out_x * stride_x) + padding_x_right);
-        for(int j=0; j<(1 + (i_out_x * stride_x) - (dim_im_out_x * stride_x) + padding_x_right); j++)
+        dim_incr_padding = MAX(-(dim_im_in_x-(i_out_x*stride_x)-1) + dim_kernel_x/2, 0);
+        p_decr = (dim_incr + dim_incr_padding); // torno indietro per kernel e padding
+        pBuffer-=p_decr;        
+        for(int j=0; j<dim_incr_padding; j++) // aggiungo padding
         {
           *(uint8_t *) pBuffer = 0;
           pBuffer++;
