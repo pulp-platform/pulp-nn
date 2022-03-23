@@ -316,9 +316,9 @@ void pulp_nn_depthwise_generic(
         }while(i<dim_kernel_x_size_padded);
         base_ptr+=dim_im_in_x;
         dim_incr_padding = MAX(-(dim_im_in_x-(i_out_x*stride_x)-1) + dim_kernel_x/2, 0);
-        p_decr = (dim_incr + dim_incr_padding); // torno indietro per kernel e padding
+        p_decr = (dim_incr + dim_incr_padding);
         pBuffer-=p_decr;        
-        for(int j=0; j<dim_incr_padding; j++) // aggiungo padding
+        for(int j=0; j<dim_incr_padding; j++)
         {
           *(uint8_t *) pBuffer = 0;
           pBuffer++;
