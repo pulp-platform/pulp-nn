@@ -37,18 +37,19 @@ void pulp_nn_avgpool (
   uint16_t  ch_im_in,
   uint16_t  dim_kernel_x,
   uint16_t  dim_kernel_y,
-  uint16_t  padding,
-  uint16_t  stride,
+  uint16_t  padding_t,
+  uint16_t  padding_b,
+  uint16_t  padding_l,
+  uint16_t  padding_r,
+  uint16_t  stride_x,
+  uint16_t  stride_y,
   uint16_t  dim_im_out_x,
   uint16_t  dim_im_out_y,
-  int8_t *  bufferA,
-  uint8_t *  Im_out,
-  int32_t * pOutBufferAcc,
-  int8_t    flag_acc_buff_out,
-  int8_t    flag_first_ch_out,
-  int       flag_relu,
-  const uint16_t  out_shift,
-  const uint16_t  out_mult
+  uint16_t  out_shift,
+  int64_t   out_add,
+  int64_t   lambda,
+  uint8_t * Im_out,
+  int       flag_requant
 );
 
 
@@ -294,14 +295,11 @@ void pulp_nn_maxpool (
   uint16_t  padding_b,           // amount of padding
   uint16_t  padding_l,           // amount of padding
   uint16_t  padding_r,           // amount of padding
-  uint16_t  stride,            // amount of stride
+  uint16_t  stride_x,            // amount of stride
+  uint16_t  stride_y,
   uint16_t  dim_im_out_x,      // reduced spatial dimension of output
   uint16_t  dim_im_out_y,
-  int8_t *  bufferA,           // actually not used in this fx
-  uint8_t * Im_out,            // pointer to the output
-  int32_t * pOutBufferAcc,
-  int8_t    flag_acc_buff_out,
-  int8_t    flag_first_ch_out
+  uint8_t * Im_out            // pointer to the output
 );
 
 void pulp_nn_depthwise_generic(
