@@ -35,14 +35,11 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
     uint16_t  padding_b,           // amount of padding
     uint16_t  padding_l,           // amount of padding
     uint16_t  padding_r,           // amount of padding
-    uint16_t  stride,            // amount of stride
-    uint16_t  dim_im_out_x,      // reduced spatial dimension of output
+    uint16_t  stride_x,              // amount of stride
+    uint16_t  stride_y,
+    uint16_t  dim_im_out_x,        // reduced spatial dimension of output
     uint16_t  dim_im_out_y,
-    int8_t *  bufferA,           // actually not used in this fx
-    uint8_t * Im_out,            // pointer to the output
-    int32_t * pOutBufferAcc,
-    int8_t    flag_acc_buff_out,
-    int8_t    flag_first_ch_out
+    uint8_t * Im_out               // pointer to the output
     ) {
     int core_id = pi_core_id();
     int n_cores = NUM_CORES;
@@ -66,22 +63,22 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
             uint8_t     *target = Im_in + (i_y * dim_im_in_x + i_x) * ch_im_in; //to test: prob dim_im_in_x
             uint8_t     *win_start;
             uint8_t     *win_stop;
-            if (i_x * stride - padding_l < 0)
+            if (i_x * stride_x - padding_l < 0)
             {
                 win_start = target;
             }
             else
             {
-                win_start = Im_in + (i_y * dim_im_in_x + i_x * stride - padding_l) * ch_im_in;//to test: prob dim_im_in_x
+                win_start = Im_in + (i_y * dim_im_in_x + i_x * stride_x - padding_l) * ch_im_in;//to test: prob dim_im_in_x
             }
 
-            if (i_x * stride - padding_l + dim_kernel_x >= dim_im_in_x)
+            if (i_x * stride_x - padding_l + dim_kernel_x >= dim_im_in_x)
             {
                 win_stop = Im_in + (i_y * dim_im_in_x + dim_im_in_x) * ch_im_in;//to test: prob dim_im_in_x
             }
             else
             {
-                win_stop = Im_in + (i_y * dim_im_in_x + i_x * stride - padding_l + dim_kernel_x) * ch_im_in;//to test: prob dim_im_in_x
+                win_stop = Im_in + (i_y * dim_im_in_x + i_x * stride_x - padding_l + dim_kernel_x) * ch_im_in;//to test: prob dim_im_in_x
             }
 
             /* first step is to copy over initial data */
@@ -106,9 +103,6 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
   int start2 = chunck2 * core_id;//, dim_im_out_y);
   int stop2 = min(start2 + chunck2, dim_im_out_y);
 
-    /* every core works on its part of accumulation buffer */
-  int32_t *pBuffAcc = pOutBufferAcc + (start2 * dim_im_out_x);
-
     /* then does the pooling along y axis */
   for (i_y = start2; i_y < stop2; i_y++)
   {
@@ -117,22 +111,22 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
     uint8_t *row_start;
     uint8_t *row_end;
     /* setting the starting row */
-    if (i_y * stride - padding_t < 0)
+    if (i_y * stride_y - padding_t < 0)
     {
       row_start = Im_in;
   }
   else
   {
-      row_start = Im_in + (i_y * stride - padding_t) * dim_im_in_x * ch_im_in; //to test: prob dim_im_in_x
+      row_start = Im_in + (i_y * stride_y - padding_t) * dim_im_in_x * ch_im_in; //to test: prob dim_im_in_x
   }
     /* setting the stopping row */
-  if (i_y * stride - padding_t + dim_kernel_y >= dim_im_in_y)
+  if (i_y * stride_y - padding_t + dim_kernel_y >= dim_im_in_y)
   {
       row_end = Im_in + dim_im_in_x * dim_im_in_y * ch_im_in;//to test: prob dim_im_in_x
   }
   else
   {
-        row_end = Im_in + (i_y * stride - padding_t + dim_kernel_y) * dim_im_in_x * ch_im_in; //to test: prob dim_im_in_x
+        row_end = Im_in + (i_y * stride_y - padding_t + dim_kernel_y) * dim_im_in_x * ch_im_in; //to test: prob dim_im_in_x
     }
 
     /* copy over the first row */
@@ -146,23 +140,7 @@ void __attribute__ ((noinline))  pulp_nn_maxpool (
     for (; row_start < row_end; row_start += dim_im_in_x * ch_im_in)
     {
       pulp_nn_compare_and_replace_if_larger_int8(target, row_start, dim_im_out_x * ch_im_in);
-      if(flag_acc_buff_out == 1)
-      {
-        if(flag_first_ch_out == 1)
-        {
-            *pBuffAcc = 0;
-        }
-        else
-        {
-                    /* to test with builtin (sdotp4) */
-            *pBuffAcc+=(target[0] + target[1] + target[2] + target[3]);
-        }
     }
-}
-if(flag_acc_buff_out == 1)
-{
-    pBuffAcc++;
-}
-}
-pi_cl_team_barrier(0);
+  }
+  pi_cl_team_barrier(0);
 }

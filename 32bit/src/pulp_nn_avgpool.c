@@ -1,9 +1,7 @@
 /*
  * pulp_nn_avgpool.c
- * Nazareno Bruschi <nazareno.bruschi@unibo.it>
- * Angelo Garofalo <angelo.garofalo@unibo.it>
+ * Georg Rutishauser <georgr@iis.ee.ethz.ch>
  *
- * Copyright (C) 2018-2020 University of Bologna
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,63 +18,104 @@
 
 #include "pmsis.h"
 #include "pulp_nn_utils.h"
+#include "pulp_nn_kernels.h"
 
-#define log2(x) __builtin_pulp_fl1(x)
-#define min(a,b) ((a)<(b)?(a):(b))
 #define clip8(x) __builtin_pulp_clipu_r(x, 255)
+#define log2(x) __builtin_pulp_fl1(x)
+#define bitext_u(x,size,off) __builtin_pulp_bextractu(x,size,off)
+#define mins32(a, b) __builtin_pulp_minsi(a, b)
+#define maxs32(a, b) __builtin_pulp_maxsi(a, b)
 
-void __attribute__ ((noinline))  pulp_nn_avgpool (
-  uint8_t *  Im_in,            // pointer to the input feature map
-  uint16_t  dim_im_in_x,      // spatial dimension of the input feature map
-  uint16_t  dim_im_in_y,
-  uint16_t  ch_im_in,         // number of channels of the IFM
-  uint16_t  dim_kernel_x,       // spatial dimension of the pooling filter
-  uint16_t  dim_kernel_y,       // spatial dimension of the pooling filter
-  uint16_t  padding,          // amount of padding
-  uint16_t  stride,           // amount of stride
-  uint16_t  dim_im_out_x,     // reduced spatial dimension of output
-  uint16_t  dim_im_out_y,
-  int8_t *  bufferA,          // actually not used in this fx
-  uint8_t *  Im_out,           // pointer to the output
-  int32_t * pOutBufferAcc,
-  int8_t    flag_acc_buff_out,
-  int8_t    flag_first_ch_out,
-  int       flag_relu,
-  const uint16_t  out_shift,
-  const uint16_t  out_mult
-) {
+void __attribute__ ((noinline))  pulp_nn_avgpool(
+  uint8_t * Im_in,
+  uint16_t dim_im_in_x,
+  uint16_t dim_im_in_y,
+  uint16_t ch_im_in,
+  uint16_t dim_kernel_x,
+  uint16_t dim_kernel_y,
+  uint16_t padding_t,
+  uint16_t padding_b,
+  uint16_t padding_l,
+  uint16_t padding_r,
+  uint16_t stride_x,
+  uint16_t stride_y,
+  uint16_t dim_im_out_x,
+  uint16_t dim_im_out_y,
+  uint16_t out_shift,
+  int32_t out_add,
+  int32_t lambda,
+  uint8_t * Im_out,
+  int flag_requant
+)
+{
+  /* parallelization */
   int core_id = pi_core_id();
   int n_cores = NUM_CORES;
-  int i,j;
-  if (pi_core_id()==0)
+  if (dim_im_in_y < NUM_CORES)
   {
-    for (int scan_channel = 0; scan_channel<ch_im_in; scan_channel++)
-    {
-      j=0;
-      for (int h_in = 0; h_in<dim_im_in_y-dim_kernel_y+1; h_in+=stride)
-      {
-        i=0;
-        for (int w_in = 0; w_in<dim_im_in_x-dim_kernel_x+1; w_in+=stride)
-        {
-          uint32_t sum=0;
-          for (int h_out=0;h_out<dim_kernel_y;h_out++){
-            for (int w_out=0;w_out<dim_kernel_x;w_out++){
-              sum += (uint32_t)*(Im_in+scan_channel + ch_im_in*(w_in+w_out)+ch_im_in*dim_im_in_x*(h_in+h_out));
-            }
-          }
-          if (flag_relu){
-            sum = (sum * out_mult) >> out_shift;
-            sum = sum/(dim_kernel_x*dim_kernel_y);
-            sum = clip8(sum);}
-          else
-            sum = sum/(dim_kernel_x*dim_kernel_y);
-          *(Im_out+scan_channel + ch_im_in*(w_in)+ch_im_in*dim_im_in_x*(h_in))=(uint8_t)sum;
-          i++;
-        }
-        j++;
-      }
-    }
+    n_cores = dim_im_in_y;
   }
-   pi_cl_team_barrier();
+  int Log2Core = log2(n_cores);
+  int chunck = (dim_im_out_y >> Log2Core) + ((dim_im_out_y & (n_cores -1))!=0);
+  int start = chunck * core_id;
+  int stop = mins32(start + chunck, dim_im_out_y);
+  int   i_x, i_y;
 
+
+
+  uint32_t kernel_size_tot = dim_kernel_x * dim_kernel_y;
+  int ch_im_in_r = ch_im_in >> 0;
+  int ch_im_out_r = ch_im_in >> 0;
+  int oc_slice;
+  uint32_t sum[1] = {0};
+  for (i_y = start; i_y < stop; i_y++)
+    {
+        for (i_x = 0; i_x < dim_im_out_x; i_x++)
+        {
+            int k_y_start, k_y_end;
+            int k_x_start, k_x_end;
+
+            int32_t out_ch_cnt = 0;
+            const int8_t *pTmp, *pTmpInner;
+            int8_t *pDst;
+
+            k_y_start = maxs32(0, i_y * stride_y - padding_b);
+            k_y_end = mins32(i_y * stride_y - padding_t + dim_kernel_y, dim_im_in_y);
+
+            k_x_start = maxs32(0, i_x * stride_x - padding_l);
+            k_x_end = mins32(i_x * stride_x - padding_r + dim_kernel_x, dim_im_in_x);
+
+            pTmp = Im_in;
+            pDst = &Im_out[ch_im_out_r * (i_x + i_y * dim_im_out_x)];
+            int k_x, k_y;
+
+            for (int ch_cnt = 0; ch_cnt < ch_im_in_r; ch_cnt++)
+            {
+              sum[0] = 0;
+              uint8_t out_el = 0;
+                for (k_y = k_y_start; k_y < k_y_end; k_y++)
+                {
+                    for (k_x = k_x_start; k_x < k_x_end; k_x++)
+                    {
+                        pTmpInner = pTmp + (ch_im_in_r * (k_x + k_y * dim_im_in_x));
+                        uint8_t cur_chans = *pTmpInner;
+
+                        sum[0] += (uint32_t) bitext_u((unsigned int) cur_chans, 8, 0);
+                    }
+                }
+                int32_t out_large;
+                if (flag_requant) {
+                  out_large = (sum[0] * lambda + out_add) >> out_shift;
+                  out_el = clip8(out_large);
+                  pDst[(ch_cnt >> (0)) + 0] = out_el;
+                  } else {
+                  out_large = sum[0] / kernel_size_tot;
+                  out_el = clip8(out_large);
+                  pDst[(ch_cnt >> (0)) + 0] = out_el;
+                }
+                pTmp++;
+            }
+        }
+    }
+ pi_cl_team_barrier(0);
 }
