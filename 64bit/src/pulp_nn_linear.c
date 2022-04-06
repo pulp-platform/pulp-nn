@@ -28,19 +28,17 @@
 
 void pulp_nn_linear(
       uint8_t *pInBuffer,
-      int8_t *pWeights,
-      uint16_t dim_vec,
-      uint16_t num_o_neurons,
       int8_t *bias,
-      uint16_t bias_shift,
-      int8_t out_shift,
-      uint16_t out_mult,
+      uint8_t *pOutBuffer,
+      int8_t *pWeights,
       int64_t *k,
       int64_t *lambda,
-      uint8_t *pOutBuffer,
+      uint16_t out_mult,
+      int8_t out_shift,
+      uint16_t dim_vec,
+      uint16_t num_o_neurons,
       int flag_relu,
-      int flag_batch_norm,
-      unsigned int * memory_chan
+      int flag_batch_norm
 )
 {
   int core_id = pi_core_id();

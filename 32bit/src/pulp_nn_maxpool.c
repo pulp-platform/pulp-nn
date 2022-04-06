@@ -25,22 +25,22 @@
 #define min(a,b) ((a)<(b)?(a):(b))
 
 void __attribute__ ((noinline))  pulp_nn_maxpool (
-    uint8_t * Im_in,             // pointer to the input feature map
-    uint16_t  dim_im_in_x,       // spatial dimension of the input feature map
-    uint16_t  dim_im_in_y,
-    uint16_t  ch_im_in,          // number of channels of the IFM
-    uint16_t  dim_kernel_x,        // spatial dimension of the pooling filter
-    uint16_t  dim_kernel_y,        // spatial dimension of the pooling filter
-    uint16_t  padding_t,           // amount of padding
-    uint16_t  padding_b,           // amount of padding
-    uint16_t  padding_l,           // amount of padding
-    uint16_t  padding_r,           // amount of padding
-    uint16_t  stride_x,              // amount of stride
-    uint16_t  stride_y,
-    uint16_t  dim_im_out_x,        // reduced spatial dimension of output
-    uint16_t  dim_im_out_y,
-    uint8_t * Im_out               // pointer to the output
-    ) {
+  uint8_t * Im_in,             // pointer to the input feature map
+  uint8_t * Im_out,               // pointer to the output
+  uint16_t  dim_im_in_x,       // spatial dimension of the input feature map
+  uint16_t  dim_im_in_y,
+  uint16_t  ch_im_in,          // number of channels of the IFM
+  uint16_t  dim_im_out_x,        // reduced spatial dimension of output
+  uint16_t  dim_im_out_y,
+  uint16_t  dim_kernel_x,        // spatial dimension of the pooling filter
+  uint16_t  dim_kernel_y,        // spatial dimension of the pooling filter
+  uint16_t  padding_t,           // amount of padding
+  uint16_t  padding_b,           // amount of padding
+  uint16_t  padding_l,           // amount of padding
+  uint16_t  padding_r,           // amount of padding
+  uint16_t  stride_x,              // amount of stride
+  uint16_t  stride_y)
+{
     int core_id = pi_core_id();
     int n_cores = NUM_CORES;
     if (dim_im_in_y < NUM_CORES)

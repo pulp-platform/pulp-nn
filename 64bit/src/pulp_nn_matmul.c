@@ -29,7 +29,6 @@ uint8_t __attribute__ ((noinline)) *pulp_nn_matmul(
   uint8_t *      pInBuffer,
   uint16_t       ch_out,
   uint16_t       num_col_im2col,
-  uint16_t       bias_shift,
   uint16_t       out_shift,
   uint16_t       out_mult,
   int64_t *      k,
