@@ -29,10 +29,19 @@
 
 void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
   const uint8_t * pInBuffer,
+  uint8_t *       pIm2ColBuffer,
+  const int8_t *  bias,
+  uint8_t *       pOutBuffer,
+  const int8_t *  pWeight,
+  int64_t *       k,
+  int64_t *       lambda,
+  const uint16_t  out_mult,
+  const uint16_t  out_shift,
   const uint16_t  dim_in_x,
   const uint16_t  dim_in_y,
   const uint16_t  ch_in,
-  const int8_t *  pWeight,
+  const uint16_t  dim_out_x,
+  const uint16_t  dim_out_y,
   const uint16_t  ch_out,
   const uint16_t  dim_kernel_x,
   const uint16_t  dim_kernel_y,
@@ -42,19 +51,8 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
   const uint16_t  padding_x_right,
   const uint16_t  stride_x,
   const uint16_t  stride_y,
-  const int8_t *  bias,
-  const uint16_t  bias_shift,
-  const uint16_t  out_shift,
-  const uint16_t  out_mult,
-  uint8_t *       pOutBuffer,
-  const uint16_t  dim_out_x,
-  const uint16_t  dim_out_y,
-  int64_t *       k,
-  int64_t *       lambda,
-  uint8_t *       pIm2ColBuffer,
   int             flag_relu,
-  int             flag_batch_norm,
-  unsigned int * memory_chan
+  int             flag_batch_norm
 ) {
 
   int core_id = pi_core_id();
@@ -192,7 +190,6 @@ void __attribute__ ((noinline)) pulp_nn_conv_HoWo_parallel(
           pIm2ColBase,
           ch_out,
           ch_in * dim_kernel_x * dim_kernel_y,
-          bias_shift,
           out_shift,
           out_mult,
           k,
