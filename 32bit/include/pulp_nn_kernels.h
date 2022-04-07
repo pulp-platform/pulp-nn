@@ -21,13 +21,13 @@
 void __attribute__ ((noinline))  pulp_nn_add (
   uint8_t * Im_in_1,             // pointer to the input feature map1
   uint8_t * Im_in_2,             // pointer to the input feature map2
-  uint16_t  ch_im_in,          // number of channels of the IFM
-  uint16_t  dim_im_in_h,
-  uint16_t  dim_im_in_w,
   uint8_t * Im_out,            // pointer to the output
   uint16_t out_mult1,            // paramter to requantize
   uint16_t out_mult2,            // paramter to requantize
-  uint16_t out_shift            // paramter to requantize
+  uint16_t out_shift,            // paramter to requantize
+  uint16_t  dim_im_in_h,
+  uint16_t  dim_im_in_w,
+  uint16_t  ch_im_in          // number of channels of the IFM
 );
 
 void pulp_nn_avgpool (
