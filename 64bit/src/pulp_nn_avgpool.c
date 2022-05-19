@@ -51,9 +51,9 @@ void __attribute__ ((noinline))  pulp_nn_avgpool(
   /* parallelization */
   int core_id = pi_core_id();
   int n_cores = NUM_CORES;
-  if (dim_im_in_y < NUM_CORES)
+  if (dim_im_out_y < NUM_CORES)
   {
-    n_cores = dim_im_in_y;
+    n_cores = dim_im_out_y;
   }
   int Log2Core = log2(n_cores);
   int chunck = (dim_im_out_y >> Log2Core) + ((dim_im_out_y & (n_cores -1))!=0);
@@ -105,7 +105,7 @@ void __attribute__ ((noinline))  pulp_nn_avgpool(
                 }
                 int64_t out_large;
                 if (flag_requant) {
-                  out_large = (sum[0] * lambda + out_add) >> out_shift;
+                  out_large = (sum[0] * lambda / kernel_size_tot + out_add) >> out_shift;
                   out_el = clip8(out_large);
                   pDst[(ch_cnt >> (0)) + 0] = out_el;
                   } else {

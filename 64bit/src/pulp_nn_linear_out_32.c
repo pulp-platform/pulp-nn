@@ -51,7 +51,7 @@ void pulp_nn_linear_out_32(
 
     if (bias != NULL)
     {
-      sum = ((int)(bias[i]));
+      sum = *(int32_t *)(bias + 4*i);
     }
 
     uint8_t *pA = pInBuffer;
