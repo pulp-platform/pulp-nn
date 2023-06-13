@@ -18,9 +18,7 @@
  * limitations under the License.
  */
 
-#ifdef GAP_SDK
-#include "pulp.h"
-#endif
+#include "pmsis.h"
 
 uint8_t pulp_nn_bn_quant_u8 (int32_t phi, int64_t k, int64_t lambda, int8_t  d);
 
