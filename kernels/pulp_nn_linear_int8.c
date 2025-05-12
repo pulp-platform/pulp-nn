@@ -88,6 +88,15 @@ void pulp_nn_linear_int8(
 		v4s vecB;
 		v4s vecB2;
 
+		if (num_o_neurons == 1) {
+			int sum = ((int)(bias[0]) << bias_shift) + NN_ROUND(out_shift);
+			for (int i = 0; i < dim_vec; i++) {
+				sum += pIn[i] * pWeights[i];
+			}
+			*pOut = (int8_t) CLIP8(sum >> out_shift);
+			return;
+		}
+
 		for(int i = start ; i< ((a<<1)+start); i+=2)
 		{
 
